@@ -11,9 +11,10 @@ Tests exercise the full stack: client construction via [clj-oa3-client](https://
 │  clj-oa3-test                                │
 │                                              │
 │  common_test.clj                             │
-│    ven1 = OA3Client :ven (ven_token)         │
-│    ven2 = OA3Client :ven (ven_token2)        │
-│    bl   = OA3Client :bl  (bl_token)          │
+│    ven1      = OA3Client :ven (ven_token)     │
+│    ven2      = OA3Client :ven (ven_token2)    │
+│    bl        = OA3Client :bl  (bl_token)      │
+│    bad-token = OA3Client :bl  (bad_token)     │
 │                                              │
 │  Test suites use client/ wrappers            │
 ├──────────────────────────────────────────────┤
@@ -23,6 +24,7 @@ Tests exercise the full stack: client construction via [clj-oa3-client](https://
 ├──────────────────────────────────────────────┤
 │  OpenADR 3 VTN                               │
 │  http://localhost:8080/openadr3/3.1.0        │
+│  MQTT broker: tcp://127.0.0.1:1883          │
 └──────────────────────────────────────────────┘
 ```
 
@@ -35,6 +37,8 @@ Tests exercise the full stack: client construction via [clj-oa3-client](https://
 2. **OpenADR 3 specification** — symlinked into clj-oa3's resources (see clj-oa3 README)
 
 3. **Running VTN** — the tests expect an OpenADR 3 VTN at `http://localhost:8080/openadr3/3.1.0`
+
+4. **MQTT broker** — the MQTT and topics tests expect a broker at `tcp://127.0.0.1:1883`
 
 Expected layout:
 
@@ -59,41 +63,105 @@ The VTN-RI uses a toy auth implementation with pre-configured tokens: `ven_token
 
 ## Test Suites
 
-| Suite | File | Description |
-|-------|------|-------------|
-| **Notifiers** | `notifiers_test.clj` | Verifies notifier discovery (WEBHOOK, MQTT support) |
-| **Programs** | `programs_test.clj` | Program CRUD lifecycle — creates Program1 and Program2 via BL client |
-| **VENs** | `vens_test.clj` | VEN CRUD lifecycle — creates ven1 and ven2 via VEN clients |
-| **Topics** | `topics_test.clj` | MQTT topic discovery across all three clients (ven1, ven2, bl) with scope-aware authorization checks |
+The suite runs **130 tests** across 8 ordered suites. Suites run in a fixed order because later suites depend on entities created by earlier ones (e.g., events depend on programs, reports depend on events).
 
-### Test Orchestration
+| Suite | File | Tests | Description |
+|-------|------|------:|-------------|
+| **Notifiers** | `notifiers_test.clj` | 1 | Verifies notifier discovery (WEBHOOK, MQTT support) |
+| **Programs** | `programs_test.clj` | 21 | Program CRUD, auth, conflict, bad-token, bad-ID, pagination |
+| **VENs** | `vens_test.clj` | 21 | VEN registration, CRUD, clientID conflict, bad-token, bad-ID, pagination |
+| **Events** | `events_test.clj` | 22 | Event CRUD, auth (BL-only create/update/delete), bad-token, bad-ID, pagination |
+| **Resources** | `resources_test.clj` | 20 | Resource CRUD (VEN + BL), conflict, bad-token, bad-ID, pagination |
+| **Reports** | `reports_test.clj` | 18 | Report CRUD (VEN-only create/update/delete), bad-token, bad-ID |
+| **Topics** | `topics_test.clj` | 13 | MQTT topic discovery for ven1/ven2/bl + 10 bad-token tests |
+| **MQTT** | `mqtt_test.clj` | 14 | MQTT notification reception for program/event/VEN/resource/report CRUD + targeted delivery |
 
-Each test namespace defines a `test-ns-hook` function that controls execution order:
+### What Each CRUD Suite Covers
 
-1. **Cleanup** — delete any leftover test data (programs, VENs) from previous runs
-2. **Create prerequisites** — programs and VENs needed for subsequent tests
-3. **Run tests** — exercise the API and assert responses
+Every entity suite (programs, VENs, events, resources, reports) follows a consistent pattern:
 
-The `topics_test` suite is the most comprehensive — it runs 12 MQTT topic endpoint tests for each of the three clients (ven1, ven2, bl), checking both successful responses and expected 403 Forbidden responses based on OAuth2 scopes.
+- **Create** — happy path for authorized roles, 403 for unauthorized roles, conflict detection (409)
+- **Search** — list all, get by ID, for both BL and VEN clients
+- **Update** — happy path + forbidden role check
+- **Delete** — happy path + forbidden role check
+- **Bad token** — 5 tests per suite (create, search-all, search-by-id, update, delete) all expect 403
+- **Bad ID** — 3 tests per suite (search, update, delete) expect 404 (or 400 for some VTNs)
+- **Pagination** — skip/limit combinations including empty result sets
+
+### MQTT Topic Tests
+
+The topics suite tests all 12 MQTT topic endpoints for three clients (ven1, ven2, bl). Each client's test verifies:
+- Topic strings are returned for each operation (ALL, CREATE, UPDATE, DELETE)
+- Scope-aware authorization — endpoints like `/events/topics` and `/vens/topics` return 403 for VEN clients
+- Per-entity topics (program, VEN) omit CREATE since entities already exist
+
+Bad-token tests verify that all 10 topic endpoint categories reject invalid credentials with 403.
+
+### MQTT Notification Tests
+
+The MQTT suite connects ven1 and bl to the MQTT broker, then tests notification delivery:
+
+- **Programs** — CREATE, UPDATE, DELETE notifications received by VEN
+- **Events** — CREATE, UPDATE, DELETE on program-scoped event topics
+- **VENs** — UPDATE notification on VEN-scoped topics
+- **Resources** — CREATE, DELETE on VEN-scoped resource topics
+- **Reports** — CREATE, DELETE notifications received by BL (reports are VEN-created)
+- **Targeted delivery** — program and event notifications on VEN-scoped topics when the entity targets a specific VEN
+
+The CREATE notification test also verifies full coercion (entity keywords, object-type, operation) and channel metadata.
+
+### Auth Model
+
+OpenADR 3 has role-based access:
+
+| Entity | Create | Update | Delete | Search |
+|--------|--------|--------|--------|--------|
+| Programs | BL only | BL only | BL only | BL + VEN |
+| Events | BL only | BL only | BL only | BL + VEN |
+| VENs | BL + VEN | BL + VEN | BL only | BL + VEN |
+| Resources | BL + VEN | BL + VEN | BL + VEN | BL + VEN |
+| Reports | VEN only | VEN only | VEN only | BL + VEN |
 
 ### Test Clients
 
-All three clients are constructed in `common_test.clj` using the Component lifecycle:
+All clients are constructed in `common_test.clj` using the Component lifecycle:
 
 ```clojure
-(def ven1 (component/start (client/oa3-client {:type :ven :url VTN-url :token "ven_token"})))
-(def ven2 (component/start (client/oa3-client {:type :ven :url VTN-url :token "ven_token2"})))
-(def bl   (component/start (client/oa3-client {:type :bl  :url VTN-url :token "bl_token"})))
+(def ven1      (component/start (client/oa3-client {:type :ven :url VTN-url :token "ven_token"})))
+(def ven2      (component/start (client/oa3-client {:type :ven :url VTN-url :token "ven_token2"})))
+(def bl        (component/start (client/oa3-client {:type :bl  :url VTN-url :token "bl_token"})))
+(def bad-token (component/start (client/oa3-client {:type :bl  :url VTN-url :token "bad_token"})))
 ```
 
-Tests use `with-redefs` to bind dynamic vars to specific clients, allowing the same test logic to run against different client types and credentials.
+### VTN Compatibility
+
+Some VTNs (notably the VTN-RI) drop HTTP/1.1 connections under sustained load. The `inter-suite-delay-ms` setting in `common_test.clj` adds a configurable pause between suites (default 5000ms). Set to 0 for VTNs that handle connection reuse well.
+
+Tests also accommodate VTN-specific behavior:
+- Update with a nonexistent ID may return 400 or 404 (tests accept either)
+- VEN registration uses `clientID` for conflict detection, not `venName`
+
+## Known Gaps
+
+Coverage is broadly comparable to other OpenADR 3 conformance test suites, with these gaps:
+
+- **Subscriptions** — no CRUD tests yet; the client API supports them, but subscriptions are primarily webhook-driven and webhook notification reception is not implemented
+- **MQTT notifications** — missing resource UPDATE, report UPDATE, VEN DELETE, per-program-scoped UPDATE/DELETE (subscribing to a single program's topic), and the ALL wildcard topic test
+- **Topics bad-token** — missing tests for VEN-scoped program and event topic endpoints with bad tokens
+- **Reports pagination** — not tested (all other CRUD suites have pagination tests)
+- **Notifiers** — only tests that WEBHOOK and MQTT are advertised; no bad-token test
 
 ## Running Tests
 
 ### Via Kaocha (command line)
 
 ```bash
+# Run all suites in order
 clojure -M:test
+
+# Run a single suite
+clojure -M:test --focus :programs
+clojure -M:test --focus :mqtt
 ```
 
 ### Via nREPL
@@ -106,33 +174,47 @@ clojure -M:nrepl
 ```clojure
 ;; In the REPL
 (require '[kaocha.repl :as k])
-(k/run :integration)
+
+;; Run all suites
+(k/run-all)
 
 ;; Run a single suite
-(k/run {:tests [{:id :integration
-                 :ns-patterns ["programs-test$"]}]})
+(k/run :programs)
+(k/run :mqtt)
 ```
+
+### Running Against VTN-RI
+
+The [VTN Reference Implementation](https://github.com/OpenADRAlliance/oadr-ri-vtn) drops HTTP/1.1 connections under sustained load (~200+ requests in a single process). This manifests as connection-refused or broken-pipe errors in the later suites (typically topics and MQTT).
+
+Workarounds:
+
+1. **Inter-suite delay** — `inter-suite-delay-ms` in `common_test.clj` (default 5000ms) pauses between suites to let the VTN recover. Increase if you still see connection errors.
+
+2. **Run in batches** — if the full suite still has connection issues, split into two runs:
+   ```bash
+   # REST suites
+   clojure -M:test --focus :notifiers --focus :programs --focus :vens --focus :events --focus :resources --focus :reports
+
+   # MQTT suites (after a pause)
+   clojure -M:test --focus :topics --focus :mqtt
+   ```
+
+3. **For well-behaved VTNs** — set `inter-suite-delay-ms` to 0 to skip the pauses entirely.
 
 ### Test Configuration
 
-Tests are configured in `tests.edn`:
+Tests are configured in `tests.edn`. Suite order is fixed (`randomize? false`) because later suites depend on entities created by earlier ones:
 
-```clojure
-#kaocha/v1
-{:tests [{:id :integration
-          :type :kaocha.type/clojure.test
-          :source-paths []
-          :test-paths ["test"]
-          :ns-patterns [".*-test$"]}]
- :color? true
- :fail-fast? false}
+```
+notifiers → programs → vens → events → resources → reports → topics → mqtt
 ```
 
 ## Dependency Chain
 
 ```
 clj-oa3-test
-  └── clj-oa3-client  (Component lifecycle, API delegation)
+  └── clj-oa3-client  (Component lifecycle, API delegation, MQTT)
         └── clj-oa3   (Martian HTTP, entity coercion, Malli schemas)
 ```
 
