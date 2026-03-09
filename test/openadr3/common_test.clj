@@ -3,6 +3,7 @@
             [openadr3.client :as client]))
 
 (def VTN-url "http://localhost:8080/openadr3/3.1.0")
+(def MQTT-broker-url "tcp://127.0.0.1:1883")
 
 (def ven1
   (component/start

@@ -18,7 +18,12 @@
            :type        :kaocha.type/clojure.test
            :source-paths []
            :test-paths  ["test"]
-           :ns-patterns ["topics-test$"]}]
+           :ns-patterns ["topics-test$"]}
+          {:id          :mqtt
+           :type        :kaocha.type/clojure.test
+           :source-paths []
+           :test-paths  ["test"]
+           :ns-patterns ["mqtt-test$"]}]
   :color?     true
   :fail-fast? false
   :randomize? false}
