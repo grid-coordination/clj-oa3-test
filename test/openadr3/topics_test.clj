@@ -1,6 +1,6 @@
 (ns openadr3.topics-test
   (:require [openadr3.client :as client]
-            [openadr3.common-test :refer [ven1 ven2 bl test-state]]
+            [openadr3.common-test :refer [ven1 ven2 bl]]
             [clojure.test :refer :all]))
 
 ;; ---------------------------------------------------------------------------
@@ -80,17 +80,17 @@
 
 (deftest test-mqtt-topics-ven1
   (testing "VEN 1 topics tests"
-    (let [ven-id  (:ven1-id @test-state)
+    (let [ven-id  (client/ven-id ven1)
           prog-id (-> (client/find-program-by-name ven1 "Program2") :id)]
-      (is (some? ven-id) "ven1-id must be set by vens-test")
+      (is (some? ven-id) "ven1 must be registered by vens-test")
       (when ven-id
         (run-topics-for-client ven1 ven-id prog-id)))))
 
 (deftest test-mqtt-topics-ven2
   (testing "VEN 2 topics tests"
-    (let [ven-id  (:ven2-id @test-state)
+    (let [ven-id  (client/ven-id ven2)
           prog-id (-> (client/find-program-by-name ven2 "Program1") :id)]
-      (is (some? ven-id) "ven2-id must be set by vens-test")
+      (is (some? ven-id) "ven2 must be registered by vens-test")
       (when ven-id
         (run-topics-for-client ven2 ven-id prog-id)))))
 

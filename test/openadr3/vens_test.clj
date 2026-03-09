@@ -1,11 +1,9 @@
 (ns openadr3.vens-test
   (:require [openadr3.client :as client]
-            [openadr3.common-test :refer [ven1 ven2 bl test-state]]
+            [openadr3.common-test :refer [ven1 ven2 bl]]
             [clojure.test :refer :all]))
 
-(def ven1-request {:objectType "VEN_VEN_REQUEST" :venName "ven1"})
-(def ven2-request {:objectType "VEN_VEN_REQUEST" :venName "ven2"})
-(def test-ven-requests [ven1-request ven2-request])
+(def test-ven-names ["ven1" "ven2"])
 
 (defn delete-ven-by-name [c ven-name]
   (let [{ven-id :id} (client/find-ven-by-name c ven-name)]
@@ -13,7 +11,7 @@
       (client/delete-ven c ven-id))))
 
 (defn delete-test-vens [c]
-  (doseq [{ven-name :venName} test-ven-requests]
+  (doseq [ven-name test-ven-names]
     (delete-ven-by-name c ven-name)))
 
 (use-fixtures :once
@@ -21,18 +19,12 @@
     (delete-test-vens bl)
     (f)))
 
-(deftest test-create-ven1
-  (testing "Create ven1"
-    (let [resp (client/create-ven ven1 ven1-request)
-          status (:status resp)
-          ven-id (-> resp :body :id)]
-      (is (<= status 299) "Check for 2xx status")
-      (swap! test-state assoc :ven1-id ven-id))))
+(deftest test-register-ven1
+  (testing "Register ven1"
+    (client/register! ven1 "ven1")
+    (is (some? (client/ven-id ven1)) "ven1 should have a ven-id after registration")))
 
-(deftest test-create-ven2
-  (testing "Create ven2"
-    (let [resp (client/create-ven ven2 ven2-request)
-          status (:status resp)
-          ven-id (-> resp :body :id)]
-      (is (<= status 299) "Check for 2xx status")
-      (swap! test-state assoc :ven2-id ven-id))))
+(deftest test-register-ven2
+  (testing "Register ven2"
+    (client/register! ven2 "ven2")
+    (is (some? (client/ven-id ven2)) "ven2 should have a ven-id after registration")))

@@ -11,6 +11,27 @@ This document explains how to set up and run the full integration test stack.
 - **tmux** — the dev helpers manage long-running processes in tmux sessions
 - **Mosquitto MQTT broker** — `brew install mosquitto` on macOS
 
+### Mosquitto configuration
+
+Homebrew's Mosquitto installation does not always create a usable config file.
+The VTN-RI repo includes one at `cfg/mosquitto/config/mosquitto.conf` — copy it
+to the Homebrew config location:
+
+```bash
+cp ../openadr3-vtn-reference-implementation/cfg/mosquitto/config/mosquitto.conf \
+   /opt/homebrew/etc/mosquitto/mosquitto.conf
+```
+
+The only two active settings in that file are:
+
+```
+listener 1883 0.0.0.0
+allow_anonymous true
+```
+
+If you prefer a minimal config, create `/opt/homebrew/etc/mosquitto/mosquitto.conf`
+with just those two lines.
+
 ### Required sibling repositories
 
 All repos must be cloned as siblings in the same parent directory:
@@ -187,11 +208,9 @@ clojure -M:dev:nrepl
 
 ```clojure
 (require '[kaocha.repl :as k])
-(k/run :integration)
-
-;; Run a single suite
-(k/run {:tests [{:id :integration
-                 :ns-patterns ["programs-test$"]}]})
+(k/run)                    ; run all suites
+(k/run :programs)          ; run a single suite
+(k/run :vens :topics)      ; run specific suites
 ```
 
 ### Expected output
@@ -202,17 +221,17 @@ Testing openadr3.programs-test
 Testing openadr3.vens-test
 Testing openadr3.topics-test
 
-54 tests, 148 assertions, 0 failures.
+8 tests, 176 assertions, 0 failures.
 ```
 
 ## Test Execution Order
 
-The tests have dependencies and run in a specific order controlled by `test-ns-hook` in each namespace:
+The tests have dependencies and run in a specific order. Kaocha's `tests.edn` defines four ordered suites with `:randomize? false`:
 
 1. **notifiers-test** — Verifies the VTN advertises WEBHOOK (and optionally MQTT) notifier support
-2. **programs-test** — Deletes any leftover test programs, then creates Program1 and Program2 via the BL client
-3. **vens-test** — Deletes any leftover test VENs, then creates ven1 and ven2 via VEN clients. Stores VEN IDs in var metadata for use by topics tests
-4. **topics-test** — Runs 12 MQTT topic endpoint tests for each of ven1, ven2, and bl (36 test runs). Checks both successful responses and expected 403 Forbidden based on OAuth2 scopes
+2. **programs-test** — Deletes any leftover test programs via `use-fixtures :once`, then creates Program1 and Program2 via the BL client
+3. **vens-test** — Deletes any leftover test VENs via `use-fixtures :once`, then registers ven1 and ven2 via `client/register!` (VEN IDs stored in each client's state atom)
+4. **topics-test** — Runs 12 MQTT topic endpoint tests for each of ven1, ven2, and bl. Checks both successful responses and expected 403 Forbidden based on OAuth2 scopes
 
 ## Troubleshooting
 
@@ -220,7 +239,7 @@ The tests have dependencies and run in a specific order controlled by `test-ns-h
 
 **MQTT topic tests failing with connection errors:** Mosquitto must be running on port 1883. Check with `brew services list` or `mosquitto -v` in a terminal.
 
-**Stale data from previous test runs:** The VTN-RI uses in-memory storage. Restart it to clear all data. Or use the test cleanup: each test suite's `test-ns-hook` deletes its test objects before creating new ones.
+**Stale data from previous test runs:** The VTN-RI uses in-memory storage. Restart it to clear all data. Or use the test cleanup: each test suite's `use-fixtures :once` deletes its test objects before creating new ones.
 
 **Clearing MQTT topics:** Restart Mosquitto to flush all retained messages: `brew services restart mosquitto` or `(restart-mqtt)` from the REPL.
 
