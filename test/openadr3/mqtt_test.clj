@@ -505,7 +505,7 @@
                                            {:programID program-id
                                             :clientName "MQTTSubCreate"
                                             :objectOperations [{:objects ["EVENT"]
-                                                                :operations ["POST"]
+                                                                :operations ["CREATE"]
                                                                 :callbackUrl "https://example.com/cb"
                                                                 :bearerToken "tok"}]})]
       (is (<= (:status resp) 299) "Subscription creation should succeed")
@@ -529,7 +529,7 @@
                                               {:programID program-id
                                                :clientName "MQTTSubDelete"
                                                :objectOperations [{:objects ["EVENT"]
-                                                                   :operations ["POST"]
+                                                                   :operations ["CREATE"]
                                                                    :callbackUrl "https://example.com/cb"
                                                                    :bearerToken "tok"}]})
           sub-id  (-> created :body :id)]

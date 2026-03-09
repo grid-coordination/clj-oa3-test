@@ -19,7 +19,7 @@
    {:programID program-id
     :clientName client-name
     :objectOperations [{:objects ["EVENT"]
-                        :operations ["POST"]
+                        :operations ["CREATE"]
                         :callbackUrl "https://example.com/callback"
                         :bearerToken "callback-token"}]}))
 
