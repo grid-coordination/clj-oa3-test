@@ -7,25 +7,24 @@ Tests exercise the full stack: client construction via [clj-oa3-client](https://
 ## Architecture
 
 ```
-┌──────────────────────────────────────────────┐
-│  clj-oa3-test                                │
-│                                              │
-│  common_test.clj                             │
-│    ven1      = OA3Client :ven (ven_token)     │
-│    ven2      = OA3Client :ven (ven_token2)    │
-│    bl        = OA3Client :bl  (bl_token)      │
-│    bad-token = OA3Client :bl  (bad_token)     │
-│                                              │
-│  Test suites use client/ wrappers            │
-├──────────────────────────────────────────────┤
-│  clj-oa3-client (Component lifecycle)        │
-├──────────────────────────────────────────────┤
-│  clj-oa3 (Martian HTTP + entity coercion)    │
-├──────────────────────────────────────────────┤
-│  OpenADR 3 VTN                               │
-│  http://localhost:8080/openadr3/3.1.0        │
-│  MQTT broker: tcp://127.0.0.1:1883          │
-└──────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────┐
+│ clj-oa3-test                                    │
+│                                                 │
+│ common_test.clj                                 │
+│   ven1      = OA3Client :ven (ven_token)        │
+│   ven2      = OA3Client :ven (ven_token2)       │
+│   bl        = OA3Client :bl  (bl_token)         │
+│   bad-token = OA3Client :bl  (bad_token)        │
+│                                                 │
+│ Test suites use client/ wrappers                │
+├─────────────────────────────────────────────────┤
+│ clj-oa3-client (Component lifecycle)            │
+├─────────────────────────────────────────────────┤
+│ clj-oa3 (Martian HTTP + entity coercion)        │
+├─────────────────────────────────────────────────┤
+│ OpenADR 3 VTN  (URL from test-config.edn)       │
+│ MQTT broker    (discovered via /notifiers)      │
+└─────────────────────────────────────────────────┘
 ```
 
 ## Prerequisites
@@ -36,9 +35,9 @@ Tests exercise the full stack: client construction via [clj-oa3-client](https://
 
 2. **OpenADR 3 specification** — symlinked into clj-oa3's resources (see clj-oa3 README)
 
-3. **Running VTN** — the tests expect an OpenADR 3 VTN at `http://localhost:8080/openadr3/3.1.0`
+3. **Running VTN** — the tests expect an OpenADR 3 VTN (URL configured in `test-config.edn`)
 
-4. **MQTT broker** — the MQTT and topics tests expect a broker at `tcp://127.0.0.1:1883`
+4. **MQTT broker** — the MQTT broker URL is discovered automatically from the VTN's `GET /notifiers` endpoint. A fallback can be configured in `test-config.edn` if needed.
 
 Expected layout:
 
@@ -60,6 +59,24 @@ docker compose up -d
 ```
 
 The VTN-RI uses a toy auth implementation with pre-configured tokens: `ven_token`, `ven_token2`, `bl_token`. Other VTNs will require different credentials.
+
+### Configuration
+
+Copy the example config and adjust for your VTN:
+
+```bash
+cp test-config.example.edn test-config.edn
+```
+
+The config file (`test-config.edn`) is gitignored. It controls:
+
+```edn
+{:vtn-url "http://localhost:8080/openadr3/3.1.0"
+ :tokens {:ven1 "ven_token" :ven2 "ven_token2" :bl "bl_token" :bad "bad_token"}
+ :inter-suite-delay-ms 5000}
+```
+
+MQTT broker URLs are discovered automatically from the VTN's `GET /notifiers` endpoint, which returns the `MQTT.URIS` array per the OpenADR 3 spec. If the VTN doesn't advertise MQTT, you can set a `:mqtt-brokers` fallback in the config.
 
 ## Test Suites
 
@@ -127,18 +144,20 @@ OpenADR 3 has role-based access:
 
 ### Test Clients
 
-All clients are constructed in `common_test.clj` using the Component lifecycle:
+All clients are constructed in `common_test.clj` using tokens from `test-config.edn`:
 
 ```clojure
-(def ven1      (component/start (client/oa3-client {:type :ven :url VTN-url :token "ven_token"})))
-(def ven2      (component/start (client/oa3-client {:type :ven :url VTN-url :token "ven_token2"})))
-(def bl        (component/start (client/oa3-client {:type :bl  :url VTN-url :token "bl_token"})))
-(def bad-token (component/start (client/oa3-client {:type :bl  :url VTN-url :token "bad_token"})))
+(def ven1      (component/start (client/oa3-client {:type :ven :url VTN-url :token (:ven1 tokens)})))
+(def ven2      (component/start (client/oa3-client {:type :ven :url VTN-url :token (:ven2 tokens)})))
+(def bl        (component/start (client/oa3-client {:type :bl  :url VTN-url :token (:bl tokens)})))
+(def bad-token (component/start (client/oa3-client {:type :bl  :url VTN-url :token (:bad tokens)})))
 ```
+
+MQTT broker URLs are discovered at startup via `(client/get-notifiers bl)` and exposed as `MQTT-broker-urls` (all) and `MQTT-broker-url` (primary).
 
 ### VTN Compatibility
 
-Some VTNs (notably the VTN-RI) drop HTTP/1.1 connections under sustained load. The `inter-suite-delay-ms` setting in `common_test.clj` adds a configurable pause between suites (default 5000ms). Set to 0 for VTNs that handle connection reuse well.
+Some VTNs (notably the VTN-RI) drop HTTP/1.1 connections under sustained load. The `inter-suite-delay-ms` setting in `test-config.edn` adds a configurable pause between suites (default 5000ms). Set to 0 for VTNs that handle connection reuse well.
 
 Tests also accommodate VTN-specific behavior:
 - Update with a nonexistent ID may return 400 or 404 (tests accept either)
