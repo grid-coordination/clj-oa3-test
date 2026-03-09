@@ -33,11 +33,12 @@
 ;; ---------------------------------------------------------------------------
 
 (defn- find-notification
-  "Find a notification in the messages whose inner object matches pred."
+  "Find a notification in the messages matching a predicate on the payload.
+  pred receives the full notification (not just the inner object)."
   [msgs pred]
   (->> msgs
        (map :payload)
-       (filter #(pred (:openadr.notification/object %)))
+       (filter pred)
        first))
 
 (deftest test-program-create-notification
@@ -52,7 +53,11 @@
 
       (let [msgs    (client/await-mqtt-messages ven1 1 5000)
             notification (find-notification
-                          msgs #(= "MQTTTestProgram" (:openadr.program/name %)))]
+                          msgs #(and (= :openadr.operation/create
+                                        (:openadr.notification/operation %))
+                                     (= "MQTTTestProgram"
+                                        (-> % :openadr.notification/object
+                                            :openadr.program/name))))]
         (is (some? notification) "Should receive notification for MQTTTestProgram")
 
         (when notification

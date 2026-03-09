@@ -16,3 +16,7 @@
 (def bl
   (component/start
    (client/oa3-client {:type :bl :url VTN-url :token "bl_token"})))
+
+(def bad-token
+  (component/start
+   (client/oa3-client {:type :bl :url VTN-url :token "bad_token"})))
