@@ -55,8 +55,7 @@
   ([] (run-vtn-ri {}))
   ([{:keys [branch] :or {branch "dcj/issue-164"}}]
    (let [script (str "bash -c 'git checkout " branch
-                     " && source ./venv/bin/activate"
-                     " && python -m swagger_server'")]
+                     " && ./venv/bin/python -m swagger_server'")]
      (run-in-tmux "vtn-ri" vtn-ri-dir script))))
 
 (defn kill-vtn-ri [] (kill-tmux-session "vtn-ri"))
@@ -70,8 +69,7 @@
   ([] (run-callback-svc {}))
   ([{:keys [branch] :or {branch "main"}}]
    (let [script (str "bash -c 'git checkout " branch
-                     " && source ./venv/bin/activate"
-                     " && python run.py'")]
+                     " && ./venv/bin/python run.py'")]
      (run-in-tmux "vtn-callbk-svc" callback-dir script))))
 
 (defn kill-callback-svc [] (kill-tmux-session "vtn-callbk-svc"))

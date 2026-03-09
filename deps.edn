@@ -16,8 +16,7 @@
                                                     com.sun.jdmk/jmxtools
                                                     com.sun.jmx/jmxri]}}
 
- :aliases {:test {:extra-paths ["dev"]
-                  :main-opts ["-m" "kaocha.runner" "--config-file" "tests.edn"]}
+ :aliases {:test {:main-opts ["-m" "kaocha.runner" "--config-file" "tests.edn"]}
 
            :dev {:extra-paths ["dev"]
                  :extra-deps {babashka/process {:mvn/version "0.6.23"}}}

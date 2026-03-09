@@ -1,11 +1,7 @@
 (ns openadr3.vens-test
   (:require [openadr3.client :as client]
-            [openadr3.common-test :refer [ven1 ven2 bl]]
+            [openadr3.common-test :refer [ven1 ven2 bl test-state]]
             [clojure.test :refer :all]))
-
-(def ^:dynamic c)
-(def ^:dynamic c-var)
-(def ^:dynamic ven-request)
 
 (def ven1-request {:objectType "VEN_VEN_REQUEST" :venName "ven1"})
 (def ven2-request {:objectType "VEN_VEN_REQUEST" :venName "ven2"})
@@ -20,34 +16,23 @@
   (doseq [{ven-name :venName} test-ven-requests]
     (delete-ven-by-name c ven-name)))
 
-(deftest test-create-ven
-  (testing "Create ven"
-    (let [resp (client/create-ven c ven-request)
-          status (:status resp)
-          body (:body resp)
-          ven-id (:id body)]
-      (is (<= status 299) "Check for 2xx status")
-      (alter-meta! c-var assoc :ven-id ven-id))))
+(use-fixtures :once
+  (fn [f]
+    (delete-test-vens bl)
+    (f)))
 
 (deftest test-create-ven1
   (testing "Create ven1"
-    (with-redefs [c ven1
-                  c-var #'ven1
-                  ven-request ven1-request]
-      (test-create-ven))))
+    (let [resp (client/create-ven ven1 ven1-request)
+          status (:status resp)
+          ven-id (-> resp :body :id)]
+      (is (<= status 299) "Check for 2xx status")
+      (swap! test-state assoc :ven1-id ven-id))))
 
 (deftest test-create-ven2
   (testing "Create ven2"
-    (with-redefs [c ven2
-                  c-var #'ven2
-                  ven-request ven2-request]
-      (test-create-ven))))
-
-(deftest test-vens
-  (testing "Combined vens tests"
-    (test-create-ven1)
-    (test-create-ven2)))
-
-(defn test-ns-hook []
-  (delete-test-vens bl)
-  (test-vens))
+    (let [resp (client/create-ven ven2 ven2-request)
+          status (:status resp)
+          ven-id (-> resp :body :id)]
+      (is (<= status 299) "Check for 2xx status")
+      (swap! test-state assoc :ven2-id ven-id))))

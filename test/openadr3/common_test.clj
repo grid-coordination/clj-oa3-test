@@ -15,3 +15,6 @@
 (def bl
   (component/start
    (client/oa3-client {:type :bl :url VTN-url :token "bl_token"})))
+
+;; Shared state for cross-namespace test data (e.g. VEN IDs created in vens_test, used in topics_test)
+(defonce test-state (atom {}))
