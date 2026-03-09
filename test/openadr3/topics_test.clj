@@ -1,7 +1,12 @@
 (ns openadr3.topics-test
   (:require [openadr3.client :as client]
-            [openadr3.common-test :refer [ven1 ven2 bl]]
+            [openadr3.common-test :refer [ven1 ven2 bl inter-suite-delay-ms]]
             [clojure.test :refer :all]))
+
+(use-fixtures :once
+  (fn [f]
+    (Thread/sleep inter-suite-delay-ms)
+    (f)))
 
 ;; ---------------------------------------------------------------------------
 ;; Individual MQTT topic tests — parameterized by c, ven-id, program-id

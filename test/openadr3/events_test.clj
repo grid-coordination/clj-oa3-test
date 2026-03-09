@@ -1,6 +1,6 @@
 (ns openadr3.events-test
   (:require [openadr3.client :as client]
-            [openadr3.common-test :refer [ven1 bl bad-token]]
+            [openadr3.common-test :refer [ven1 bl bad-token inter-suite-delay-ms]]
             [clojure.test :refer :all]))
 
 ;; ---------------------------------------------------------------------------
@@ -32,6 +32,7 @@
 
 (use-fixtures :once
   (fn [f]
+    (Thread/sleep inter-suite-delay-ms)
     (let [pid (find-program-id)]
       (when pid (delete-all-events-for-program pid)))
     (f)))

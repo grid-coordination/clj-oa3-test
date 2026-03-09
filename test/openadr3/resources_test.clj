@@ -1,6 +1,6 @@
 (ns openadr3.resources-test
   (:require [openadr3.client :as client]
-            [openadr3.common-test :refer [ven1 ven2 bl bad-token]]
+            [openadr3.common-test :refer [ven1 ven2 bl bad-token inter-suite-delay-ms]]
             [clojure.test :refer :all]))
 
 ;; ---------------------------------------------------------------------------
@@ -37,6 +37,7 @@
 
 (use-fixtures :once
   (fn [f]
+    (Thread/sleep inter-suite-delay-ms)
     (when-let [vid (ven1-id)]
       (delete-all-resources-for-ven vid))
     (f)))

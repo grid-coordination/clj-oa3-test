@@ -5,6 +5,11 @@
 (def VTN-url "http://localhost:8080/openadr3/3.1.0")
 (def MQTT-broker-url "tcp://127.0.0.1:1883")
 
+(def inter-suite-delay-ms
+  "Delay in ms between test suites to let the VTN recover connections.
+  Set to 0 for well-behaved VTNs."
+  5000)
+
 (def ven1
   (component/start
    (client/oa3-client {:type :ven :url VTN-url :token "ven_token"})))

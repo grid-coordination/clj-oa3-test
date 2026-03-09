@@ -1,6 +1,6 @@
 (ns openadr3.mqtt-test
   (:require [openadr3.client :as client]
-            [openadr3.common-test :refer [ven1 bl MQTT-broker-url]]
+            [openadr3.common-test :refer [ven1 bl MQTT-broker-url inter-suite-delay-ms]]
             [clojure.test :refer :all]))
 
 ;; ---------------------------------------------------------------------------
@@ -9,6 +9,7 @@
 
 (use-fixtures :once
   (fn [f]
+    (Thread/sleep inter-suite-delay-ms)
     (client/connect-mqtt! ven1 MQTT-broker-url)
     (try
       (f)
