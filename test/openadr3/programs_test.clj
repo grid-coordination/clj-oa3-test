@@ -1,5 +1,5 @@
 (ns openadr3.programs-test
-  (:require [openadr3.api :as api]
+  (:require [openadr3.client :as client]
             [openadr3.common-test :refer [bl]]
             [clojure.test :refer :all]))
 
@@ -11,18 +11,18 @@
 (def program2-request {:programName "Program2"})
 (def test-program-requests [program1-request program2-request])
 
-(defn delete-program-by-name [openapi-bl program-name]
-  (let [{program-id :id} (api/find-program-by-name openapi-bl program-name)]
+(defn delete-program-by-name [c program-name]
+  (let [{program-id :id} (client/find-program-by-name c program-name)]
     (when program-id
-      (api/delete-program openapi-bl program-id))))
+      (client/delete-program c program-id))))
 
-(defn delete-test-programs [openapi-bl]
+(defn delete-test-programs [c]
   (doseq [{program-name :programName} test-program-requests]
-    (delete-program-by-name openapi-bl program-name)))
+    (delete-program-by-name c program-name)))
 
 (deftest test-create-program
   (testing "Create a program"
-    (let [resp (api/create-program bl-client program-request)
+    (let [resp (client/create-program bl-client program-request)
           status (:status resp)]
       (is (<= status 299) "Check for 2xx status"))))
 

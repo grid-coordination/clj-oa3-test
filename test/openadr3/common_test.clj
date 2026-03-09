@@ -1,20 +1,17 @@
 (ns openadr3.common-test
-  (:require [openadr3.api :as api]))
-
-(def apispecfile_3_0_0 "resources/openadr3-specification/3.0.0/openadr3.yaml")
-(def apispecfile_3_0_1 "resources/openadr3-specification/3.0.1/openadr3.yaml")
-(def apispecfile_3_1_0 "resources/openadr3-specification/3.1.0/openadr3.yaml")
+  (:require [com.stuartsierra.component :as component]
+            [openadr3.client :as client]))
 
 (def VTN-url "http://localhost:8080/openadr3/3.1.0")
 
-(def oa3spec
-  (api/read-openapi-spec apispecfile_3_1_0))
-
 (def ven1
-  (api/create-ven-client apispecfile_3_1_0 "ven_token" VTN-url))
+  (component/start
+   (client/oa3-client {:type :ven :url VTN-url :token "ven_token"})))
 
 (def ven2
-  (api/create-ven-client apispecfile_3_1_0 "ven_token2" VTN-url))
+  (component/start
+   (client/oa3-client {:type :ven :url VTN-url :token "ven_token2"})))
 
 (def bl
-  (api/create-bl-client apispecfile_3_1_0 "bl_token" VTN-url))
+  (component/start
+   (client/oa3-client {:type :bl :url VTN-url :token "bl_token"})))

@@ -2,8 +2,8 @@
  :deps {org.clojure/clojure            {:mvn/version "1.12.3"}
         org.clojure/tools.logging      {:mvn/version "1.3.0"}
 
-        ;; OpenADR3 client library
-        energy.grid-coordination/clj-oa3 {:local/root "../clj-oa3"}
+        ;; OpenADR3 client framework (transitively includes clj-oa3)
+        energy.grid-coordination/clj-oa3-client {:local/root "../clj-oa3-client"}
 
         ;; Test framework
         lambdaisland/kaocha            {:mvn/version "1.91.1392"}

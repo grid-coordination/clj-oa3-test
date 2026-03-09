@@ -1,17 +1,17 @@
 (ns openadr3.topics-test
-  (:require [openadr3.api :as api]
+  (:require [openadr3.client :as client]
             [openadr3.common-test :refer [ven1 ven2 bl]]
             [clojure.test :refer :all]))
 
-(def ^:dynamic client)
-(def ^:dynamic client-var)
+(def ^:dynamic c)
+(def ^:dynamic c-var)
 (def ^:dynamic ven-id)
 (def ^:dynamic program-name)
 (def ^:dynamic program-id)
 
 (deftest test-mqtt-topics-programs
   (testing "MQTT notifier programs topic"
-    (let [resp (api/get-mqtt-topics-programs client)
+    (let [resp (client/get-mqtt-topics-programs c)
           status (:status resp)
           ok? (is (<= status 299) "Check for 2xx status")]
       (when ok?
@@ -26,7 +26,7 @@
 
 (deftest test-mqtt-topics-program
   (testing "MQTT notifier program topic"
-    (let [resp (api/get-mqtt-topics-program client program-id)
+    (let [resp (client/get-mqtt-topics-program c program-id)
           status (:status resp)
           ok? (is (<= status 299) "Check for 2xx status")]
       (when ok?
@@ -41,7 +41,7 @@
 
 (deftest test-mqtt-topics-program-events
   (testing "MQTT notifier program events topic"
-    (let [resp (api/get-mqtt-topics-program-events client program-id)
+    (let [resp (client/get-mqtt-topics-program-events c program-id)
           status (:status resp)
           ok? (is (<= status 299) "Check for 2xx status")]
       (when ok?
@@ -56,7 +56,7 @@
 
 (deftest test-mqtt-topics-ven
   (testing "MQTT notifier ven topic"
-    (let [resp (api/get-mqtt-topics-ven client ven-id)
+    (let [resp (client/get-mqtt-topics-ven c ven-id)
           status (:status resp)
           ok? (is (<= status 299) "Check for 2xx status")]
       (when ok?
@@ -71,7 +71,7 @@
 
 (deftest test-mqtt-topics-ven-programs
   (testing "MQTT notifier ven programs topic"
-    (let [resp (api/get-mqtt-topics-ven-programs client ven-id)
+    (let [resp (client/get-mqtt-topics-ven-programs c ven-id)
           status (:status resp)
           ok? (is (<= status 299) "Check for 2xx status")]
       (when ok?
@@ -86,7 +86,7 @@
 
 (deftest test-mqtt-topics-ven-events
   (testing "MQTT notifier ven events topic"
-    (let [resp (api/get-mqtt-topics-ven-events client ven-id)
+    (let [resp (client/get-mqtt-topics-ven-events c ven-id)
           status (:status resp)
           ok? (is (<= status 299) "Check for 2xx status")]
       (when ok?
@@ -101,7 +101,7 @@
 
 (deftest test-mqtt-topics-ven-resources
   (testing "MQTT notifier ven resources topic"
-    (let [resp (api/get-mqtt-topics-ven-resources client ven-id)
+    (let [resp (client/get-mqtt-topics-ven-resources c ven-id)
           status (:status resp)
           ok? (is (<= status 299) "Check for 2xx status")]
       (when ok?
@@ -117,9 +117,9 @@
 (deftest test-mqtt-topics-events
   (testing "MQTT notifier events topic"
     (let [endpoint :list-all-mqtt-notifier-topics-events
-          resp (api/get-mqtt-topics-events client)
+          resp (client/get-mqtt-topics-events c)
           status (:status resp)]
-      (if (api/authorized? (api/scopes client) (api/endpoint-scopes client endpoint))
+      (if (client/authorized? c endpoint)
         (when (is (<= status 299) "Check for 2xx status")
           (let [body (:body resp)
                 has-topics? (is (contains? body :topics) "Check response body contains :topics")]
@@ -134,9 +134,9 @@
 (deftest test-mqtt-topics-reports
   (testing "MQTT notifier reports topic"
     (let [endpoint :list-all-mqtt-notifier-topics-reports
-          resp (api/get-mqtt-topics-reports client)
+          resp (client/get-mqtt-topics-reports c)
           status (:status resp)]
-      (if (api/authorized? (api/scopes client) (api/endpoint-scopes client endpoint))
+      (if (client/authorized? c endpoint)
         (when (is (<= status 299) "Check for 2xx status")
           (let [body (:body resp)
                 has-topics? (is (contains? body :topics) "Check response body contains :topics")]
@@ -151,9 +151,9 @@
 (deftest test-mqtt-topics-subscriptions
   (testing "MQTT notifier subscriptions topic"
     (let [endpoint :list-all-mqtt-notifier-topics-subscriptions
-          resp (api/get-mqtt-topics-subscriptions client)
+          resp (client/get-mqtt-topics-subscriptions c)
           status (:status resp)]
-      (if (api/authorized? (api/scopes client) (api/endpoint-scopes client endpoint))
+      (if (client/authorized? c endpoint)
         (when (is (<= status 299) "Check for 2xx status")
           (let [body (:body resp)
                 has-topics? (is (contains? body :topics) "Check response body contains :topics")]
@@ -168,9 +168,9 @@
 (deftest test-mqtt-topics-vens
   (testing "MQTT notifier vens topic"
     (let [endpoint :list-all-mqtt-notifier-topics-vens
-          resp (api/get-mqtt-topics-vens client)
+          resp (client/get-mqtt-topics-vens c)
           status (:status resp)]
-      (if (api/authorized? (api/scopes client) (api/endpoint-scopes client endpoint))
+      (if (client/authorized? c endpoint)
         (when (is (<= status 299) "Check for 2xx status")
           (let [body (:body resp)
                 has-topics? (is (contains? body :topics) "Check response body contains :topics")]
@@ -185,9 +185,9 @@
 (deftest test-mqtt-topics-resources
   (testing "MQTT notifier resources topic"
     (let [endpoint :list-all-mqtt-notifier-topics-resources
-          resp (api/get-mqtt-topics-resources client)
+          resp (client/get-mqtt-topics-resources c)
           status (:status resp)]
-      (if (api/authorized? (api/scopes client) (api/endpoint-scopes client endpoint))
+      (if (client/authorized? c endpoint)
         (when (is (<= status 299) "Check for 2xx status")
           (let [body (:body resp)
                 has-topics? (is (contains? body :topics) "Check response body contains :topics")]
@@ -216,34 +216,31 @@
 
 (deftest test-mqtt-topics-ven1
   (testing "VEN 1 topics tests ->"
-    (with-redefs [client ven1
-                  client-var #'ven1
+    (with-redefs [c ven1
+                  c-var #'ven1
                   program-name "Program2"]
-      (with-redefs [ven-id (-> client-var meta :ven-id)
-                    program-id (-> client
-                                   (api/find-program-by-name program-name)
+      (with-redefs [ven-id (-> c-var meta :ven-id)
+                    program-id (-> (client/find-program-by-name c program-name)
                                    :id)]
         (test-mqtt-topics)))))
 
 (deftest test-mqtt-topics-ven2
   (testing "VEN 2 topics tests ->"
-    (with-redefs [client ven2
-                  client-var #'ven2
+    (with-redefs [c ven2
+                  c-var #'ven2
                   program-name "Program1"]
-      (with-redefs [ven-id (-> client-var meta :ven-id)
-                    program-id (-> client
-                                   (api/find-program-by-name program-name)
+      (with-redefs [ven-id (-> c-var meta :ven-id)
+                    program-id (-> (client/find-program-by-name c program-name)
                                    :id)]
         (test-mqtt-topics)))))
 
 (deftest test-mqtt-topics-bl
   (testing "BL topics tests ->"
-    (with-redefs [client bl
-                  client-var #'bl
+    (with-redefs [c bl
+                  c-var #'bl
                   program-name "Program1"]
-      (with-redefs [ven-id (-> client api/get-vens :body first :id)
-                    program-id (-> client
-                                   (api/find-program-by-name program-name)
+      (with-redefs [ven-id (-> (client/get-vens c) :body first :id)
+                    program-id (-> (client/find-program-by-name c program-name)
                                    :id)]
         (test-mqtt-topics)))))
 
