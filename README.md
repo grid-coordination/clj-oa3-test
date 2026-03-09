@@ -1,6 +1,6 @@
 # clj-oa3-test
 
-Integration test suite for the OpenADR 3 Clojure libraries, running against the [VTN Reference Implementation](https://github.com/OpenADRAlliance/oadr-ri-vtn).
+Integration test suite for the OpenADR 3 Clojure libraries, running against any OpenADR 3 compliant VTN.
 
 Tests exercise the full stack: client construction via [clj-oa3-client](https://github.com/grid-coordination/clj-oa3-client) Component lifecycle, HTTP requests via [clj-oa3](https://github.com/grid-coordination/clj-oa3) Martian client, and responses from a live VTN server.
 
@@ -21,7 +21,7 @@ Tests exercise the full stack: client construction via [clj-oa3-client](https://
 ├──────────────────────────────────────────────┤
 │  clj-oa3 (Martian HTTP + entity coercion)    │
 ├──────────────────────────────────────────────┤
-│  VTN Reference Implementation                │
+│  OpenADR 3 VTN                               │
 │  http://localhost:8080/openadr3/3.1.0        │
 └──────────────────────────────────────────────┘
 ```
@@ -34,7 +34,7 @@ Tests exercise the full stack: client construction via [clj-oa3-client](https://
 
 2. **OpenADR 3 specification** — symlinked into clj-oa3's resources (see clj-oa3 README)
 
-3. **Running VTN-RI** — the tests expect a VTN Reference Implementation at `http://localhost:8080/openadr3/3.1.0`
+3. **Running VTN** — the tests expect an OpenADR 3 VTN at `http://localhost:8080/openadr3/3.1.0`
 
 Expected layout:
 
@@ -46,14 +46,16 @@ repo/
   specification/     # OpenADR 3 OpenAPI specs
 ```
 
-### Starting the VTN-RI
+### Starting a VTN
+
+Any OpenADR 3 compliant VTN will work. For development, the [VTN Reference Implementation](https://github.com/OpenADRAlliance/oadr-ri-vtn) is convenient:
 
 ```bash
 # See https://github.com/OpenADRAlliance/oadr-ri-vtn for full setup
 docker compose up -d
 ```
 
-The VTN-RI uses a toy auth implementation with pre-configured tokens: `ven_token`, `ven_token2`, `bl_token`.
+The VTN-RI uses a toy auth implementation with pre-configured tokens: `ven_token`, `ven_token2`, `bl_token`. Other VTNs will require different credentials.
 
 ## Test Suites
 
