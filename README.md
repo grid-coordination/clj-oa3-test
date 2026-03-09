@@ -63,22 +63,23 @@ The VTN-RI uses a toy auth implementation with pre-configured tokens: `ven_token
 
 ## Test Suites
 
-The suite runs **130 tests** across 8 ordered suites. Suites run in a fixed order because later suites depend on entities created by earlier ones (e.g., events depend on programs, reports depend on events).
+The suite runs **156 tests** across 9 ordered suites. Suites run in a fixed order because later suites depend on entities created by earlier ones (e.g., events depend on programs, reports depend on events).
 
 | Suite | File | Tests | Description |
 |-------|------|------:|-------------|
 | **Notifiers** | `notifiers_test.clj` | 1 | Verifies notifier discovery (WEBHOOK, MQTT support) |
 | **Programs** | `programs_test.clj` | 21 | Program CRUD, auth, conflict, bad-token, bad-ID, pagination |
 | **VENs** | `vens_test.clj` | 21 | VEN registration, CRUD, clientID conflict, bad-token, bad-ID, pagination |
-| **Events** | `events_test.clj` | 22 | Event CRUD, auth (BL-only create/update/delete), bad-token, bad-ID, pagination |
+| **Events** | `events_test.clj` | 21 | Event CRUD, auth (BL-only create/update/delete), bad-token, bad-ID, pagination |
 | **Resources** | `resources_test.clj` | 20 | Resource CRUD (VEN + BL), conflict, bad-token, bad-ID, pagination |
-| **Reports** | `reports_test.clj` | 18 | Report CRUD (VEN-only create/update/delete), bad-token, bad-ID |
-| **Topics** | `topics_test.clj` | 13 | MQTT topic discovery for ven1/ven2/bl + 10 bad-token tests |
-| **MQTT** | `mqtt_test.clj` | 14 | MQTT notification reception for program/event/VEN/resource/report CRUD + targeted delivery |
+| **Reports** | `reports_test.clj` | 19 | Report CRUD (VEN-only create/update/delete), bad-token, bad-ID, pagination |
+| **Subscriptions** | `subscriptions_test.clj` | 21 | Subscription CRUD (BL + VEN), bad-token, bad-ID, pagination, search by programID/clientName |
+| **Topics** | `topics_test.clj` | 15 | MQTT topic discovery for ven1/ven2/bl + 12 bad-token tests |
+| **MQTT** | `mqtt_test.clj` | 17 | MQTT notification reception for all entity types + targeted delivery |
 
 ### What Each CRUD Suite Covers
 
-Every entity suite (programs, VENs, events, resources, reports) follows a consistent pattern:
+Every entity suite (programs, VENs, events, resources, reports, subscriptions) follows a consistent pattern:
 
 - **Create** — happy path for authorized roles, 403 for unauthorized roles, conflict detection (409)
 - **Search** — list all, get by ID, for both BL and VEN clients
@@ -95,7 +96,7 @@ The topics suite tests all 12 MQTT topic endpoints for three clients (ven1, ven2
 - Scope-aware authorization — endpoints like `/events/topics` and `/vens/topics` return 403 for VEN clients
 - Per-entity topics (program, VEN) omit CREATE since entities already exist
 
-Bad-token tests verify that all 10 topic endpoint categories reject invalid credentials with 403.
+Bad-token tests verify that all 12 topic endpoint categories reject invalid credentials with 403.
 
 ### MQTT Notification Tests
 
@@ -104,8 +105,9 @@ The MQTT suite connects ven1 and bl to the MQTT broker, then tests notification 
 - **Programs** — CREATE, UPDATE, DELETE notifications received by VEN
 - **Events** — CREATE, UPDATE, DELETE on program-scoped event topics
 - **VENs** — UPDATE notification on VEN-scoped topics
-- **Resources** — CREATE, DELETE on VEN-scoped resource topics
-- **Reports** — CREATE, DELETE notifications received by BL (reports are VEN-created)
+- **Resources** — CREATE, UPDATE, DELETE on VEN-scoped resource topics
+- **Reports** — CREATE, UPDATE, DELETE notifications received by BL (reports are VEN-created)
+- **Subscriptions** — CREATE, DELETE notifications received by BL
 - **Targeted delivery** — program and event notifications on VEN-scoped topics when the entity targets a specific VEN
 
 The CREATE notification test also verifies full coercion (entity keywords, object-type, operation) and channel metadata.
@@ -121,6 +123,7 @@ OpenADR 3 has role-based access:
 | VENs | BL + VEN | BL + VEN | BL only | BL + VEN |
 | Resources | BL + VEN | BL + VEN | BL + VEN | BL + VEN |
 | Reports | VEN only | VEN only | VEN only | BL + VEN |
+| Subscriptions | BL + VEN | BL + VEN | BL + VEN | BL + VEN |
 
 ### Test Clients
 
@@ -143,12 +146,10 @@ Tests also accommodate VTN-specific behavior:
 
 ## Known Gaps
 
-Coverage is broadly comparable to other OpenADR 3 conformance test suites, with these gaps:
+Coverage is broadly comparable to other OpenADR 3 conformance test suites, with these remaining gaps:
 
-- **Subscriptions** — no CRUD tests yet; the client API supports them, but subscriptions are primarily webhook-driven and webhook notification reception is not implemented
-- **MQTT notifications** — missing resource UPDATE, report UPDATE, VEN DELETE, per-program-scoped UPDATE/DELETE (subscribing to a single program's topic), and the ALL wildcard topic test
-- **Topics bad-token** — missing tests for VEN-scoped program and event topic endpoints with bad tokens
-- **Reports pagination** — not tested (all other CRUD suites have pagination tests)
+- **Webhook notifications** — subscription callback delivery is not tested; we test subscription CRUD via REST and MQTT notifications, but cannot receive webhook callbacks
+- **MQTT notifications** — missing VEN DELETE, per-program-scoped UPDATE/DELETE (subscribing to a single program's topic), subscription UPDATE, and the ALL wildcard topic test
 - **Notifiers** — only tests that WEBHOOK and MQTT are advertised; no bad-token test
 
 ## Running Tests
@@ -207,7 +208,7 @@ Workarounds:
 Tests are configured in `tests.edn`. Suite order is fixed (`randomize? false`) because later suites depend on entities created by earlier ones:
 
 ```
-notifiers → programs → vens → events → resources → reports → topics → mqtt
+notifiers → programs → vens → events → resources → reports → subscriptions → topics → mqtt
 ```
 
 ## Dependency Chain

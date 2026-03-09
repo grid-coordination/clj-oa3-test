@@ -168,3 +168,17 @@
       (when ven-id
         (let [resp (client/get-mqtt-topics-ven-resources bad-token ven-id)]
           (is (= 403 (:status resp)) "Bad token should be forbidden"))))))
+
+(deftest test-mqtt-topics-bad-token-ven-programs
+  (testing "Bad token cannot get ven programs topics"
+    (let [ven-id (-> (client/get-vens bl) :body first :id)]
+      (when ven-id
+        (let [resp (client/get-mqtt-topics-ven-programs bad-token ven-id)]
+          (is (= 403 (:status resp)) "Bad token should be forbidden"))))))
+
+(deftest test-mqtt-topics-bad-token-ven-events
+  (testing "Bad token cannot get ven events topics"
+    (let [ven-id (-> (client/get-vens bl) :body first :id)]
+      (when ven-id
+        (let [resp (client/get-mqtt-topics-ven-events bad-token ven-id)]
+          (is (= 403 (:status resp)) "Bad token should be forbidden"))))))

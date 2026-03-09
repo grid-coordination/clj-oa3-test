@@ -223,3 +223,42 @@
                                       :resources []})]
       (is (#{400 404} (:status resp))
           "Should return 404 NOT_FOUND or 400 BAD_REQUEST"))))
+
+;; ---------------------------------------------------------------------------
+;; Pagination (skip / limit)
+;; ---------------------------------------------------------------------------
+
+(deftest test-search-reports-pagination
+  (testing "Pagination with skip and limit"
+    (let [r1 (client/create-report ven1 (report-body "PagReport1"))
+          r2 (client/create-report ven1 (report-body "PagReport2"))
+          r3 (client/create-report ven1 (report-body "PagReport3"))
+          ids (mapv #(-> % :body :id) [r1 r2 r3])]
+      (is (= 201 (:status r1)))
+      (is (= 201 (:status r2)))
+      (is (= 201 (:status r3)))
+
+      (testing "limit=1 returns exactly 1"
+        (let [resp (client/search-reports bl {:limit 1})]
+          (is (= 200 (:status resp)))
+          (is (= 1 (count (:body resp))))))
+
+      (testing "skip=1 skips first result"
+        (let [all  (-> (client/get-reports bl) :body count)
+              resp (client/search-reports bl {:skip 1})]
+          (is (= 200 (:status resp)))
+          (is (= (dec all) (count (:body resp))))))
+
+      (testing "skip+limit together"
+        (let [resp (client/search-reports bl {:skip 1 :limit 1})]
+          (is (= 200 (:status resp)))
+          (is (= 1 (count (:body resp))))))
+
+      (testing "skip too big returns empty"
+        (let [resp (client/search-reports bl {:skip 1000})]
+          (is (= 200 (:status resp)))
+          (is (= 0 (count (:body resp))))))
+
+      ;; Clean up
+      (doseq [id ids]
+        (when id (client/delete-report ven1 id))))))

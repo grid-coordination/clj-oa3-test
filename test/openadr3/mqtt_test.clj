@@ -300,6 +300,39 @@
           (when-let [res-id (-> resp :body :id)]
             (client/delete-resource bl res-id)))))))
 
+(deftest test-resource-update-notification
+  (testing "MQTT notification for resource update"
+    (let [ven-id (client/ven-id ven1)]
+      (when ven-id
+        (let [created (client/create-resource ven1 {:venID ven-id
+                                                    :objectType "VEN_RESOURCE_REQUEST"
+                                                    :resourceName "MQTTResource3"})
+              res-id  (-> created :body :id)]
+          (is (some? res-id) "Need a resource ID")
+
+          (when res-id
+            (subscribe-clear-wait!
+             ven1 #(client/get-mqtt-topics-ven-resources % ven-id))
+
+            (client/update-resource bl res-id {:objectType "BL_RESOURCE_REQUEST"
+                                               :venID ven-id
+                                               :resourceName "MQTTResource3"
+                                               :attributes [{:type "UPDATED" :values ["yes"]}]})
+
+            (let [msgs (client/await-mqtt-messages ven1 1 5000)
+                  notification (find-notification
+                                msgs #(and (= :openadr.operation/update
+                                              (:openadr.notification/operation %))
+                                           (= res-id
+                                              (-> % :openadr.notification/object
+                                                  :openadr/id))))]
+              (is (some? notification) "Should receive UPDATE notification for resource")
+              (when notification
+                (is (= :openadr.object-type/resource
+                       (:openadr.notification/object-type notification)))))
+
+            (client/delete-resource bl res-id)))))))
+
 (deftest test-resource-delete-notification
   (testing "MQTT notification for resource deletion"
     (let [ven-id (client/ven-id ven1)]
@@ -370,6 +403,57 @@
 
         (client/delete-event bl event-id)))))
 
+(deftest test-report-update-notification
+  (testing "MQTT notification for report update (BL receives)"
+    (let [program-id (:id (client/find-program-by-name bl "Program1"))
+          event-resp (client/create-event bl {:programID program-id
+                                              :intervals [{:id 0
+                                                           :payloads [{:type "PRICE"
+                                                                       :values [1.0]}]}]})
+          event-id   (-> event-resp :body :id)]
+      (is (some? event-id) "Need an event for the report")
+
+      (when event-id
+        (let [report-resp (client/create-report ven1 {:programID program-id
+                                                      :eventID event-id
+                                                      :clientName "test-client"
+                                                      :reportName "MQTTReportUpd"
+                                                      :resources [{:resourceName "r1"
+                                                                   :intervals [{:id 0
+                                                                                :payloads [{:type "USAGE"
+                                                                                            :values [100]}]}]}]})
+              report-id   (-> report-resp :body :id)]
+          (is (some? report-id) "Need a report ID")
+
+          (when report-id
+            (subscribe-clear-wait! bl client/get-mqtt-topics-reports)
+
+            (client/update-report ven1 report-id
+                                  {:programID program-id
+                                   :eventID event-id
+                                   :clientName "test-client"
+                                   :reportName "MQTTReportUpdated"
+                                   :resources [{:resourceName "r1"
+                                                :intervals [{:id 0
+                                                             :payloads [{:type "USAGE"
+                                                                         :values [200]}]}]}]})
+
+            (let [msgs (client/await-mqtt-messages bl 1 5000)
+                  notification (find-notification
+                                msgs #(and (= :openadr.operation/update
+                                              (:openadr.notification/operation %))
+                                           (= report-id
+                                              (-> % :openadr.notification/object
+                                                  :openadr/id))))]
+              (is (some? notification) "BL should receive UPDATE notification for report")
+              (when notification
+                (is (= :openadr.object-type/report
+                       (:openadr.notification/object-type notification)))))
+
+            (client/delete-report ven1 report-id)))
+
+        (client/delete-event bl event-id)))))
+
 (deftest test-report-delete-notification
   (testing "MQTT notification for report deletion (BL receives)"
     (let [program-id (:id (client/find-program-by-name bl "Program1"))
@@ -407,6 +491,63 @@
                        (:openadr.notification/object-type notification)))))))
 
         (client/delete-event bl event-id)))))
+
+;; ---------------------------------------------------------------------------
+;; Subscription notifications (BL receives these)
+;; ---------------------------------------------------------------------------
+
+(deftest test-subscription-create-notification
+  (testing "MQTT notification for subscription creation (BL receives)"
+    (subscribe-clear-wait! bl client/get-mqtt-topics-subscriptions)
+
+    (let [program-id (:id (client/find-program-by-name bl "Program1"))
+          resp (client/create-subscription ven1
+                                           {:programID program-id
+                                            :clientName "MQTTSubCreate"
+                                            :objectOperations [{:objects ["EVENT"]
+                                                                :operations ["POST"]
+                                                                :callbackUrl "https://example.com/cb"
+                                                                :bearerToken "tok"}]})]
+      (is (<= (:status resp) 299) "Subscription creation should succeed")
+
+      (let [msgs (client/await-mqtt-messages bl 1 5000)
+            notification (find-notification
+                          msgs #(= :openadr.operation/create
+                                   (:openadr.notification/operation %)))]
+        (is (some? notification) "BL should receive CREATE notification for subscription")
+        (when notification
+          (is (= :openadr.object-type/subscription
+                 (:openadr.notification/object-type notification)))))
+
+      (when-let [sub-id (-> resp :body :id)]
+        (client/delete-subscription ven1 sub-id)))))
+
+(deftest test-subscription-delete-notification
+  (testing "MQTT notification for subscription deletion (BL receives)"
+    (let [program-id (:id (client/find-program-by-name bl "Program1"))
+          created (client/create-subscription ven1
+                                              {:programID program-id
+                                               :clientName "MQTTSubDelete"
+                                               :objectOperations [{:objects ["EVENT"]
+                                                                   :operations ["POST"]
+                                                                   :callbackUrl "https://example.com/cb"
+                                                                   :bearerToken "tok"}]})
+          sub-id  (-> created :body :id)]
+      (is (some? sub-id) "Need a subscription ID")
+
+      (when sub-id
+        (subscribe-clear-wait! bl client/get-mqtt-topics-subscriptions)
+
+        (client/delete-subscription ven1 sub-id)
+
+        (let [msgs (client/await-mqtt-messages bl 1 5000)
+              notification (find-notification
+                            msgs #(= :openadr.operation/delete
+                                     (:openadr.notification/operation %)))]
+          (is (some? notification) "BL should receive DELETE notification for subscription")
+          (when notification
+            (is (= :openadr.object-type/subscription
+                   (:openadr.notification/object-type notification)))))))))
 
 ;; ---------------------------------------------------------------------------
 ;; Targeted program notifications (VEN-scoped)
