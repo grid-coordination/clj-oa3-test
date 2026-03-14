@@ -1,20 +1,24 @@
 (ns openadr3.webhook-test
-  (:require [openadr3.client :as client]
+  (:require [openadr3.client.base :as client]
+            [openadr3.channel :as ch]
             [openadr3.common-test :refer [ven1 bl inter-suite-delay-ms]]
             [clojure.test :refer :all]))
 
 ;; ---------------------------------------------------------------------------
-;; Fixture: start/stop webhook server on ven1
+;; Webhook channel — created/destroyed per test run
 ;; ---------------------------------------------------------------------------
+
+(def ven1-webhook (atom nil))
 
 (use-fixtures :once
   (fn [f]
     (Thread/sleep inter-suite-delay-ms)
-    (client/start-webhook! ven1 {:port 0 :callback-host "127.0.0.1"})
+    (reset! ven1-webhook (-> (ch/webhook-channel {:port 0 :callback-host "127.0.0.1"})
+                             ch/channel-start))
     (try
       (f)
       (finally
-        (client/stop-webhook! ven1)))))
+        (ch/channel-stop @ven1-webhook)))))
 
 ;; ---------------------------------------------------------------------------
 ;; Helpers
@@ -44,7 +48,7 @@
            :clientName client-name
            :objectOperations [{:objects objects
                                :operations operations
-                               :callbackUrl (client/webhook-callback-url ven1)
+                               :callbackUrl (ch/callback-url @ven1-webhook)
                                :bearerToken "test-token"}]}
     targets (assoc :targets targets)))
 
@@ -65,7 +69,7 @@
 
           (when (= 201 (:status sub-resp))
             (let [sub-id (-> sub-resp :body :id)]
-              (client/clear-webhook-messages! ven1)
+              (ch/clear-channel-messages! @ven1-webhook)
               (Thread/sleep 200)
 
               (let [event-resp (client/create-event
@@ -75,7 +79,7 @@
                                                              :values [1.5]}]}]})]
                 (is (<= (:status event-resp) 299) "Event creation should succeed")
 
-                (let [msgs (client/await-webhook-messages ven1 1 10000)
+                (let [msgs (ch/await-channel-messages @ven1-webhook 1 10000)
                       notification (find-notification
                                     msgs #(= :openadr.operation/create
                                              (:openadr.notification/operation %)))]
@@ -131,13 +135,13 @@
 
           (when (= 201 (:status sub-resp))
             (let [sub-id (-> sub-resp :body :id)]
-              (client/clear-webhook-messages! ven1)
+              (ch/clear-channel-messages! @ven1-webhook)
               (Thread/sleep 200)
 
               (let [prog-resp (client/create-program bl {:programName "WebhookProgTest"})]
                 (is (<= (:status prog-resp) 299) "Program creation should succeed")
 
-                (let [msgs (client/await-webhook-messages ven1 1 10000)
+                (let [msgs (ch/await-channel-messages @ven1-webhook 1 10000)
                       notification (find-notification
                                     msgs #(and (= :openadr.operation/create
                                                   (:openadr.notification/operation %))
@@ -177,13 +181,13 @@
               (let [prog-resp (client/create-program bl {:programName "WebhookProgDel"})
                     pid       (-> prog-resp :body :id)]
                 (when pid
-                  (client/clear-webhook-messages! ven1)
+                  (ch/clear-channel-messages! @ven1-webhook)
                   (Thread/sleep 200)
 
                   ;; Delete it and expect notification
                   (client/delete-program bl pid)
 
-                  (let [msgs (client/await-webhook-messages ven1 1 10000)
+                  (let [msgs (ch/await-channel-messages @ven1-webhook 1 10000)
                         notification (find-notification
                                       msgs #(= :openadr.operation/delete
                                                (:openadr.notification/operation %)))]

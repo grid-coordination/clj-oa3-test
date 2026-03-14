@@ -2,7 +2,9 @@
   (:require [com.stuartsierra.component :as component]
             [clojure.edn :as edn]
             [clojure.java.io :as io]
-            [openadr3.client :as client]))
+            [openadr3.client.base :as base]
+            [openadr3.client.ven :as ven]
+            [openadr3.client.bl :as bl]))
 
 ;; ---------------------------------------------------------------------------
 ;; Configuration — loaded from test-config.edn
@@ -40,19 +42,19 @@
 
 (def ven1
   (component/start
-   (client/oa3-client {:type :ven :url VTN-url :token (:ven1 tokens)})))
+   (ven/ven-client {:url VTN-url :token (:ven1 tokens)})))
 
 (def ven2
   (component/start
-   (client/oa3-client {:type :ven :url VTN-url :token (:ven2 tokens)})))
+   (ven/ven-client {:url VTN-url :token (:ven2 tokens)})))
 
 (def bl
   (component/start
-   (client/oa3-client {:type :bl :url VTN-url :token (:bl tokens)})))
+   (bl/bl-client {:url VTN-url :token (:bl tokens)})))
 
 (def bad-token
   (component/start
-   (client/oa3-client {:type :bl :url VTN-url :token (:bad tokens)})))
+   (bl/bl-client {:url VTN-url :token (:bad tokens)})))
 
 ;; ---------------------------------------------------------------------------
 ;; MQTT broker URLs — discovered from VTN via GET /notifiers
@@ -61,7 +63,7 @@
 (def MQTT-broker-urls
   "Vector of MQTT broker URIs discovered from the VTN's notifiers endpoint.
   Falls back to config or default if the VTN doesn't advertise MQTT."
-  (let [resp      (client/get-notifiers bl)
+  (let [resp      (base/get-notifiers bl)
         mqtt-info (-> resp :body :MQTT)
         uris      (:URIS mqtt-info)]
     (if (seq uris)

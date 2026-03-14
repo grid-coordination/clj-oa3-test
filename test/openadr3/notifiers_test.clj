@@ -1,5 +1,5 @@
 (ns openadr3.notifiers-test
-  (:require [openadr3.client :as client]
+  (:require [openadr3.client.base :as client]
             [openadr3.common-test :refer [ven1]]
             [clojure.test :refer :all]))
 

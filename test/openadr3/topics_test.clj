@@ -1,5 +1,6 @@
 (ns openadr3.topics-test
-  (:require [openadr3.client :as client]
+  (:require [openadr3.client.base :as client]
+            [openadr3.client.ven :as ven]
             [openadr3.common-test :refer [ven1 ven2 bl bad-token inter-suite-delay-ms]]
             [clojure.test :refer :all]))
 
@@ -85,7 +86,7 @@
 
 (deftest test-mqtt-topics-ven1
   (testing "VEN 1 topics tests"
-    (let [ven-id  (client/ven-id ven1)
+    (let [ven-id  (ven/ven-id ven1)
           prog-id (-> (client/find-program-by-name ven1 "Program2") :id)]
       (is (some? ven-id) "ven1 must be registered by vens-test")
       (when ven-id
@@ -93,7 +94,7 @@
 
 (deftest test-mqtt-topics-ven2
   (testing "VEN 2 topics tests"
-    (let [ven-id  (client/ven-id ven2)
+    (let [ven-id  (ven/ven-id ven2)
           prog-id (-> (client/find-program-by-name ven2 "Program1") :id)]
       (is (some? ven-id) "ven2 must be registered by vens-test")
       (when ven-id

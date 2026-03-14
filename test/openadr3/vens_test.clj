@@ -1,5 +1,6 @@
 (ns openadr3.vens-test
-  (:require [openadr3.client :as client]
+  (:require [openadr3.client.base :as client]
+            [openadr3.client.ven :as ven]
             [openadr3.common-test :refer [ven1 ven2 bl bad-token]]
             [clojure.test :refer :all]))
 
@@ -34,8 +35,8 @@
     (delete-test-vens bl)
     ;; Register ven1 and ven2 in the fixture so all tests can use ven-id
     ;; regardless of kaocha test ordering.
-    (client/register! ven1 "ven1")
-    (client/register! ven2 "ven2")
+    (ven/register! ven1 "ven1")
+    (ven/register! ven2 "ven2")
     (f)))
 
 ;; ---------------------------------------------------------------------------
@@ -44,11 +45,11 @@
 
 (deftest test-register-ven1
   (testing "ven1 is registered (done in fixture)"
-    (is (some? (client/ven-id ven1)) "ven1 should have a ven-id")))
+    (is (some? (ven/ven-id ven1)) "ven1 should have a ven-id")))
 
 (deftest test-register-ven2
   (testing "ven2 is registered (done in fixture)"
-    (is (some? (client/ven-id ven2)) "ven2 should have a ven-id")))
+    (is (some? (ven/ven-id ven2)) "ven2 should have a ven-id")))
 
 ;; ---------------------------------------------------------------------------
 ;; VEN creation: BL and VEN roles
@@ -106,7 +107,7 @@
 
 (deftest test-search-ven-by-id-bl
   (testing "BL can get a VEN by ID"
-    (let [ven-id (client/ven-id ven1)]
+    (let [ven-id (ven/ven-id ven1)]
       (is (some? ven-id) "ven1 should be registered")
       (when ven-id
         (let [resp (client/get-ven-by-id bl ven-id)]
@@ -115,7 +116,7 @@
 
 (deftest test-search-ven-by-id-ven
   (testing "VEN can get own VEN by ID"
-    (let [ven-id (client/ven-id ven1)]
+    (let [ven-id (ven/ven-id ven1)]
       (is (some? ven-id) "ven1 should be registered")
       (when ven-id
         (let [resp (client/get-ven-by-id ven1 ven-id)]
@@ -144,7 +145,7 @@
 
 (deftest test-update-ven-ven
   (testing "VEN can update own VEN"
-    (let [ven-id (client/ven-id ven1)]
+    (let [ven-id (ven/ven-id ven1)]
       (is (some? ven-id) "ven1 should be registered")
       (when ven-id
         (let [resp (client/update-ven ven1 ven-id {:objectType "VEN_VEN_REQUEST"
@@ -184,7 +185,7 @@
 
 (deftest test-search-ven-by-id-bad-token
   (testing "Bad token cannot get a VEN by ID"
-    (let [ven-id (client/ven-id ven1)]
+    (let [ven-id (ven/ven-id ven1)]
       (is (some? ven-id) "ven1 should be registered")
       (when ven-id
         (let [resp (client/get-ven-by-id bad-token ven-id)]
@@ -192,7 +193,7 @@
 
 (deftest test-update-ven-bad-token
   (testing "Bad token cannot update a VEN"
-    (let [ven-id (client/ven-id ven1)]
+    (let [ven-id (ven/ven-id ven1)]
       (is (some? ven-id) "ven1 should be registered")
       (when ven-id
         (let [resp (client/update-ven bad-token ven-id {:objectType "VEN_VEN_REQUEST"
@@ -201,7 +202,7 @@
 
 (deftest test-delete-ven-bad-token
   (testing "Bad token cannot delete a VEN"
-    (let [ven-id (client/ven-id ven1)]
+    (let [ven-id (ven/ven-id ven1)]
       (is (some? ven-id) "ven1 should be registered")
       (when ven-id
         (let [resp (client/delete-ven bad-token ven-id)]

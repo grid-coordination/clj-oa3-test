@@ -1,22 +1,27 @@
 (ns openadr3.mqtt-test
-  (:require [openadr3.client :as client]
+  (:require [openadr3.client.base :as client]
+            [openadr3.client.ven :as ven]
+            [openadr3.channel :as ch]
             [openadr3.common-test :refer [ven1 bl MQTT-broker-url inter-suite-delay-ms]]
             [clojure.test :refer :all]))
 
 ;; ---------------------------------------------------------------------------
-;; Fixture: connect/disconnect MQTT for ven1 and bl
+;; MQTT channels — created/destroyed per test run
 ;; ---------------------------------------------------------------------------
+
+(def ven1-mqtt (atom nil))
+(def bl-mqtt (atom nil))
 
 (use-fixtures :once
   (fn [f]
     (Thread/sleep inter-suite-delay-ms)
-    (client/connect-mqtt! ven1 MQTT-broker-url)
-    (client/connect-mqtt! bl MQTT-broker-url)
+    (reset! ven1-mqtt (-> (ch/mqtt-channel MQTT-broker-url) ch/channel-start))
+    (reset! bl-mqtt   (-> (ch/mqtt-channel MQTT-broker-url) ch/channel-start))
     (try
       (f)
       (finally
-        (client/disconnect-mqtt! ven1)
-        (client/disconnect-mqtt! bl)))))
+        (ch/channel-stop @ven1-mqtt)
+        (ch/channel-stop @bl-mqtt)))))
 
 ;; ---------------------------------------------------------------------------
 ;; Helpers
@@ -41,10 +46,13 @@
        first))
 
 (defn- subscribe-clear-wait!
-  "Subscribe to topics, clear messages, and wait for subscriptions to settle."
-  [c topic-fn]
-  (client/subscribe-notifications! c topic-fn)
-  (client/clear-mqtt-messages! c)
+  "Subscribe mqtt-ch to topics from topic-fn, clear messages, and wait to settle."
+  [mqtt-ch c topic-fn]
+  (let [resp   (topic-fn c)
+        topics (client/extract-topics resp)]
+    (when topics
+      (ch/subscribe-topics mqtt-ch topics)))
+  (ch/clear-channel-messages! mqtt-ch)
   (Thread/sleep 200))
 
 ;; ---------------------------------------------------------------------------
@@ -54,12 +62,12 @@
 (deftest test-program-create-notification
   (testing "MQTT notification for program creation"
     (delete-program-by-name bl "MQTTTestProgram")
-    (subscribe-clear-wait! ven1 client/get-mqtt-topics-programs)
+    (subscribe-clear-wait! @ven1-mqtt ven1 client/get-mqtt-topics-programs)
 
     (let [resp (client/create-program bl {:programName "MQTTTestProgram"})]
       (is (<= (:status resp) 299) "Program creation should succeed")
 
-      (let [msgs    (client/await-mqtt-messages ven1 1 5000)
+      (let [msgs    (ch/await-channel-messages @ven1-mqtt 1 5000)
             notification (find-notification
                           msgs #(and (= :openadr.operation/create
                                         (:openadr.notification/operation %))
@@ -99,13 +107,13 @@
       (is (some? program-id) "Need a program ID to update")
 
       (when program-id
-        (subscribe-clear-wait! ven1 client/get-mqtt-topics-programs)
+        (subscribe-clear-wait! @ven1-mqtt ven1 client/get-mqtt-topics-programs)
 
         (client/update-program bl program-id
                                {:programName "MQTTUpdateProgram"
                                 :descriptions ["updated"]})
 
-        (let [msgs (client/await-mqtt-messages ven1 1 5000)
+        (let [msgs (ch/await-channel-messages @ven1-mqtt 1 5000)
               notification (find-notification
                             msgs #(and (= :openadr.operation/update
                                           (:openadr.notification/operation %))
@@ -128,11 +136,11 @@
       (is (some? program-id) "Need a program ID to delete")
 
       (when program-id
-        (subscribe-clear-wait! ven1 client/get-mqtt-topics-programs)
+        (subscribe-clear-wait! @ven1-mqtt ven1 client/get-mqtt-topics-programs)
 
         (client/delete-program bl program-id)
 
-        (let [msgs (client/await-mqtt-messages ven1 1 5000)
+        (let [msgs (ch/await-channel-messages @ven1-mqtt 1 5000)
               notification (find-notification
                             msgs #(= :openadr.operation/delete
                                      (:openadr.notification/operation %)))]
@@ -153,7 +161,7 @@
       (when program
         (let [program-id (:id program)]
           (subscribe-clear-wait!
-           ven1 #(client/get-mqtt-topics-program-events % program-id))
+           @ven1-mqtt ven1 #(client/get-mqtt-topics-program-events % program-id))
 
           (let [resp (client/create-event bl {:programID program-id
                                               :intervals [{:id 0
@@ -161,7 +169,7 @@
                                                                        :values [1.5]}]}]})]
             (is (<= (:status resp) 299) "Event creation should succeed")
 
-            (let [msgs (client/await-mqtt-messages ven1 1 5000)
+            (let [msgs (ch/await-channel-messages @ven1-mqtt 1 5000)
                   notification (find-notification
                                 msgs #(= :openadr.operation/create
                                          (:openadr.notification/operation %)))]
@@ -190,7 +198,7 @@
 
           (when event-id
             (subscribe-clear-wait!
-             ven1 #(client/get-mqtt-topics-program-events % program-id))
+             @ven1-mqtt ven1 #(client/get-mqtt-topics-program-events % program-id))
 
             (client/update-event bl event-id
                                  {:programID program-id
@@ -199,7 +207,7 @@
                                                :payloads [{:type "PRICE"
                                                            :values [2.0]}]}]})
 
-            (let [msgs (client/await-mqtt-messages ven1 1 5000)
+            (let [msgs (ch/await-channel-messages @ven1-mqtt 1 5000)
                   notification (find-notification
                                 msgs #(and (= :openadr.operation/update
                                               (:openadr.notification/operation %))
@@ -227,11 +235,11 @@
 
           (when event-id
             (subscribe-clear-wait!
-             ven1 #(client/get-mqtt-topics-program-events % program-id))
+             @ven1-mqtt ven1 #(client/get-mqtt-topics-program-events % program-id))
 
             (client/delete-event bl event-id)
 
-            (let [msgs (client/await-mqtt-messages ven1 1 5000)
+            (let [msgs (ch/await-channel-messages @ven1-mqtt 1 5000)
                   notification (find-notification
                                 msgs #(= :openadr.operation/delete
                                          (:openadr.notification/operation %)))]
@@ -246,18 +254,18 @@
 
 (deftest test-ven-update-notification
   (testing "MQTT notification for VEN update"
-    (let [ven-id (client/ven-id ven1)]
+    (let [ven-id (ven/ven-id ven1)]
       (is (some? ven-id) "ven1 must be registered")
 
       (when ven-id
         (subscribe-clear-wait!
-         ven1 #(client/get-mqtt-topics-ven % ven-id))
+         @ven1-mqtt ven1 #(client/get-mqtt-topics-ven % ven-id))
 
         (client/update-ven bl ven-id {:objectType "BL_VEN_REQUEST"
                                       :venName "ven1"
                                       :attributes [{:type "MQTT_TEST" :values ["v1"]}]})
 
-        (let [msgs (client/await-mqtt-messages ven1 1 5000)
+        (let [msgs (ch/await-channel-messages @ven1-mqtt 1 5000)
               notification (find-notification
                             msgs #(and (= :openadr.operation/update
                                           (:openadr.notification/operation %))
@@ -275,19 +283,19 @@
 
 (deftest test-resource-create-notification
   (testing "MQTT notification for resource creation"
-    (let [ven-id (client/ven-id ven1)]
+    (let [ven-id (ven/ven-id ven1)]
       (is (some? ven-id) "ven1 must be registered")
 
       (when ven-id
         (subscribe-clear-wait!
-         ven1 #(client/get-mqtt-topics-ven-resources % ven-id))
+         @ven1-mqtt ven1 #(client/get-mqtt-topics-ven-resources % ven-id))
 
         (let [resp (client/create-resource ven1 {:venID ven-id
                                                  :objectType "VEN_RESOURCE_REQUEST"
                                                  :resourceName "MQTTResource1"})]
           (is (<= (:status resp) 299) "Resource creation should succeed")
 
-          (let [msgs (client/await-mqtt-messages ven1 1 5000)
+          (let [msgs (ch/await-channel-messages @ven1-mqtt 1 5000)
                 notification (find-notification
                               msgs #(= :openadr.operation/create
                                        (:openadr.notification/operation %)))]
@@ -302,7 +310,7 @@
 
 (deftest test-resource-update-notification
   (testing "MQTT notification for resource update"
-    (let [ven-id (client/ven-id ven1)]
+    (let [ven-id (ven/ven-id ven1)]
       (when ven-id
         (let [created (client/create-resource ven1 {:venID ven-id
                                                     :objectType "VEN_RESOURCE_REQUEST"
@@ -312,14 +320,14 @@
 
           (when res-id
             (subscribe-clear-wait!
-             ven1 #(client/get-mqtt-topics-ven-resources % ven-id))
+             @ven1-mqtt ven1 #(client/get-mqtt-topics-ven-resources % ven-id))
 
             (client/update-resource bl res-id {:objectType "BL_RESOURCE_REQUEST"
                                                :venID ven-id
                                                :resourceName "MQTTResource3"
                                                :attributes [{:type "UPDATED" :values ["yes"]}]})
 
-            (let [msgs (client/await-mqtt-messages ven1 1 5000)
+            (let [msgs (ch/await-channel-messages @ven1-mqtt 1 5000)
                   notification (find-notification
                                 msgs #(and (= :openadr.operation/update
                                               (:openadr.notification/operation %))
@@ -335,7 +343,7 @@
 
 (deftest test-resource-delete-notification
   (testing "MQTT notification for resource deletion"
-    (let [ven-id (client/ven-id ven1)]
+    (let [ven-id (ven/ven-id ven1)]
       (when ven-id
         (let [created (client/create-resource ven1 {:venID ven-id
                                                     :objectType "VEN_RESOURCE_REQUEST"
@@ -345,11 +353,11 @@
 
           (when res-id
             (subscribe-clear-wait!
-             ven1 #(client/get-mqtt-topics-ven-resources % ven-id))
+             @ven1-mqtt ven1 #(client/get-mqtt-topics-ven-resources % ven-id))
 
             (client/delete-resource bl res-id)
 
-            (let [msgs (client/await-mqtt-messages ven1 1 5000)
+            (let [msgs (ch/await-channel-messages @ven1-mqtt 1 5000)
                   notification (find-notification
                                 msgs #(= :openadr.operation/delete
                                          (:openadr.notification/operation %)))]
@@ -364,7 +372,7 @@
 
 (deftest test-report-create-notification
   (testing "MQTT notification for report creation (BL receives)"
-    (subscribe-clear-wait! bl client/get-mqtt-topics-reports)
+    (subscribe-clear-wait! @bl-mqtt bl client/get-mqtt-topics-reports)
 
     (let [program-id (:id (client/find-program-by-name bl "Program1"))
           event-resp (client/create-event bl {:programID program-id
@@ -375,7 +383,7 @@
       (is (some? event-id) "Need an event for the report")
 
       (when event-id
-        (client/clear-mqtt-messages! bl)
+        (ch/clear-channel-messages! @bl-mqtt)
         (Thread/sleep 200)
 
         (let [resp (client/create-report ven1 {:programID program-id
@@ -388,7 +396,7 @@
                                                                                      :values [100]}]}]}]})]
           (is (<= (:status resp) 299) "Report creation should succeed")
 
-          (let [msgs (client/await-mqtt-messages bl 1 5000)
+          (let [msgs (ch/await-channel-messages @bl-mqtt 1 5000)
                 notification (find-notification
                               msgs #(= :openadr.operation/create
                                        (:openadr.notification/operation %)))]
@@ -426,7 +434,7 @@
           (is (some? report-id) "Need a report ID")
 
           (when report-id
-            (subscribe-clear-wait! bl client/get-mqtt-topics-reports)
+            (subscribe-clear-wait! @bl-mqtt bl client/get-mqtt-topics-reports)
 
             (client/update-report ven1 report-id
                                   {:programID program-id
@@ -438,7 +446,7 @@
                                                              :payloads [{:type "USAGE"
                                                                          :values [200]}]}]}]})
 
-            (let [msgs (client/await-mqtt-messages bl 1 5000)
+            (let [msgs (ch/await-channel-messages @bl-mqtt 1 5000)
                   notification (find-notification
                                 msgs #(and (= :openadr.operation/update
                                               (:openadr.notification/operation %))
@@ -477,11 +485,11 @@
           (is (some? report-id) "Need a report ID")
 
           (when report-id
-            (subscribe-clear-wait! bl client/get-mqtt-topics-reports)
+            (subscribe-clear-wait! @bl-mqtt bl client/get-mqtt-topics-reports)
 
             (client/delete-report ven1 report-id)
 
-            (let [msgs (client/await-mqtt-messages bl 1 5000)
+            (let [msgs (ch/await-channel-messages @bl-mqtt 1 5000)
                   notification (find-notification
                                 msgs #(= :openadr.operation/delete
                                          (:openadr.notification/operation %)))]
@@ -498,7 +506,7 @@
 
 (deftest test-subscription-create-notification
   (testing "MQTT notification for subscription creation (BL receives)"
-    (subscribe-clear-wait! bl client/get-mqtt-topics-subscriptions)
+    (subscribe-clear-wait! @bl-mqtt bl client/get-mqtt-topics-subscriptions)
 
     (let [program-id (:id (client/find-program-by-name bl "Program1"))
           resp (client/create-subscription ven1
@@ -510,7 +518,7 @@
                                                                 :bearerToken "tok"}]})]
       (is (<= (:status resp) 299) "Subscription creation should succeed")
 
-      (let [msgs (client/await-mqtt-messages bl 1 5000)
+      (let [msgs (ch/await-channel-messages @bl-mqtt 1 5000)
             notification (find-notification
                           msgs #(= :openadr.operation/create
                                    (:openadr.notification/operation %)))]
@@ -536,11 +544,11 @@
       (is (some? sub-id) "Need a subscription ID")
 
       (when sub-id
-        (subscribe-clear-wait! bl client/get-mqtt-topics-subscriptions)
+        (subscribe-clear-wait! @bl-mqtt bl client/get-mqtt-topics-subscriptions)
 
         (client/delete-subscription ven1 sub-id)
 
-        (let [msgs (client/await-mqtt-messages bl 1 5000)
+        (let [msgs (ch/await-channel-messages @bl-mqtt 1 5000)
               notification (find-notification
                             msgs #(= :openadr.operation/delete
                                      (:openadr.notification/operation %)))]
@@ -555,19 +563,19 @@
 
 (deftest test-targeted-program-notification
   (testing "MQTT notification on VEN-scoped program topics for targeted program"
-    (let [ven-id (client/ven-id ven1)]
+    (let [ven-id (ven/ven-id ven1)]
       (is (some? ven-id) "ven1 must be registered")
 
       (when ven-id
         (delete-program-by-name bl "MQTTTargetedProg")
         (subscribe-clear-wait!
-         ven1 #(client/get-mqtt-topics-ven-programs % ven-id))
+         @ven1-mqtt ven1 #(client/get-mqtt-topics-ven-programs % ven-id))
 
         (let [resp (client/create-program bl {:programName "MQTTTargetedProg"
                                               :targets [ven-id]})]
           (is (<= (:status resp) 299) "Targeted program creation should succeed")
 
-          (let [msgs (client/await-mqtt-messages ven1 1 5000)
+          (let [msgs (ch/await-channel-messages @ven1-mqtt 1 5000)
                 notification (find-notification
                               msgs #(and (= :openadr.operation/create
                                             (:openadr.notification/operation %))
@@ -586,10 +594,10 @@
 
 (deftest test-targeted-event-notification
   (testing "MQTT notification on VEN-scoped event topics for targeted event"
-    (let [ven-id (client/ven-id ven1)]
+    (let [ven-id (ven/ven-id ven1)]
       (when ven-id
         (subscribe-clear-wait!
-         ven1 #(client/get-mqtt-topics-ven-events % ven-id))
+         @ven1-mqtt ven1 #(client/get-mqtt-topics-ven-events % ven-id))
 
         (let [program (client/find-program-by-name bl "Program1")
               program-id (:id program)]
@@ -601,7 +609,7 @@
                                                                          :values [1.5]}]}]})]
               (is (<= (:status resp) 299) "Targeted event creation should succeed")
 
-              (let [msgs (client/await-mqtt-messages ven1 1 5000)
+              (let [msgs (ch/await-channel-messages @ven1-mqtt 1 5000)
                     notification (find-notification
                                   msgs #(= :openadr.operation/create
                                            (:openadr.notification/operation %)))]

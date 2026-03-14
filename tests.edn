@@ -1,5 +1,11 @@
+;; Test suite ordering — dependencies are declared via :suite-deps/requires.
+;; The suite-deps plugin auto-includes prerequisite suites when using --focus.
+;;
+;; Example: `clojure -M:test --focus :mqtt` will also run :programs and :vens.
+
 #kaocha/v1
- {:tests [{:id          :notifiers
+ {:plugins [:kaocha.plugin/suite-deps]
+  :tests [{:id          :notifiers
            :type        :kaocha.type/clojure.test
            :source-paths []
            :test-paths  ["test"]
@@ -18,37 +24,44 @@
            :type        :kaocha.type/clojure.test
            :source-paths []
            :test-paths  ["test"]
-           :ns-patterns ["events-test$"]}
+           :ns-patterns ["events-test$"]
+           :suite-deps/requires [:programs]}
           {:id          :resources
            :type        :kaocha.type/clojure.test
            :source-paths []
            :test-paths  ["test"]
-           :ns-patterns ["resources-test$"]}
+           :ns-patterns ["resources-test$"]
+           :suite-deps/requires [:vens]}
           {:id          :reports
            :type        :kaocha.type/clojure.test
            :source-paths []
            :test-paths  ["test"]
-           :ns-patterns ["reports-test$"]}
+           :ns-patterns ["reports-test$"]
+           :suite-deps/requires [:programs]}
           {:id          :subscriptions
            :type        :kaocha.type/clojure.test
            :source-paths []
            :test-paths  ["test"]
-           :ns-patterns ["subscriptions-test$"]}
+           :ns-patterns ["subscriptions-test$"]
+           :suite-deps/requires [:programs]}
           {:id          :topics
            :type        :kaocha.type/clojure.test
            :source-paths []
            :test-paths  ["test"]
-           :ns-patterns ["topics-test$"]}
+           :ns-patterns ["topics-test$"]
+           :suite-deps/requires [:vens]}
           {:id          :mqtt
            :type        :kaocha.type/clojure.test
            :source-paths []
            :test-paths  ["test"]
-           :ns-patterns ["mqtt-test$"]}
+           :ns-patterns ["mqtt-test$"]
+           :suite-deps/requires [:programs :vens]}
           {:id          :webhook
            :type        :kaocha.type/clojure.test
            :source-paths []
            :test-paths  ["test"]
-           :ns-patterns ["webhook-test$"]}]
+           :ns-patterns ["webhook-test$"]
+           :suite-deps/requires [:programs]}]
   :color?     true
   :fail-fast? false
   :randomize? false}

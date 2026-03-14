@@ -1,5 +1,5 @@
 (ns openadr3.events-test
-  (:require [openadr3.client :as client]
+  (:require [openadr3.client.base :as client]
             [openadr3.common-test :refer [ven1 bl bad-token inter-suite-delay-ms]]
             [clojure.test :refer :all]))
 

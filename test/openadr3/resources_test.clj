@@ -1,5 +1,6 @@
 (ns openadr3.resources-test
-  (:require [openadr3.client :as client]
+  (:require [openadr3.client.base :as client]
+            [openadr3.client.ven :as ven]
             [openadr3.common-test :refer [ven1 ven2 bl bad-token inter-suite-delay-ms]]
             [clojure.test :refer :all]))
 
@@ -7,7 +8,7 @@
 ;; Helpers
 ;; ---------------------------------------------------------------------------
 
-(defn- ven1-id [] (client/ven-id ven1))
+(defn- ven1-id [] (ven/ven-id ven1))
 
 (defn- resource-body
   "Create a VEN resource request body."
