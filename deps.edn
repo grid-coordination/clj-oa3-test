@@ -22,6 +22,7 @@
                  :extra-deps {babashka/process {:mvn/version "0.6.23"}}}
 
            :nrepl {:extra-paths ["dev"]
-                   :extra-deps {nrepl/nrepl {:mvn/version "1.6.0"}}
+                   :extra-deps {nrepl/nrepl {:mvn/version "1.6.0"}
+                                babashka/process {:mvn/version "0.6.23"}}
                    :jvm-opts ["-Djdk.attach.allowAttachSelf"]
                    :main-opts ["-m" "nrepl.cmdline" "--port" "7891"]}}}
