@@ -9,9 +9,9 @@
           :bl   "bl_token"
           :bad  "bad_token"}
 
- ;; Delay in ms between test suites to let the VTN recover connections.
- ;; Set to 0 for well-behaved VTNs; 5000+ for VTN-RI.
- :inter-suite-delay-ms 5000
+ ;; Delay in ms between test suites.
+ ;; Set to 0 for fast VTNs, 1000-5000 if you see connection errors.
+ :inter-suite-delay-ms 1000
 
  ;; MQTT settle time in ms — how long to wait after clearing the message
  ;; buffer for retained messages to drain. Increase for slow brokers.

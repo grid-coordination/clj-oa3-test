@@ -22,9 +22,9 @@
   (get config :vtn-url "http://localhost:8080/openadr3/3.1.0"))
 
 (def inter-suite-delay-ms
-  "Delay in ms between test suites to let the VTN recover connections.
-  Set to 0 for well-behaved VTNs."
-  (get config :inter-suite-delay-ms 5000))
+  "Delay in ms between test suites.
+  Set to 0 for fast VTNs, 1000-5000 if you see connection errors."
+  (get config :inter-suite-delay-ms 1000))
 
 ;; ---------------------------------------------------------------------------
 ;; Tokens
