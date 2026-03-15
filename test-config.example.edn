@@ -13,6 +13,13 @@
  ;; Set to 0 for well-behaved VTNs; 5000+ for VTN-RI.
  :inter-suite-delay-ms 5000
 
+ ;; MQTT settle time in ms — how long to wait after clearing the message
+ ;; buffer for retained messages to drain. Increase for slow brokers.
+ ;; :mqtt-settle-ms 1000
+
+ ;; MQTT await timeout in ms — max time to wait for expected notifications.
+ ;; :mqtt-await-ms 10000
+
  ;; MQTT broker fallback — only used if the VTN's GET /notifiers endpoint
  ;; does not advertise MQTT broker URIs. Normally the broker URLs are
  ;; discovered automatically from the VTN.

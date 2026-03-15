@@ -57,6 +57,19 @@
    (bl/bl-client {:url VTN-url :token (:bad tokens)})))
 
 ;; ---------------------------------------------------------------------------
+;; MQTT timing
+;; ---------------------------------------------------------------------------
+
+(def mqtt-settle-ms
+  "Delay in ms after clearing MQTT message buffer before acting.
+  Allows retained messages from prior operations to drain."
+  (get config :mqtt-settle-ms 1000))
+
+(def mqtt-await-ms
+  "Default timeout in ms for awaiting MQTT channel messages."
+  (get config :mqtt-await-ms 10000))
+
+;; ---------------------------------------------------------------------------
 ;; MQTT broker URLs — discovered from VTN via GET /notifiers
 ;; ---------------------------------------------------------------------------
 
