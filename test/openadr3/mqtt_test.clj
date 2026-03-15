@@ -7,6 +7,19 @@
             [clojure.test :refer :all]))
 
 ;; ---------------------------------------------------------------------------
+;; MQTT credentials — use when broker requires authentication
+;; ---------------------------------------------------------------------------
+
+(defn- mqtt-credentials
+  "Fetch MQTT credentials for a client from GET /notifiers.
+  Returns opts map with :username/:password when available, empty map otherwise."
+  [c]
+  (let [auth (get-in (client/get-notifiers c) [:body :MQTT :authentication])]
+    (if (and auth (not= "ANONYMOUS" (:method auth)) (:username auth) (:password auth))
+      (select-keys auth [:username :password])
+      {})))
+
+;; ---------------------------------------------------------------------------
 ;; MQTT channels — created/destroyed per test run
 ;; ---------------------------------------------------------------------------
 
@@ -16,8 +29,10 @@
 (use-fixtures :once
   (fn [f]
     (Thread/sleep inter-suite-delay-ms)
-    (reset! ven1-mqtt (-> (ch/mqtt-channel MQTT-broker-url) ch/channel-start))
-    (reset! bl-mqtt   (-> (ch/mqtt-channel MQTT-broker-url) ch/channel-start))
+    (reset! ven1-mqtt (-> (ch/mqtt-channel MQTT-broker-url (mqtt-credentials ven1))
+                          ch/channel-start))
+    (reset! bl-mqtt   (-> (ch/mqtt-channel MQTT-broker-url (mqtt-credentials bl))
+                          ch/channel-start))
     (try
       (f)
       (finally
