@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+# Show status of test infrastructure services.
+# Usage: bin/test-stack-status
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "$SCRIPT_DIR/_lib.sh"
+resolve_dirs
+
+echo "=== Test Stack Status ==="
+echo ""
+
+# --- Mosquitto ---
+if tmux has-session -t mosquitto-dynsec 2>/dev/null; then
+    printf "  Mosquitto:  running (dynsec, tmux)"
+    if wait_mqtt_dynsec 2; then
+        echo " [OK]"
+    else
+        echo " [NOT RESPONDING]"
+    fi
+elif brew services list 2>/dev/null | grep mosquitto | grep -q started; then
+    printf "  Mosquitto:  running (anonymous, brew)"
+    if wait_mqtt_anon 2; then
+        echo " [OK]"
+    else
+        echo " [NOT RESPONDING]"
+    fi
+elif pgrep -x mosquitto &>/dev/null; then
+    echo "  Mosquitto:  running (unmanaged process)"
+else
+    echo "  Mosquitto:  stopped"
+fi
+
+# --- VTN-RI ---
+if tmux has-session -t vtn-ri 2>/dev/null; then
+    printf "  VTN-RI:     running"
+    if wait_http "$VTN_URL/programs" 3; then
+        echo " [OK]"
+    else
+        echo " [NOT RESPONDING]"
+    fi
+else
+    echo "  VTN-RI:     stopped"
+fi
+
+# --- Callback Service ---
+if tmux has-session -t vtn-callbk-svc 2>/dev/null; then
+    printf "  Callback:   running"
+    local_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000 2>/dev/null)
+    if echo "$local_code" | grep -q "200\|404"; then
+        echo " [OK]"
+    else
+        echo " [NOT RESPONDING]"
+    fi
+else
+    echo "  Callback:   stopped"
+fi
+
+# --- Config ---
+echo ""
+if [ -f "$VTN_RI_DIR/config.yaml" ]; then
+    mqtt_auth=$("$VTN_RI_DIR/venv/bin/python3" -c "
+import yaml, sys
+with open(sys.argv[1]) as f:
+    print(yaml.safe_load(f)['mqtt']['broker']['auth'])
+" "$VTN_RI_DIR/config.yaml" 2>/dev/null || echo "unknown")
+    echo "  Config:     mqtt.broker.auth = $mqtt_auth"
+fi
+if [ -f "$VTN_RI_DIR/tmp/fileStorage.json" ]; then
+    echo "  Storage:    fileStorage.json exists (has data)"
+else
+    echo "  Storage:    clean (no fileStorage.json)"
+fi
+
+echo ""

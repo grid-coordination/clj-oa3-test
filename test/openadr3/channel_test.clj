@@ -4,7 +4,8 @@
   (:require [openadr3.client.base :as base]
             [openadr3.client.ven :as ven]
             [openadr3.channel :as ch]
-            [openadr3.common-test :refer [ven1 bl MQTT-broker-url inter-suite-delay-ms]]
+            [openadr3.common-test :refer [ven1 bl MQTT-broker-url inter-suite-delay-ms
+                                          mqtt-credentials]]
             [clojure.test :refer :all]
             [com.stuartsierra.component :as component]))
 
@@ -19,7 +20,7 @@
 
 (deftest test-mqtt-channel-lifecycle
   (testing "MqttChannel start → use → stop lifecycle"
-    (let [ch1 (ch/mqtt-channel MQTT-broker-url)]
+    (let [ch1 (ch/mqtt-channel MQTT-broker-url (mqtt-credentials ven1))]
 
       (testing "before start"
         (is (nil? (ch/channel-messages ch1))
@@ -50,7 +51,7 @@
 
 (deftest test-mqtt-channel-subscribe-before-start-throws
   (testing "subscribe-topics before start throws"
-    (let [ch1 (ch/mqtt-channel MQTT-broker-url)]
+    (let [ch1 (ch/mqtt-channel MQTT-broker-url (mqtt-credentials ven1))]
       (is (thrown? clojure.lang.ExceptionInfo
                    (ch/subscribe-topics ch1 ["test/+"]))))))
 
@@ -58,9 +59,10 @@
   (testing "MqttChannel with :on-message callback"
     (let [received (atom [])
           ch1 (-> (ch/mqtt-channel MQTT-broker-url
-                                   {:on-message (fn [topic _meta payload]
-                                                  (swap! received conj {:topic topic
-                                                                        :payload payload}))})
+                                   (merge (mqtt-credentials ven1)
+                                          {:on-message (fn [topic _meta payload]
+                                                         (swap! received conj {:topic topic
+                                                                               :payload payload}))}))
                   ch/channel-start)]
       (is (true? (ch/mqtt-connected? ch1)))
       ;; Just verify it started with callback - actual message delivery
@@ -123,7 +125,7 @@
 
 (deftest test-mqtt-conn-accessor
   (testing "mqtt-conn returns raw connection after start"
-    (let [ch1 (-> (ch/mqtt-channel MQTT-broker-url) ch/channel-start)]
+    (let [ch1 (-> (ch/mqtt-channel MQTT-broker-url (mqtt-credentials ven1)) ch/channel-start)]
       (let [conn (ch/mqtt-conn ch1)]
         (is (some? conn) "Should return connection map")
         (is (contains? conn :client) "Connection should have :client key"))
@@ -150,7 +152,7 @@
 
       (when ven-id
         ;; Add MQTT channel to ven1
-        (ven/add-mqtt ven1 MQTT-broker-url)
+        (ven/add-mqtt ven1 MQTT-broker-url (mqtt-credentials ven1))
         (let [mqtt-ch (ven/get-channel ven1 :mqtt)]
           (is (some? mqtt-ch) "Channel should be in state")
           (is (ch/mqtt-connected? mqtt-ch) "Channel should be connected")
@@ -188,9 +190,8 @@
   (testing "component/stop auto-stops managed channels"
     ;; Create a fresh VenClient with a channel, then stop it
     (let [v (component/start
-             (ven/ven-client {:url "http://localhost:8080/openadr3/3.1.0"
-                              :token "ven_token"}))]
-      (ven/add-mqtt v MQTT-broker-url)
+             (ven/ven-client {:url (:url ven1) :token (:token ven1)}))]
+      (ven/add-mqtt v MQTT-broker-url (mqtt-credentials ven1))
       (let [mqtt-ch (ven/get-channel v :mqtt)]
         (is (ch/mqtt-connected? mqtt-ch) "Channel should be connected before stop")
 

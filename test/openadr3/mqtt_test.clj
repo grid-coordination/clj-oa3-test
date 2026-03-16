@@ -3,21 +3,8 @@
             [openadr3.client.ven :as ven]
             [openadr3.channel :as ch]
             [openadr3.common-test :refer [ven1 bl MQTT-broker-url inter-suite-delay-ms
-                                          mqtt-settle-ms mqtt-await-ms]]
+                                          mqtt-settle-ms mqtt-await-ms mqtt-credentials]]
             [clojure.test :refer :all]))
-
-;; ---------------------------------------------------------------------------
-;; MQTT credentials — use when broker requires authentication
-;; ---------------------------------------------------------------------------
-
-(defn- mqtt-credentials
-  "Fetch MQTT credentials for a client from GET /notifiers.
-  Returns opts map with :username/:password when available, empty map otherwise."
-  [c]
-  (let [auth (get-in (client/get-notifiers c) [:body :MQTT :authentication])]
-    (if (and auth (not= "ANONYMOUS" (:method auth)) (:username auth) (:password auth))
-      (select-keys auth [:username :password])
-      {})))
 
 ;; ---------------------------------------------------------------------------
 ;; MQTT channels — created/destroyed per test run

@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# Start test infrastructure in anonymous MQTT mode.
+# Usage: bin/test-stack-start-anon [--with-callback]
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "$SCRIPT_DIR/_lib.sh"
+resolve_dirs
+
+WITH_CALLBACK=false
+for arg in "$@"; do
+    case "$arg" in
+        --with-callback) WITH_CALLBACK=true ;;
+        *) echo "Unknown argument: $arg" >&2; exit 1 ;;
+    esac
+done
+
+# 1. Stop everything
+stop_all
+
+# 2. Configure anonymous mode
+echo "Configuring anonymous MQTT mode..."
+set_config_anonymous
+
+# 3. Clean VTN storage
+delete_vtn_storage
+
+# 4. Start mosquitto (anonymous via brew)
+echo "Starting mosquitto (anonymous)..."
+brew services start mosquitto >/dev/null 2>&1
+if wait_mqtt_anon 5; then
+    echo "  Mosquitto is up (anonymous)"
+else
+    echo "Error: mosquitto not responding after 5s" >&2
+    exit 1
+fi
+
+# 5. Start VTN-RI
+start_vtn
+
+# 6. Verify VTN
+if wait_http "$VTN_URL/programs" 5; then
+    echo "VTN-RI verified."
+else
+    echo "Warning: VTN-RI HTTP check failed." >&2
+fi
+
+# 7. Optionally start callback service
+if $WITH_CALLBACK; then
+    start_callback
+fi
+
+echo ""
+echo "=== Test stack ready (anonymous MQTT) ==="
+echo "  VTN:  $VTN_URL"
+echo "  MQTT: mqtt://127.0.0.1:1883 (anonymous)"
+$WITH_CALLBACK && echo "  Callback: http://localhost:5000"
+echo ""

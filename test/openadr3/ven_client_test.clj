@@ -4,7 +4,8 @@
   (:require [openadr3.client.base :as base]
             [openadr3.client.ven :as ven]
             [openadr3.channel :as ch]
-            [openadr3.common-test :refer [ven1 bl MQTT-broker-url inter-suite-delay-ms]]
+            [openadr3.common-test :refer [ven1 bl MQTT-broker-url inter-suite-delay-ms
+                                          mqtt-credentials]]
             [clojure.test :refer :all]))
 
 (use-fixtures :once
@@ -106,7 +107,7 @@
 
 (deftest test-add-mqtt-and-get-channel
   (testing "add-mqtt creates and starts an MQTT channel"
-    (ven/add-mqtt ven1 MQTT-broker-url)
+    (ven/add-mqtt ven1 MQTT-broker-url (mqtt-credentials ven1))
     (let [mqtt-ch (ven/get-channel ven1 :mqtt)]
       (is (some? mqtt-ch) "MQTT channel should be stored in state")
       (is (instance? openadr3.channel.MqttChannel mqtt-ch)
@@ -137,7 +138,7 @@
 
 (deftest test-subscribe-mqtt
   (testing "subscribe discovers topics from VTN and subscribes on MQTT channel"
-    (ven/add-mqtt ven1 MQTT-broker-url)
+    (ven/add-mqtt ven1 MQTT-broker-url (mqtt-credentials ven1))
     (let [result (ven/subscribe ven1 :mqtt base/get-mqtt-topics-programs)]
       (is (= ven1 result) "subscribe should return the client for threading")
 

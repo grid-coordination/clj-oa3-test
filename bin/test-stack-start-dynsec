@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# Start test infrastructure in dynsec (authenticated) MQTT mode.
+# Usage: bin/test-stack-start-dynsec [--with-callback]
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "$SCRIPT_DIR/_lib.sh"
+resolve_dirs
+
+WITH_CALLBACK=false
+for arg in "$@"; do
+    case "$arg" in
+        --with-callback) WITH_CALLBACK=true ;;
+        *) echo "Unknown argument: $arg" >&2; exit 1 ;;
+    esac
+done
+
+# 1. Stop everything
+stop_all
+
+# 2. Configure dynsec mode
+echo "Configuring dynsec MQTT mode..."
+set_config_dynsec
+
+# 3. Clean VTN storage
+delete_vtn_storage
+
+# 4. Bootstrap mosquitto dynsec
+echo "Bootstrapping mosquitto dynsec..."
+"$VTN_RI_DIR/bin/bootstrap-mosquitto-dynsec.sh" >/dev/null 2>&1
+
+# 5. Start mosquitto with dynsec config
+echo "Starting mosquitto (dynsec)..."
+DYNSEC_CONF="$VTN_RI_DIR/cfg/mosquitto/dynsec/mosquitto-dynsec.conf"
+tmux new-session -d -s mosquitto-dynsec \
+    "mosquitto -c '$DYNSEC_CONF' 2>&1 | tee /tmp/mosquitto-dynsec.log"
+
+if wait_mqtt_dynsec 5; then
+    echo "  Mosquitto is up (dynsec, user=vtn_admin)"
+else
+    echo "Error: mosquitto not responding after 5s" >&2
+    echo "Check: /tmp/mosquitto-dynsec.log" >&2
+    exit 1
+fi
+
+# 6. Start VTN-RI
+start_vtn
+
+# 7. Verify VTN
+if wait_http "$VTN_URL/programs" 5; then
+    echo "VTN-RI verified."
+else
+    echo "Warning: VTN-RI HTTP check failed." >&2
+fi
+
+# 8. Optionally start callback service
+if $WITH_CALLBACK; then
+    start_callback
+fi
+
+echo ""
+echo "=== Test stack ready (dynsec MQTT) ==="
+echo "  VTN:  $VTN_URL"
+echo "  MQTT: mqtt://127.0.0.1:1883 (dynsec, user=vtn_admin)"
+$WITH_CALLBACK && echo "  Callback: http://localhost:5000"
+echo ""

@@ -46,14 +46,26 @@ repo/
   specification/     # OpenADR 3 OpenAPI specs
 ```
 
-### Starting a VTN
+### Starting the Test Stack
 
-Any OpenADR 3 compliant VTN will work. For development, the [VTN Reference Implementation](https://github.com/oadr3-org/openadr3-vtn-reference-implementation) is convenient:
+Scripts in `bin/` manage the full test infrastructure (VTN-RI, mosquitto, callback service). These currently require macOS with Homebrew for mosquitto service management.
 
 ```bash
-# See https://github.com/oadr3-org/openadr3-vtn-reference-implementation for full setup
-python3 -m swagger_server
+bin/test-stack-start-anon          # anonymous MQTT mode
+bin/test-stack-start-dynsec        # dynsec (authenticated) MQTT mode
+bin/test-stack-stop                # stop everything
+bin/test-stack-status              # show what's running
 ```
+
+Both start scripts stop all existing services first, configure mosquitto and the VTN's `config.yaml` programmatically, clear VTN storage for a clean state, start services, and verify connectivity before returning.
+
+Add `--with-callback` to include the test-callback-service (needed for webhook tests).
+
+Override default paths via environment variables:
+- `VTN_RI_DIR` — VTN Reference Implementation repo
+- `CBS_DIR` — test-callback-service repo
+
+For other VTNs, start them manually and configure `test-config.edn`.
 
 ### Configuration
 
@@ -182,10 +194,10 @@ The CREATE notification test also verifies full coercion (entity keywords, objec
 The `:mqtt-auth` suite tests MQTT broker authentication via Mosquitto's dynamic security plugin. Tests auto-detect dynsec mode from the `GET /notifiers` response and skip gracefully when the VTN runs in ANONYMOUS mode.
 
 To run in dynsec mode:
-1. Bootstrap mosquitto: `bin/bootstrap-mosquitto-dynsec.sh` (in VTN-RI repo)
-2. Start mosquitto with the generated dynsec config
-3. Start the VTN with `mqtt.broker.auth: OAUTH2_BEARER_TOKEN`
-4. Run: `clojure -M:test --focus :mqtt-auth`
+```bash
+bin/test-stack-start-dynsec
+clojure -M:test --focus :mqtt-auth
+```
 
 ### Webhook Notification Tests
 

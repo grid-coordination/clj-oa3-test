@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Stop all test infrastructure: VTN-RI, mosquitto, callback service.
+# Usage: bin/test-stack-stop
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "$SCRIPT_DIR/_lib.sh"
+resolve_dirs
+
+stop_all

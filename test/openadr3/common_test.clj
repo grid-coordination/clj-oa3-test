@@ -87,3 +87,16 @@
 (def MQTT-broker-url
   "Primary MQTT broker URL (first from the discovered list)."
   (first MQTT-broker-urls))
+
+;; ---------------------------------------------------------------------------
+;; MQTT credentials — discovered from VTN via GET /notifiers
+;; ---------------------------------------------------------------------------
+
+(defn mqtt-credentials
+  "Fetch MQTT credentials for a client from GET /notifiers.
+  Returns opts map with :username/:password when available, empty map otherwise."
+  [c]
+  (let [auth (get-in (base/get-notifiers c) [:body :MQTT :authentication])]
+    (if (and auth (not= "ANONYMOUS" (:method auth)) (:username auth) (:password auth))
+      (select-keys auth [:username :password])
+      {})))
