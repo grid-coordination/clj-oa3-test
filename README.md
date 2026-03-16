@@ -238,4 +238,4 @@ All dependencies are `:local/root` references to sibling directories.
 
 ## License
 
-[MIT License](LICENSE) — Copyright (c) 2026 Grid Coordination
+[MIT License](LICENSE) — Copyright (c) 2026 Clark Communications Corporation
