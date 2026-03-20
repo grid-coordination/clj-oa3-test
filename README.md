@@ -26,25 +26,11 @@ Integration test suite for OpenADR 3 VTN implementations, using the [clj-oa3-cli
 
 ## Prerequisites
 
-1. **Sibling repos** — both must be checked out alongside this repo:
-   - [clj-oa3](../clj-oa3) — pure client library
-   - [clj-oa3-client](../clj-oa3-client) — Component lifecycle wrapper
+1. **Dependencies** — [clj-oa3-client](https://github.com/grid-coordination/clj-oa3-client) and [clj-oa3](https://github.com/grid-coordination/clj-oa3) are pulled from [Clojars](https://clojars.org/energy.grid-coordination/clj-oa3-client) automatically (the OpenADR 3 specification is bundled in the clj-oa3 JAR)
 
-2. **[OpenADR 3 specification](https://github.com/grid-coordination/openadr3-specification)** — the `openadr3-specification` directory (containing `{version}/openadr3.yaml`) must be symlinked into `clj-oa3/resources/`
+2. **Running VTN** — the tests expect an OpenADR 3 VTN (URL configured in `test-config.edn`)
 
-3. **Running VTN** — the tests expect an OpenADR 3 VTN (URL configured in `test-config.edn`)
-
-4. **MQTT broker** — the MQTT broker URL is discovered automatically from the VTN's `GET /notifiers` endpoint. A fallback can be configured in `test-config.edn` if needed.
-
-Expected layout:
-
-```
-repo/
-  clj-oa3/           # pure client library
-  clj-oa3-client/    # Component wrapper
-  clj-oa3-test/      # this repo
-  specification/     # OpenADR 3 OpenAPI specs
-```
+3. **MQTT broker** — the MQTT broker URL is discovered automatically from the VTN's `GET /notifiers` endpoint. A fallback can be configured in `test-config.edn` if needed.
 
 ### Starting the Test Stack
 
