@@ -239,7 +239,7 @@ clj-oa3-test
         └── clj-oa3   (Martian HTTP, entity coercion, Malli schemas)
 ```
 
-All dependencies are `:local/root` references to sibling directories.
+Dependencies are available from [Clojars](https://clojars.org/energy.grid-coordination/clj-oa3-client).
 
 ## Related Repos
 
