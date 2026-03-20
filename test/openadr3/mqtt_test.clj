@@ -2,7 +2,8 @@
   (:require [openadr3.client.base :as client]
             [openadr3.client.ven :as ven]
             [openadr3.channel :as ch]
-            [openadr3.common-test :refer [ven1 bl MQTT-broker-url inter-suite-delay-ms
+            [openadr3.common-test :refer [ven1 bl MQTT-broker-url mqtt-available?
+                                          inter-suite-delay-ms
                                           mqtt-settle-ms mqtt-await-ms mqtt-credentials]]
             [clojure.test :refer :all]))
 
@@ -15,16 +16,19 @@
 
 (use-fixtures :once
   (fn [f]
-    (Thread/sleep inter-suite-delay-ms)
-    (reset! ven1-mqtt (-> (ch/mqtt-channel MQTT-broker-url (mqtt-credentials ven1))
-                          ch/channel-start))
-    (reset! bl-mqtt   (-> (ch/mqtt-channel MQTT-broker-url (mqtt-credentials bl))
-                          ch/channel-start))
-    (try
-      (f)
-      (finally
-        (ch/channel-stop @ven1-mqtt)
-        (ch/channel-stop @bl-mqtt)))))
+    (if-not mqtt-available?
+      (println "SKIPPING mqtt-test — VTN does not advertise MQTT support")
+      (do
+        (Thread/sleep inter-suite-delay-ms)
+        (reset! ven1-mqtt (-> (ch/mqtt-channel MQTT-broker-url (mqtt-credentials ven1))
+                              ch/channel-start))
+        (reset! bl-mqtt   (-> (ch/mqtt-channel MQTT-broker-url (mqtt-credentials bl))
+                              ch/channel-start))
+        (try
+          (f)
+          (finally
+            (ch/channel-stop @ven1-mqtt)
+            (ch/channel-stop @bl-mqtt)))))))
 
 ;; ---------------------------------------------------------------------------
 ;; Helpers

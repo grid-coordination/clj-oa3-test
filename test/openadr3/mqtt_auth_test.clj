@@ -7,7 +7,7 @@
   (:require [openadr3.client.base :as client]
             [openadr3.client.ven :as ven]
             [openadr3.channel :as ch]
-            [openadr3.common-test :refer [ven1 ven2 bl MQTT-broker-url
+            [openadr3.common-test :refer [ven1 ven2 bl MQTT-broker-url mqtt-available?
                                           inter-suite-delay-ms
                                           mqtt-settle-ms mqtt-await-ms]]
             [clojure.test :refer :all])
@@ -36,11 +36,13 @@
 (def ^:private dynsec? (delay (dynsec-active?)))
 
 (defmacro when-dynsec
-  "Execute body only when VTN is in dynsec mode, otherwise skip with a passing assertion."
+  "Execute body only when VTN advertises MQTT and is in dynsec mode,
+  otherwise skip with a passing assertion."
   [& body]
-  `(if @dynsec?
-     (do ~@body)
-     (is true "SKIPPED — VTN not in dynsec mode")))
+  `(cond
+     (not mqtt-available?) (is true "SKIPPED — VTN does not advertise MQTT support")
+     (not @dynsec?)        (is true "SKIPPED — VTN not in dynsec mode")
+     :else                 (do ~@body)))
 
 ;; ---------------------------------------------------------------------------
 ;; Helpers

@@ -30,7 +30,7 @@ Integration test suite for OpenADR 3 VTN implementations, using the [clj-oa3-cli
 
 2. **Running VTN** — the tests expect an OpenADR 3 VTN (URL configured in `test-config.edn`)
 
-3. **MQTT broker** — the MQTT broker URL is discovered automatically from the VTN's `GET /notifiers` endpoint. A fallback can be configured in `test-config.edn` if needed.
+3. **MQTT broker** (optional) — MQTT support is auto-detected from the VTN's `GET /notifiers` endpoint. If the VTN does not advertise MQTT URIs, MQTT tests are skipped automatically.
 
 ### Starting the Test Stack
 

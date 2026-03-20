@@ -75,17 +75,19 @@
 
 (def MQTT-broker-urls
   "Vector of MQTT broker URIs discovered from the VTN's notifiers endpoint.
-  Falls back to config or default if the VTN doesn't advertise MQTT."
+  Returns nil if the VTN does not advertise MQTT support."
   (let [resp      (base/get-notifiers bl)
         mqtt-info (-> resp :body :MQTT)
         uris      (:URIS mqtt-info)]
-    (if (seq uris)
-      (vec uris)
-      (do (println "WARNING: VTN did not advertise MQTT broker URIs, using config/defaults.")
-          (get config :mqtt-brokers ["tcp://127.0.0.1:1883"])))))
+    (when (seq uris)
+      (vec uris))))
+
+(def mqtt-available?
+  "True if the VTN advertises MQTT broker URIs via GET /notifiers."
+  (boolean (seq MQTT-broker-urls)))
 
 (def MQTT-broker-url
-  "Primary MQTT broker URL (first from the discovered list)."
+  "Primary MQTT broker URL (first from the discovered list), or nil."
   (first MQTT-broker-urls))
 
 ;; ---------------------------------------------------------------------------
