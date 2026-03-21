@@ -27,3 +27,4 @@ log/*
 .clojure-mcp/
 test-config.edn
 report/
+CLAUDE.md
