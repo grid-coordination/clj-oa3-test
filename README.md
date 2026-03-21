@@ -212,6 +212,97 @@ Tests accommodate VTN-specific behavior:
 
 Tests are configured in `tests.edn`. Suite order is fixed (`randomize? false`) because later suites depend on entities created by earlier ones. The `suite-deps` plugin handles prerequisite resolution automatically.
 
+## Test Reports
+
+Every test run generates a structured report in two formats:
+
+1. **EDN** (machine-readable) — written to `report/test-report.edn`
+2. **Tabular** (human-readable) — written to `report/test-report.txt` and printed to stdout
+
+The tabular output is produced by formatting the EDN report — the EDN data is the single source of truth.
+
+### EDN Report Structure
+
+```edn
+{:report/timestamp "2026-03-21T16:46:45Z"
+ :report/summary   {:total 192 :pass 189 :fail 3 :error 0 :pending 0}
+ :report/suites
+ [{:suite/id      :programs
+   :suite/summary {:total 21 :pass 21 :fail 0 :error 0 :pending 0}
+   :suite/tests
+   [{:test/id     :openadr3.programs-test/test-create-program1
+     :test/name   "test-create-program1"
+     :test/desc   "Create Program1 with BL token"
+     :test/result :pass
+     :test/file   "openadr3/programs_test.clj"
+     :test/line   47}
+    ...]}
+  ...]}
+```
+
+Failed tests include `:test/failures` with expected/actual values:
+
+```edn
+{:test/result :fail
+ :test/failures [{:type :fail
+                  :message "BL should create a program (201)"
+                  :expected "(= 201 (:status resp))"
+                  :actual "(not (= 201 500))"
+                  :file "openadr3/programs_test.clj"
+                  :line 62}]}
+```
+
+### Tabular Output
+
+The tabular summary is printed to stdout after each run, showing per-suite tables with pass/fail status and a failures section with details:
+
+```
+════════════════════════════════════════════════════════════════════════
+  OpenADR3 Test Report — 2026-03-21T16:46:45Z
+════════════════════════════════════════════════════════════════════════
+
+  Suite: programs (21/21 passed)
+  ┌─────────────────────────────────────────┬────────┐
+  │ Test                                    │ Result │
+  ├─────────────────────────────────────────┼────────┤
+  │ Create Program1 with BL token           │ PASS   │
+  │ VEN cannot create a program             │ PASS   │
+  │ ...                                     │        │
+  └─────────────────────────────────────────┴────────┘
+
+  Summary: 192 tests, 189 passed, 3 failed
+════════════════════════════════════════════════════════════════════════
+```
+
+### Configuration
+
+The report plugin is enabled by default in `tests.edn`. Configuration keys (optional):
+
+```edn
+:kaocha.plugin.test-report/edn-file     "report/test-report.edn"  ;; default
+:kaocha.plugin.test-report/txt-file     "report/test-report.txt"  ;; default
+:kaocha.plugin.test-report/print-table?  true                      ;; default
+```
+
+### Programmatic Use
+
+The report functions are composable — generate the EDN report first, then format it:
+
+```clojure
+(require '[kaocha.plugin.test-report :as tr])
+
+;; After a test run, read the EDN report
+(def report (clojure.edn/read-string (slurp "report/test-report.edn")))
+
+;; Format as table
+(println (tr/format-table report))
+
+;; Filter for failures
+(->> (:report/suites report)
+     (mapcat :suite/tests)
+     (filter #(#{:fail :error} (:test/result %))))
+```
+
 ## Known Gaps
 
 - **MQTT notifications** — missing VEN DELETE, per-program-scoped UPDATE/DELETE, subscription UPDATE, and the ALL wildcard topic test

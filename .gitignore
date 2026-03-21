@@ -26,3 +26,4 @@ log/*
 !log/.gitkeep
 .clojure-mcp/
 test-config.edn
+report/
