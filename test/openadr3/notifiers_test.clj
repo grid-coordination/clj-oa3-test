@@ -1,6 +1,6 @@
 (ns openadr3.notifiers-test
   (:require [openadr3.client.base :as client]
-            [openadr3.common-test :refer [ven1]]
+            [openadr3.common-test :refer [ven1 expected-notifiers]]
             [clojure.test :refer :all]))
 
 (deftest test-notifiers
@@ -9,10 +9,10 @@
           status (:status resp)
           body (:body resp)]
       (is (= 200 status) "Check for 200 status")
-      (is (contains? body :WEBHOOK) "Check that notifiers includes WEBHOOK")
-      (when (not= 1 (count body))
-        (testing "More than one notifier supported, testing for MQTT"
-          (is (contains? body :MQTT) "Check that MQTT is a supported notifier"))))))
+      (doseq [notifier-type expected-notifiers]
+        (testing (str "expected notifier " notifier-type)
+          (is (contains? body notifier-type)
+              (str "Notifiers should include " notifier-type)))))))
 
 (defn test-ns-hook []
   (test-notifiers))

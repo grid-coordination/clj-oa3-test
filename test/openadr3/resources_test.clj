@@ -168,19 +168,19 @@
 ;; Bad token tests
 ;; ---------------------------------------------------------------------------
 
-(deftest test-create-resource-bad-token
+(deftest ^:auth test-create-resource-bad-token
   (testing "Bad token cannot create a resource"
     (let [vid  (ven1-id)
           resp (client/create-resource bad-token (resource-body vid "BadTokenResource"))]
       (is (= 403 (:status resp)) "Bad token should be forbidden"))))
 
-(deftest test-search-resources-bad-token
+(deftest ^:auth test-search-resources-bad-token
   (testing "Bad token cannot search resources"
     (let [vid  (ven1-id)
           resp (client/search-ven-resources bad-token {:venID vid})]
       (is (= 403 (:status resp)) "Bad token should be forbidden"))))
 
-(deftest test-search-resource-by-id-bad-token
+(deftest ^:auth test-search-resource-by-id-bad-token
   (testing "Bad token cannot get a resource by ID"
     (let [vid       (ven1-id)
           resources (-> (client/search-ven-resources bl {:venID vid}) :body)
@@ -190,7 +190,7 @@
         (let [resp (client/get-resource-by-id bad-token res-id)]
           (is (= 403 (:status resp)) "Bad token should be forbidden"))))))
 
-(deftest test-update-resource-bad-token
+(deftest ^:auth test-update-resource-bad-token
   (testing "Bad token cannot update a resource"
     (let [vid       (ven1-id)
           resources (-> (client/search-ven-resources bl {:venID vid}) :body)
@@ -200,7 +200,7 @@
         (let [resp (client/update-resource bad-token res-id {:resourceName "hack"})]
           (is (= 403 (:status resp)) "Bad token should be forbidden"))))))
 
-(deftest test-delete-resource-bad-token
+(deftest ^:auth test-delete-resource-bad-token
   (testing "Bad token cannot delete a resource"
     (let [vid       (ven1-id)
           resources (-> (client/search-ven-resources bl {:venID vid}) :body)

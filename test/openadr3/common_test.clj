@@ -21,6 +21,14 @@
 (def VTN-url
   (get config :vtn-url "http://localhost:8080/openadr3/3.1.0"))
 
+(def BL-url
+  "URL for BL (write) clients. Falls back to :vtn-url for single-port VTNs."
+  (get config :bl-url VTN-url))
+
+(def VEN-url
+  "URL for VEN (read) clients. Falls back to :vtn-url for single-port VTNs."
+  (get config :ven-url VTN-url))
+
 (def inter-suite-delay-ms
   "Delay in ms between test suites.
   Set to 0 for fast VTNs, 1000-5000 if you see connection errors."
@@ -42,19 +50,28 @@
 
 (def ven1
   (component/start
-   (ven/ven-client {:url VTN-url :token (:ven1 tokens)})))
+   (ven/ven-client {:url VEN-url :token (:ven1 tokens)})))
 
 (def ven2
   (component/start
-   (ven/ven-client {:url VTN-url :token (:ven2 tokens)})))
+   (ven/ven-client {:url VEN-url :token (:ven2 tokens)})))
 
 (def bl
   (component/start
-   (bl/bl-client {:url VTN-url :token (:bl tokens)})))
+   (bl/bl-client {:url BL-url :token (:bl tokens)})))
 
 (def bad-token
   (component/start
-   (bl/bl-client {:url VTN-url :token (:bad tokens)})))
+   (bl/bl-client {:url VEN-url :token (:bad tokens)})))
+
+;; ---------------------------------------------------------------------------
+;; Expected notifiers — configurable per VTN
+;; ---------------------------------------------------------------------------
+
+(def expected-notifiers
+  "Set of notifier types the VTN is expected to advertise.
+  Defaults to #{:WEBHOOK :MQTT} per the OA3 spec."
+  (get config :expected-notifiers #{:WEBHOOK :MQTT}))
 
 ;; ---------------------------------------------------------------------------
 ;; MQTT timing

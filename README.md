@@ -9,9 +9,9 @@ Integration test suite for OpenADR 3 VTN implementations, using the [clj-oa3-cli
 │ clj-oa3-test                                    │
 │                                                 │
 │ common_test.clj                                 │
-│   ven1 = VenClient (ven_client:999)             │
-│   ven2 = VenClient (ven_client2:9999)           │
-│   bl   = BlClient  (bl_client:1001)             │
+│   ven1 = VenClient (ven_client:999)  → VEN-url  │
+│   ven2 = VenClient (ven_client2:9999)→ VEN-url  │
+│   bl   = BlClient  (bl_client:1001)  → BL-url   │
 │                                                 │
 │ Test suites use client/ wrappers                │
 ├─────────────────────────────────────────────────┤
@@ -19,7 +19,7 @@ Integration test suite for OpenADR 3 VTN implementations, using the [clj-oa3-cli
 ├─────────────────────────────────────────────────┤
 │ clj-oa3 (Martian HTTP + entity coercion)        │
 ├─────────────────────────────────────────────────┤
-│ OpenADR 3 VTN  (URL from test-config.edn)       │
+│ OpenADR 3 VTN  (BL-url / VEN-url / VTN-url)    │
 │ MQTT broker    (discovered via /notifiers)      │
 └─────────────────────────────────────────────────┘
 ```
@@ -74,6 +74,27 @@ The config file (`test-config.edn`) is gitignored. It controls:
 
 The VTN-RI uses BasicAuthProvider with base64-encoded `client_id:secret` tokens. Other VTNs will require different credential formats.
 
+#### Dual-URL Configuration
+
+VTNs that serve BL (write) and VEN (read) clients on separate ports can use `:bl-url` and `:ven-url`:
+
+```edn
+{:bl-url  "http://localhost:8081/openadr3/3.1.0"   ;; BL write port
+ :ven-url "http://localhost:8080/openadr3/3.1.0"}  ;; VEN read port
+```
+
+If omitted, both fall back to `:vtn-url`. Single-port VTNs (like the Python RI) need only `:vtn-url`.
+
+#### Expected Notifiers
+
+By default the test suite expects the VTN to advertise both `:WEBHOOK` and `:MQTT` notifier types. For VTNs that only support a subset:
+
+```edn
+{:expected-notifiers #{:MQTT}}   ;; only MQTT, no WEBHOOK
+```
+
+#### MQTT Broker Discovery
+
 MQTT broker URLs are discovered automatically from the VTN's `GET /notifiers` endpoint, which returns the `MQTT.URIS` array per the OpenADR 3 spec. If the VTN doesn't advertise MQTT, you can set a `:mqtt-brokers` fallback in the config.
 
 ## Running Tests
@@ -87,6 +108,9 @@ clojure -M:test --focus :mqtt
 
 # Run multiple suites
 clojure -M:test --focus :mqtt --focus :mqtt-auth
+
+# Skip auth enforcement tests (for VTNs without authentication)
+clojure -M:test --exclude-meta :auth
 ```
 
 ### Via nREPL
@@ -161,6 +185,16 @@ OpenADR 3 has role-based access:
 | Reports | VEN only | VEN only | VEN only | BL + VEN |
 | Subscriptions | BL + VEN | BL + VEN | BL + VEN | BL + VEN |
 
+### Auth Metadata
+
+All 51 tests that assert 403 (role enforcement and bad-token rejection) are tagged with `^:auth` metadata. This allows skipping them for VTNs that don't implement authentication:
+
+```bash
+clojure -M:test --exclude-meta :auth
+```
+
+The tagged tests span 7 suites: programs (8), events (8), vens (5), resources (5), reports (8), subscriptions (5), topics (12).
+
 ### MQTT Notification Tests
 
 The MQTT suite connects ven1 and bl to the MQTT broker (using credentials from `GET /notifiers` when the broker requires authentication), then tests notification delivery:
@@ -194,10 +228,12 @@ The webhook suite creates a local HTTP server, registers webhook subscriptions v
 All clients are constructed in `common_test.clj` using tokens from `test-config.edn`:
 
 ```clojure
-(def ven1 (component/start (ven/ven-client {:url VTN-url :token (:ven1 tokens)})))
-(def ven2 (component/start (ven/ven-client {:url VTN-url :token (:ven2 tokens)})))
-(def bl   (component/start (bl/bl-client   {:url VTN-url :token (:bl tokens)})))
+(def ven1 (component/start (ven/ven-client {:url VEN-url :token (:ven1 tokens)})))
+(def ven2 (component/start (ven/ven-client {:url VEN-url :token (:ven2 tokens)})))
+(def bl   (component/start (bl/bl-client   {:url BL-url  :token (:bl tokens)})))
 ```
+
+`BL-url` and `VEN-url` fall back to `VTN-url` when not configured, so single-port VTNs work without changes.
 
 MQTT broker URLs are discovered at startup via `(base/get-notifiers bl)` and exposed as `MQTT-broker-urls` (all) and `MQTT-broker-url` (primary).
 

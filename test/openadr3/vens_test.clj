@@ -171,19 +171,19 @@
 ;; Bad token tests
 ;; ---------------------------------------------------------------------------
 
-(deftest test-create-ven-bad-token
+(deftest ^:auth test-create-ven-bad-token
   (testing "Bad token cannot create a VEN"
     (let [resp (client/create-ven bad-token {:objectType "BL_VEN_REQUEST"
                                              :venName "BadTokenVEN"
                                              :clientID "bad_client"})]
       (is (= 403 (:status resp)) "Bad token should be forbidden"))))
 
-(deftest test-search-vens-bad-token
+(deftest ^:auth test-search-vens-bad-token
   (testing "Bad token cannot search VENs"
     (let [resp (client/get-vens bad-token)]
       (is (= 403 (:status resp)) "Bad token should be forbidden"))))
 
-(deftest test-search-ven-by-id-bad-token
+(deftest ^:auth test-search-ven-by-id-bad-token
   (testing "Bad token cannot get a VEN by ID"
     (let [ven-id (ven/ven-id ven1)]
       (is (some? ven-id) "ven1 should be registered")
@@ -191,7 +191,7 @@
         (let [resp (client/get-ven-by-id bad-token ven-id)]
           (is (= 403 (:status resp)) "Bad token should be forbidden"))))))
 
-(deftest test-update-ven-bad-token
+(deftest ^:auth test-update-ven-bad-token
   (testing "Bad token cannot update a VEN"
     (let [ven-id (ven/ven-id ven1)]
       (is (some? ven-id) "ven1 should be registered")
@@ -200,7 +200,7 @@
                                                         :venName "ven1"})]
           (is (= 403 (:status resp)) "Bad token should be forbidden"))))))
 
-(deftest test-delete-ven-bad-token
+(deftest ^:auth test-delete-ven-bad-token
   (testing "Bad token cannot delete a VEN"
     (let [ven-id (ven/ven-id ven1)]
       (is (some? ven-id) "ven1 should be registered")

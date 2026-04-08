@@ -61,7 +61,7 @@
       (is (= 201 (:status resp)) "VEN should create a report (201)")
       (is (some? (-> resp :body :id)) "Response should include report ID"))))
 
-(deftest test-create-report-bl-forbidden
+(deftest ^:auth test-create-report-bl-forbidden
   (testing "BL cannot create a report"
     (let [resp (client/create-report bl (report-body))]
       (is (= 403 (:status resp)) "BL should be forbidden from creating reports"))))
@@ -123,7 +123,7 @@
           (is (= "UpdatedReport" (-> resp :body :reportName))
               "Report name should be updated"))))))
 
-(deftest test-update-report-bl-forbidden
+(deftest ^:auth test-update-report-bl-forbidden
   (testing "BL cannot update a report"
     (let [created   (client/create-report ven1 (report-body "NoUpdateBL"))
           report-id (-> created :body :id)]
@@ -148,7 +148,7 @@
         (let [resp (client/delete-report ven1 report-id)]
           (is (= 200 (:status resp)) "VEN should delete own report"))))))
 
-(deftest test-delete-report-bl-forbidden
+(deftest ^:auth test-delete-report-bl-forbidden
   (testing "BL cannot delete a report"
     (let [created   (client/create-report ven1 (report-body "NoDeleteBL"))
           report-id (-> created :body :id)]
@@ -161,17 +161,17 @@
 ;; Bad token tests
 ;; ---------------------------------------------------------------------------
 
-(deftest test-create-report-bad-token
+(deftest ^:auth test-create-report-bad-token
   (testing "Bad token cannot create a report"
     (let [resp (client/create-report bad-token (report-body))]
       (is (= 403 (:status resp)) "Bad token should be forbidden"))))
 
-(deftest test-search-reports-bad-token
+(deftest ^:auth test-search-reports-bad-token
   (testing "Bad token cannot search reports"
     (let [resp (client/get-reports bad-token)]
       (is (= 403 (:status resp)) "Bad token should be forbidden"))))
 
-(deftest test-search-report-by-id-bad-token
+(deftest ^:auth test-search-report-by-id-bad-token
   (testing "Bad token cannot get a report by ID"
     (let [created   (client/create-report ven1 (report-body "BadTokenById"))
           report-id (-> created :body :id)]
@@ -180,7 +180,7 @@
         (let [resp (client/get-report-by-id bad-token report-id)]
           (is (= 403 (:status resp)) "Bad token should be forbidden"))))))
 
-(deftest test-update-report-bad-token
+(deftest ^:auth test-update-report-bad-token
   (testing "Bad token cannot update a report"
     (let [created   (client/create-report ven1 (report-body "BadTokenUpdate"))
           report-id (-> created :body :id)]
@@ -192,7 +192,7 @@
                                           :resources []})]
           (is (= 403 (:status resp)) "Bad token should be forbidden"))))))
 
-(deftest test-delete-report-bad-token
+(deftest ^:auth test-delete-report-bad-token
   (testing "Bad token cannot delete a report"
     (let [created   (client/create-report ven1 (report-body "BadTokenDelete"))
           report-id (-> created :body :id)]

@@ -5,7 +5,7 @@
             [openadr3.client.ven :as ven]
             [openadr3.channel :as ch]
             [openadr3.common-test :refer [ven1 bl MQTT-broker-url inter-suite-delay-ms
-                                          mqtt-credentials]]
+                                          mqtt-credentials expected-notifiers]]
             [clojure.test :refer :all]))
 
 (use-fixtures :once
@@ -48,7 +48,9 @@
   (testing "discover-notifiers returns notifier configuration"
     (let [notifiers (ven/discover-notifiers ven1)]
       (is (map? notifiers) "Should return a map")
-      (is (contains? notifiers :WEBHOOK) "Should include WEBHOOK notifier"))))
+      (doseq [notifier-type expected-notifiers]
+        (is (contains? notifiers notifier-type)
+            (str "Should include " notifier-type " notifier"))))))
 
 (deftest test-vtn-supports-mqtt
   (testing "vtn-supports-mqtt? detects MQTT support"

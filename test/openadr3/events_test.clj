@@ -51,7 +51,7 @@
       (when-let [id (-> resp :body :id)]
         (client/delete-event bl id)))))
 
-(deftest test-create-event-ven-forbidden
+(deftest ^:auth test-create-event-ven-forbidden
   (testing "VEN cannot create an event"
     (let [pid  (find-program-id)
           resp (client/create-event ven1 (event-body pid))]
@@ -135,7 +135,7 @@
               "Event name should be updated"))
         (client/delete-event bl event-id)))))
 
-(deftest test-update-event-ven-forbidden
+(deftest ^:auth test-update-event-ven-forbidden
   (testing "VEN cannot update an event"
     (let [pid      (find-program-id)
           created  (client/create-event bl (event-body pid))
@@ -164,7 +164,7 @@
         (let [resp (client/delete-event bl event-id)]
           (is (= 200 (:status resp)) "Delete should succeed"))))))
 
-(deftest test-delete-event-ven-forbidden
+(deftest ^:auth test-delete-event-ven-forbidden
   (testing "VEN cannot delete an event"
     (let [pid      (find-program-id)
           created  (client/create-event bl (event-body pid))
@@ -179,18 +179,18 @@
 ;; Bad token tests
 ;; ---------------------------------------------------------------------------
 
-(deftest test-create-event-bad-token
+(deftest ^:auth test-create-event-bad-token
   (testing "Bad token cannot create an event"
     (let [pid  (find-program-id)
           resp (client/create-event bad-token (event-body pid))]
       (is (= 403 (:status resp)) "Bad token should be forbidden"))))
 
-(deftest test-search-events-bad-token
+(deftest ^:auth test-search-events-bad-token
   (testing "Bad token cannot search events"
     (let [resp (client/get-events bad-token)]
       (is (= 403 (:status resp)) "Bad token should be forbidden"))))
 
-(deftest test-search-event-by-id-bad-token
+(deftest ^:auth test-search-event-by-id-bad-token
   (testing "Bad token cannot get an event by ID"
     (let [pid      (find-program-id)
           created  (client/create-event bl (event-body pid))
@@ -201,7 +201,7 @@
           (is (= 403 (:status resp)) "Bad token should be forbidden"))
         (client/delete-event bl event-id)))))
 
-(deftest test-update-event-bad-token
+(deftest ^:auth test-update-event-bad-token
   (testing "Bad token cannot update an event"
     (let [pid      (find-program-id)
           created  (client/create-event bl (event-body pid))
@@ -214,7 +214,7 @@
           (is (= 403 (:status resp)) "Bad token should be forbidden"))
         (client/delete-event bl event-id)))))
 
-(deftest test-delete-event-bad-token
+(deftest ^:auth test-delete-event-bad-token
   (testing "Bad token cannot delete an event"
     (let [pid      (find-program-id)
           created  (client/create-event bl (event-body pid))

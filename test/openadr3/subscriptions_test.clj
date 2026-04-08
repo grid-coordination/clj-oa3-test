@@ -154,17 +154,17 @@
 ;; Bad token tests
 ;; ---------------------------------------------------------------------------
 
-(deftest test-create-subscription-bad-token
+(deftest ^:auth test-create-subscription-bad-token
   (testing "Bad token cannot create a subscription"
     (let [resp (client/create-subscription bad-token (subscription-body "BadTokenCreate"))]
       (is (= 403 (:status resp)) "Bad token should be forbidden"))))
 
-(deftest test-search-subscriptions-bad-token
+(deftest ^:auth test-search-subscriptions-bad-token
   (testing "Bad token cannot search subscriptions"
     (let [resp (client/get-subscriptions bad-token)]
       (is (= 403 (:status resp)) "Bad token should be forbidden"))))
 
-(deftest test-search-subscription-by-id-bad-token
+(deftest ^:auth test-search-subscription-by-id-bad-token
   (testing "Bad token cannot get a subscription by ID"
     (let [created (client/create-subscription bl (subscription-body "BadTokenById"))
           sub-id  (-> created :body :id)]
@@ -174,7 +174,7 @@
           (is (= 403 (:status resp)) "Bad token should be forbidden"))
         (client/delete-subscription bl sub-id)))))
 
-(deftest test-update-subscription-bad-token
+(deftest ^:auth test-update-subscription-bad-token
   (testing "Bad token cannot update a subscription"
     (let [created (client/create-subscription bl (subscription-body "BadTokenUpdate"))
           sub-id  (-> created :body :id)]
@@ -185,7 +185,7 @@
           (is (= 403 (:status resp)) "Bad token should be forbidden"))
         (client/delete-subscription bl sub-id)))))
 
-(deftest test-delete-subscription-bad-token
+(deftest ^:auth test-delete-subscription-bad-token
   (testing "Bad token cannot delete a subscription"
     (let [created (client/create-subscription bl (subscription-body "BadTokenDelete"))
           sub-id  (-> created :body :id)]

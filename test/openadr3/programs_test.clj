@@ -58,7 +58,7 @@
 ;; Authorization: VEN cannot create programs
 ;; ---------------------------------------------------------------------------
 
-(deftest test-create-program-ven-forbidden
+(deftest ^:auth test-create-program-ven-forbidden
   (testing "VEN cannot create a program"
     (let [resp (client/create-program ven1 {:programName "VENProgram"})]
       (is (= 403 (:status resp)) "VEN should be forbidden from creating programs"))))
@@ -124,7 +124,7 @@
           (is (= "group1" (-> resp :body :targets first))
               "Target should be updated"))))))
 
-(deftest test-update-program-ven-forbidden
+(deftest ^:auth test-update-program-ven-forbidden
   (testing "VEN cannot update a program"
     (let [program (client/find-program-by-name bl "UpdateTest")]
       (is (some? program) "UpdateTest should exist")
@@ -146,7 +146,7 @@
         (let [resp (client/delete-program bl program-id)]
           (is (= 200 (:status resp)) "Delete should succeed"))))))
 
-(deftest test-delete-program-ven-forbidden
+(deftest ^:auth test-delete-program-ven-forbidden
   (testing "VEN cannot delete a program"
     (let [program (client/find-program-by-name bl "Program1")]
       (is (some? program) "Program1 should exist")
@@ -158,17 +158,17 @@
 ;; Bad token tests
 ;; ---------------------------------------------------------------------------
 
-(deftest test-create-program-bad-token
+(deftest ^:auth test-create-program-bad-token
   (testing "Bad token cannot create a program"
     (let [resp (client/create-program bad-token {:programName "BadTokenTest"})]
       (is (= 403 (:status resp)) "Bad token should be forbidden"))))
 
-(deftest test-search-programs-bad-token
+(deftest ^:auth test-search-programs-bad-token
   (testing "Bad token cannot search programs"
     (let [resp (client/get-programs bad-token)]
       (is (= 403 (:status resp)) "Bad token should be forbidden"))))
 
-(deftest test-search-program-by-id-bad-token
+(deftest ^:auth test-search-program-by-id-bad-token
   (testing "Bad token cannot get a program by ID"
     (let [program (client/find-program-by-name bl "Program1")]
       (is (some? program) "Program1 should exist")
@@ -176,7 +176,7 @@
         (let [resp (client/get-program-by-id bad-token (:id program))]
           (is (= 403 (:status resp)) "Bad token should be forbidden"))))))
 
-(deftest test-update-program-bad-token
+(deftest ^:auth test-update-program-bad-token
   (testing "Bad token cannot update a program"
     (let [program (client/find-program-by-name bl "Program1")]
       (is (some? program) "Program1 should exist")
@@ -185,7 +185,7 @@
                                           {:programName "Program1"})]
           (is (= 403 (:status resp)) "Bad token should be forbidden"))))))
 
-(deftest test-delete-program-bad-token
+(deftest ^:auth test-delete-program-bad-token
   (testing "Bad token cannot delete a program"
     (let [program (client/find-program-by-name bl "Program1")]
       (is (some? program) "Program1 should exist")

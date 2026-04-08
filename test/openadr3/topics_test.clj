@@ -112,72 +112,72 @@
 ;; Bad token tests — every topic endpoint should return 403
 ;; ---------------------------------------------------------------------------
 
-(deftest test-mqtt-topics-bad-token-programs
+(deftest ^:auth test-mqtt-topics-bad-token-programs
   (testing "Bad token cannot get programs topics"
     (let [resp (client/get-mqtt-topics-programs bad-token)]
       (is (= 403 (:status resp)) "Bad token should be forbidden"))))
 
-(deftest test-mqtt-topics-bad-token-program
+(deftest ^:auth test-mqtt-topics-bad-token-program
   (testing "Bad token cannot get program topics"
     (let [prog-id (-> (client/find-program-by-name bl "Program1") :id)]
       (when prog-id
         (let [resp (client/get-mqtt-topics-program bad-token prog-id)]
           (is (= 403 (:status resp)) "Bad token should be forbidden"))))))
 
-(deftest test-mqtt-topics-bad-token-program-events
+(deftest ^:auth test-mqtt-topics-bad-token-program-events
   (testing "Bad token cannot get program events topics"
     (let [prog-id (-> (client/find-program-by-name bl "Program1") :id)]
       (when prog-id
         (let [resp (client/get-mqtt-topics-program-events bad-token prog-id)]
           (is (= 403 (:status resp)) "Bad token should be forbidden"))))))
 
-(deftest test-mqtt-topics-bad-token-events
+(deftest ^:auth test-mqtt-topics-bad-token-events
   (testing "Bad token cannot get events topics"
     (let [resp (client/get-mqtt-topics-events bad-token)]
       (is (= 403 (:status resp)) "Bad token should be forbidden"))))
 
-(deftest test-mqtt-topics-bad-token-reports
+(deftest ^:auth test-mqtt-topics-bad-token-reports
   (testing "Bad token cannot get reports topics"
     (let [resp (client/get-mqtt-topics-reports bad-token)]
       (is (= 403 (:status resp)) "Bad token should be forbidden"))))
 
-(deftest test-mqtt-topics-bad-token-subscriptions
+(deftest ^:auth test-mqtt-topics-bad-token-subscriptions
   (testing "Bad token cannot get subscriptions topics"
     (let [resp (client/get-mqtt-topics-subscriptions bad-token)]
       (is (= 403 (:status resp)) "Bad token should be forbidden"))))
 
-(deftest test-mqtt-topics-bad-token-vens
+(deftest ^:auth test-mqtt-topics-bad-token-vens
   (testing "Bad token cannot get vens topics"
     (let [resp (client/get-mqtt-topics-vens bad-token)]
       (is (= 403 (:status resp)) "Bad token should be forbidden"))))
 
-(deftest test-mqtt-topics-bad-token-resources
+(deftest ^:auth test-mqtt-topics-bad-token-resources
   (testing "Bad token cannot get resources topics"
     (let [resp (client/get-mqtt-topics-resources bad-token)]
       (is (= 403 (:status resp)) "Bad token should be forbidden"))))
 
-(deftest test-mqtt-topics-bad-token-ven
+(deftest ^:auth test-mqtt-topics-bad-token-ven
   (testing "Bad token cannot get ven topics"
     (let [ven-id (-> (client/get-vens bl) :body first :id)]
       (when ven-id
         (let [resp (client/get-mqtt-topics-ven bad-token ven-id)]
           (is (= 403 (:status resp)) "Bad token should be forbidden"))))))
 
-(deftest test-mqtt-topics-bad-token-ven-resources
+(deftest ^:auth test-mqtt-topics-bad-token-ven-resources
   (testing "Bad token cannot get ven resources topics"
     (let [ven-id (-> (client/get-vens bl) :body first :id)]
       (when ven-id
         (let [resp (client/get-mqtt-topics-ven-resources bad-token ven-id)]
           (is (= 403 (:status resp)) "Bad token should be forbidden"))))))
 
-(deftest test-mqtt-topics-bad-token-ven-programs
+(deftest ^:auth test-mqtt-topics-bad-token-ven-programs
   (testing "Bad token cannot get ven programs topics"
     (let [ven-id (-> (client/get-vens bl) :body first :id)]
       (when ven-id
         (let [resp (client/get-mqtt-topics-ven-programs bad-token ven-id)]
           (is (= 403 (:status resp)) "Bad token should be forbidden"))))))
 
-(deftest test-mqtt-topics-bad-token-ven-events
+(deftest ^:auth test-mqtt-topics-bad-token-ven-events
   (testing "Bad token cannot get ven events topics"
     (let [ven-id (-> (client/get-vens bl) :body first :id)]
       (when ven-id

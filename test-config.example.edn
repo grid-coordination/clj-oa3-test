@@ -3,6 +3,12 @@
 
 {:vtn-url "http://localhost:8080/openadr3/3.1.0"
 
+ ;; Dual-URL config for two-port VTN architectures.
+ ;; If your VTN serves BL (write) and VEN (read) clients on separate ports,
+ ;; set :bl-url and :ven-url. If omitted, both fall back to :vtn-url.
+ ;; :bl-url  "http://localhost:8081/openadr3/3.1.0"
+ ;; :ven-url "http://localhost:8080/openadr3/3.1.0"
+
  ;; Auth tokens — must match your VTN's token configuration.
  :tokens {:ven1 "ven_token"
           :ven2 "ven_token2"
@@ -19,6 +25,10 @@
 
  ;; MQTT await timeout in ms — max time to wait for expected notifications.
  ;; :mqtt-await-ms 10000
+
+ ;; Expected notifier types the VTN should advertise.
+ ;; Defaults to #{:WEBHOOK :MQTT}. For a VTN that only supports MQTT:
+ ;; :expected-notifiers #{:MQTT}
 
  ;; MQTT broker fallback — only used if the VTN's GET /notifiers endpoint
  ;; does not advertise MQTT broker URIs. Normally the broker URLs are
