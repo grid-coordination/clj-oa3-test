@@ -1,20 +1,15 @@
 {:paths ["test" "resources"]
  :deps {org.clojure/clojure            {:mvn/version "1.12.3"}
-        org.clojure/tools.logging      {:mvn/version "1.3.0"}
 
         ;; OpenADR3 client framework (transitively includes clj-oa3)
-        energy.grid-coordination/clj-oa3-client {:mvn/version "0.1.0-SNAPSHOT"}
+        energy.grid-coordination/clj-oa3-client {:mvn/version "0.3.0"}
 
         ;; Test framework
         lambdaisland/kaocha            {:mvn/version "1.91.1392"}
 
-        ;; Logging
-        org.slf4j/slf4j-log4j12       {:mvn/version "2.0.0-alpha6"}
-        log4j/log4j                   {:mvn/version "1.2.17"
-                                       :exclusions [javax.mail/mail
-                                                    javax.jms/jms
-                                                    com.sun.jdmk/jmxtools
-                                                    com.sun.jmx/jmxri]}}
+        ;; Structured logging
+        com.brunobonacci/mulog         {:mvn/version "0.10.1"}
+        org.slf4j/slf4j-nop            {:mvn/version "2.0.16"}}
 
  :aliases {:test {:main-opts ["-m" "kaocha.runner" "--config-file" "tests.edn"]}
 
@@ -25,4 +20,4 @@
                    :extra-deps {nrepl/nrepl {:mvn/version "1.6.0"}
                                 babashka/process {:mvn/version "0.6.23"}}
                    :jvm-opts ["-Djdk.attach.allowAttachSelf"]
-                   :main-opts ["-m" "nrepl.cmdline" "--port" "7891"]}}}
+                   :main-opts ["-m" "nrepl.cmdline"]}}}

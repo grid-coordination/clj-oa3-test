@@ -50,19 +50,23 @@
 
 (def ven1
   (component/start
-   (ven/ven-client {:url VEN-url :token (:ven1 tokens)})))
+   (ven/ven-client {:url VEN-url :token (:ven1 tokens)
+                    :user-agent "clj-oa3-test (ven1)"})))
 
 (def ven2
   (component/start
-   (ven/ven-client {:url VEN-url :token (:ven2 tokens)})))
+   (ven/ven-client {:url VEN-url :token (:ven2 tokens)
+                    :user-agent "clj-oa3-test (ven2)"})))
 
 (def bl
   (component/start
-   (bl/bl-client {:url BL-url :token (:bl tokens)})))
+   (bl/bl-client {:url BL-url :token (:bl tokens)
+                  :user-agent "clj-oa3-test (bl)"})))
 
 (def bad-token
   (component/start
-   (bl/bl-client {:url VEN-url :token (:bad tokens)})))
+   (bl/bl-client {:url VEN-url :token (:bad tokens)
+                  :user-agent "clj-oa3-test (bad-token)"})))
 
 ;; ---------------------------------------------------------------------------
 ;; Expected notifiers — configurable per VTN

@@ -1,6 +1,10 @@
 (ns user
   (:require [babashka.process :refer [shell]]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [com.brunobonacci.mulog :as mu]))
+
+;; Start mulog console publisher for REPL visibility
+(mu/start-publisher! {:type :console :pretty? true})
 
 ;; ---------------------------------------------------------------------------
 ;; Paths — derived from this repo's location
