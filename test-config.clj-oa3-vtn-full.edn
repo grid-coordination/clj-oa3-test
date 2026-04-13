@@ -1,11 +1,18 @@
-;; Test configuration — clj-oa3-vtn 0.4.0 (all VEN routes enabled)
-;; Two-port architecture with VEN subscription CRUD enabled.
-;; Requires VTN started with: {:ven-routes {:subscriptions :full}}
+;; Test configuration — clj-oa3-vtn 0.5.0 (all VEN routes enabled)
+;; Two-port architecture with VEN subscription CRUD enabled on VEN port.
+;;
+;; Requires VTN started with ven-routes subscriptions enabled, e.g.:
+;;   CLJ_OA3_VTN_CONFIG=path/to/config.edn  (with :ven-routes {:subscriptions :full})
+;;
+;; clj-oa3-vtn 0.5.0 implements: programs, events, subscriptions, notifiers,
+;; and MQTT topic discovery. VEN/resource/report handlers are not yet
+;; implemented — skip those suites.
 ;;
 ;; Usage:
 ;;   cp test-config.clj-oa3-vtn-full.edn test-config.edn
 ;;   # Start clj-oa3-vtn with subscription routes enabled, then:
-;;   clojure -M:test
+;;   clojure -M:test --focus :notifiers --focus :programs --focus :events \
+;;                   --focus :subscriptions --skip-meta :auth
 
 {;; Dual-URL config for two-port VTN
  :bl-url  "http://localhost:8081/openadr3/3.1.0"
@@ -17,11 +24,11 @@
           :bl   "YmxfY2xpZW50OjEwMDE="        ;; bl_client:1001
           :bad  "bad_token"}
 
- ;; clj-oa3-vtn only supports MQTT (no WEBHOOK yet)
+ ;; clj-oa3-vtn supports MQTT only (no WEBHOOK yet)
  :expected-notifiers #{:MQTT}
 
- ;; All VEN routes enabled — matches VTN config with:
- ;; {:ven-routes {:subscriptions :full}}
+ ;; All implemented VEN routes enabled — VEN subscription CRUD on VEN port.
+ ;; Requires VTN config: {:ven-routes {:subscriptions :full}}
  :ven-routes {:subscriptions :full}
 
  ;; No delay needed — Clojure VTN handles connections properly

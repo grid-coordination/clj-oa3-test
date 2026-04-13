@@ -103,7 +103,7 @@
 (deftest test-search-subscription-by-id-ven
   (if ven-subscriptions?
     (testing "VEN can get own subscription by ID"
-      (let [created (client/create-subscription bl (subscription-body "ByIdVEN"))
+      (let [created (client/create-subscription ven1 (subscription-body "ByIdVEN"))
             sub-id  (-> created :body :id)]
         (is (some? sub-id) "Need a subscription ID")
         (when sub-id
@@ -138,7 +138,7 @@
 (deftest test-update-subscription-ven
   (if ven-subscriptions?
     (testing "VEN can update own subscription"
-      (let [created (client/create-subscription bl (subscription-body "UpdateVEN"))
+      (let [created (client/create-subscription ven1 (subscription-body "UpdateVEN"))
             sub-id  (-> created :body :id)]
         (is (some? sub-id) "Need a subscription ID")
         (when sub-id

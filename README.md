@@ -271,8 +271,8 @@ Example configs for common VTN setups are in `test-config.*.edn`:
 |------|-----|-------------|
 | `test-config.example.edn` | Generic | Template with all options documented |
 | `test-config.vtn-ri.edn` | VTN-RI (Python) | Single-port, all VEN routes enabled |
-| `test-config.clj-oa3-vtn.edn` | clj-oa3-vtn 0.4.0 | Two-port, default VEN routes (subscriptions disabled) |
-| `test-config.clj-oa3-vtn-full.edn` | clj-oa3-vtn 0.4.0 | Two-port, all VEN routes enabled |
+| `test-config.clj-oa3-vtn.edn` | clj-oa3-vtn 0.5.0 | Two-port, default VEN routes (subscriptions disabled) |
+| `test-config.clj-oa3-vtn-full.edn` | clj-oa3-vtn 0.5.0 | Two-port, VEN subscriptions enabled |
 
 ### Test Configuration
 
@@ -373,6 +373,7 @@ The report functions are composable — generate the EDN report first, then form
 
 - **MQTT notifications** — missing VEN DELETE, per-program-scoped UPDATE/DELETE, subscription UPDATE, and the ALL wildcard topic test
 - **Notifiers** — only tests that WEBHOOK and MQTT are advertised; no bad-token test
+- **clj-oa3-vtn coverage** — the Clojure VTN does not yet implement vens, resources, or reports handlers; those suites only run against the VTN-RI
 
 ## Dependency Chain
 
@@ -390,6 +391,7 @@ Dependencies are available from [Clojars](https://clojars.org/energy.grid-coordi
 |------|-------------|
 | [clj-oa3](https://github.com/grid-coordination/clj-oa3) | Pure client library |
 | [clj-oa3-client](https://github.com/grid-coordination/clj-oa3-client) | Component lifecycle wrapper |
+| [clj-oa3-vtn](https://github.com/grid-coordination/clj-oa3-vtn) | Clojure VTN implementation |
 
 ## License
 
