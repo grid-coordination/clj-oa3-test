@@ -117,7 +117,7 @@ clojure -M:test --exclude-meta :auth
 
 ```bash
 clojure -M:nrepl
-# nREPL running on port 7891
+# nREPL port written to .nrepl-port
 ```
 
 ```clojure
