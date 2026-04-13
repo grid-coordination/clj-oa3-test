@@ -1,7 +1,8 @@
 (ns openadr3.topics-test
   (:require [openadr3.client.base :as client]
             [openadr3.client.ven :as ven]
-            [openadr3.common-test :refer [ven1 ven2 bl bad-token inter-suite-delay-ms]]
+            [openadr3.common-test :refer [ven1 ven2 bl bad-token inter-suite-delay-ms
+                                          ven-route-enabled?]]
             [clojure.test :refer :all]))
 
 (use-fixtures :once
@@ -48,37 +49,43 @@
       (is (= status 403) "Check for 403 status"))))
 
 (defn run-topics-for-client
-  "Run all MQTT topic tests for a given client, ven-id, and program-id."
-  [c ven-id program-id]
-  (testing "programs topics"
-    (test-topics-endpoint (client/get-mqtt-topics-programs c) check-topics-present))
-  (testing "program topics"
-    (test-topics-endpoint (client/get-mqtt-topics-program c program-id) check-topics-no-create))
-  (testing "program events topics"
-    (test-topics-endpoint (client/get-mqtt-topics-program-events c program-id) check-topics-present))
-  (testing "ven topics"
-    (test-topics-endpoint (client/get-mqtt-topics-ven c ven-id) check-topics-no-create))
-  (testing "ven programs topics"
-    (test-topics-endpoint (client/get-mqtt-topics-ven-programs c ven-id) check-topics-present))
-  (testing "ven events topics"
-    (test-topics-endpoint (client/get-mqtt-topics-ven-events c ven-id) check-topics-present))
-  (testing "ven resources topics"
-    (test-topics-endpoint (client/get-mqtt-topics-ven-resources c ven-id) check-topics-present))
-  (testing "events topics"
-    (test-scoped-endpoint c :list-all-mqtt-notifier-topics-events
-                          (client/get-mqtt-topics-events c)))
-  (testing "reports topics"
-    (test-scoped-endpoint c :list-all-mqtt-notifier-topics-reports
-                          (client/get-mqtt-topics-reports c)))
-  (testing "subscriptions topics"
-    (test-scoped-endpoint c :list-all-mqtt-notifier-topics-subscriptions
-                          (client/get-mqtt-topics-subscriptions c)))
-  (testing "vens topics"
-    (test-scoped-endpoint c :list-all-mqtt-notifier-topics-vens
-                          (client/get-mqtt-topics-vens c)))
-  (testing "resources topics"
-    (test-scoped-endpoint c :list-all-mqtt-notifier-topics-resources
-                          (client/get-mqtt-topics-resources c))))
+  "Run all MQTT topic tests for a given client, ven-id, and program-id.
+  opts map:
+    :subscription-topics? — include subscription topic tests (default true).
+                            Set to false for VEN clients when VEN subscription
+                            routes are disabled on the VTN."
+  ([c ven-id program-id] (run-topics-for-client c ven-id program-id {}))
+  ([c ven-id program-id {:keys [subscription-topics?] :or {subscription-topics? true}}]
+   (testing "programs topics"
+     (test-topics-endpoint (client/get-mqtt-topics-programs c) check-topics-present))
+   (testing "program topics"
+     (test-topics-endpoint (client/get-mqtt-topics-program c program-id) check-topics-no-create))
+   (testing "program events topics"
+     (test-topics-endpoint (client/get-mqtt-topics-program-events c program-id) check-topics-present))
+   (testing "ven topics"
+     (test-topics-endpoint (client/get-mqtt-topics-ven c ven-id) check-topics-no-create))
+   (testing "ven programs topics"
+     (test-topics-endpoint (client/get-mqtt-topics-ven-programs c ven-id) check-topics-present))
+   (testing "ven events topics"
+     (test-topics-endpoint (client/get-mqtt-topics-ven-events c ven-id) check-topics-present))
+   (testing "ven resources topics"
+     (test-topics-endpoint (client/get-mqtt-topics-ven-resources c ven-id) check-topics-present))
+   (testing "events topics"
+     (test-scoped-endpoint c :list-all-mqtt-notifier-topics-events
+                           (client/get-mqtt-topics-events c)))
+   (testing "reports topics"
+     (test-scoped-endpoint c :list-all-mqtt-notifier-topics-reports
+                           (client/get-mqtt-topics-reports c)))
+   (when subscription-topics?
+     (testing "subscriptions topics"
+       (test-scoped-endpoint c :list-all-mqtt-notifier-topics-subscriptions
+                             (client/get-mqtt-topics-subscriptions c))))
+   (testing "vens topics"
+     (test-scoped-endpoint c :list-all-mqtt-notifier-topics-vens
+                           (client/get-mqtt-topics-vens c)))
+   (testing "resources topics"
+     (test-scoped-endpoint c :list-all-mqtt-notifier-topics-resources
+                           (client/get-mqtt-topics-resources c)))))
 
 ;; ---------------------------------------------------------------------------
 ;; Tests
@@ -90,7 +97,8 @@
           prog-id (-> (client/find-program-by-name ven1 "Program2") :id)]
       (is (some? ven-id) "ven1 must be registered by vens-test")
       (when ven-id
-        (run-topics-for-client ven1 ven-id prog-id)))))
+        (run-topics-for-client ven1 ven-id prog-id
+                               {:subscription-topics? (ven-route-enabled? :subscriptions)})))))
 
 (deftest test-mqtt-topics-ven2
   (testing "VEN 2 topics tests"
@@ -98,7 +106,8 @@
           prog-id (-> (client/find-program-by-name ven2 "Program1") :id)]
       (is (some? ven-id) "ven2 must be registered by vens-test")
       (when ven-id
-        (run-topics-for-client ven2 ven-id prog-id)))))
+        (run-topics-for-client ven2 ven-id prog-id
+                               {:subscription-topics? (ven-route-enabled? :subscriptions)})))))
 
 (deftest test-mqtt-topics-bl
   (testing "BL topics tests"

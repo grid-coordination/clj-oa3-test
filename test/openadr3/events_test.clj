@@ -18,9 +18,12 @@
   (:id (client/find-program-by-name bl "PriceProgram")))
 
 (defn- event-body
-  "Create a basic event request body for a program."
+  "Create a basic event request body for a program.
+  Sets intervalPeriod.start to now so the event falls within the VTN's
+  default date window (today + tomorrow)."
   [program-id]
   {:programID program-id
+   :intervalPeriod {:start (str (java.time.Instant/now))}
    :intervals [{:id 0
                 :payloads [{:type "PRICE" :values [1.5]}]}]})
 
@@ -132,6 +135,7 @@
         (let [resp (client/update-event bl event-id
                                         {:programID pid
                                          :eventName "updated-event"
+                                         :intervalPeriod {:start (str (java.time.Instant/now))}
                                          :intervals [{:id 0
                                                       :payloads [{:type "PRICE"
                                                                   :values [2.0]}]}]})]
@@ -260,6 +264,7 @@
     (let [pid  (find-price-program-id)
           resp (client/create-event bl
                                     {:programID pid
+                                     :intervalPeriod {:start (str (java.time.Instant/now))}
                                      :intervals [{:id 0
                                                   :payloads [{:type "PRICE" :values [0.15]}]}
                                                  {:id 1
@@ -275,6 +280,7 @@
     (let [pid     (find-price-program-id)
           created (client/create-event bl
                                        {:programID pid
+                                        :intervalPeriod {:start (str (java.time.Instant/now))}
                                         :intervals [{:id 0
                                                      :payloads [{:type "PRICE" :values [0.15]}]}
                                                     {:id 1

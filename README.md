@@ -93,6 +93,25 @@ By default the test suite expects the VTN to advertise both `:WEBHOOK` and `:MQT
 {:expected-notifiers #{:MQTT}}   ;; only MQTT, no WEBHOOK
 ```
 
+#### VEN Route Enablement
+
+VTNs may disable certain routes on the VEN port (e.g., subscriptions, vens, resources, reports). The test suite adapts its assertions based on the `:ven-routes` config — testing that disabled routes return 404 and enabled routes work normally.
+
+Defaults match clj-oa3-vtn 0.4.0 (programs and events `:read-only`, everything else `false`):
+
+```edn
+{:ven-routes {:subscriptions false   ;; VEN subscription CRUD disabled
+              :vens          false
+              :resources     false
+              :reports       false}}
+```
+
+To test a VTN with VEN subscription routes enabled:
+
+```edn
+{:ven-routes {:subscriptions :full}}
+```
+
 #### MQTT Broker Discovery
 
 MQTT broker URLs are discovered automatically from the VTN's `GET /notifiers` endpoint, which returns the `MQTT.URIS` array per the OpenADR 3 spec. If the VTN doesn't advertise MQTT, you can set a `:mqtt-brokers` fallback in the config.
@@ -162,7 +181,7 @@ The suite runs **192 tests** across 13 suites:
 
 ### What Each CRUD Suite Covers
 
-Every entity suite (programs, VENs, events, resources, reports, subscriptions) follows a consistent pattern:
+Every entity suite (programs, vens, events, resources, reports, subscriptions) follows a consistent pattern:
 
 - **Create** — happy path for authorized roles, 403 for unauthorized roles, conflict detection (409)
 - **Search** — list all, get by ID, for both BL and VEN clients
@@ -183,7 +202,7 @@ OpenADR 3 has role-based access:
 | VENs | BL + VEN | BL + VEN | BL only | BL + VEN |
 | Resources | BL + VEN | BL + VEN | BL + VEN | BL + VEN |
 | Reports | VEN only | VEN only | VEN only | BL + VEN |
-| Subscriptions | BL + VEN | BL + VEN | BL + VEN | BL + VEN |
+| Subscriptions | BL (+ VEN if enabled) | BL (+ VEN if enabled) | BL (+ VEN if enabled) | BL (+ VEN if enabled) |
 
 ### Auth Metadata
 
@@ -243,6 +262,17 @@ Tests accommodate VTN-specific behavior:
 - Update with a nonexistent ID may return 400 or 404 (tests accept either)
 - VEN registration uses `clientID` for conflict detection, not `venName`
 - `inter-suite-delay-ms` in `test-config.edn` adds a configurable pause between suites (set to 0 for fast VTNs, 1000-5000 if you see connection errors)
+- VEN port route enablement is configurable via `:ven-routes` (see example configs)
+- Events include `intervalPeriod.start` to work with VTNs that apply default date window filtering
+
+Example configs for common VTN setups are in `test-config.*.edn`:
+
+| File | VTN | Description |
+|------|-----|-------------|
+| `test-config.example.edn` | Generic | Template with all options documented |
+| `test-config.vtn-ri.edn` | VTN-RI (Python) | Single-port, all VEN routes enabled |
+| `test-config.clj-oa3-vtn.edn` | clj-oa3-vtn 0.4.0 | Two-port, default VEN routes (subscriptions disabled) |
+| `test-config.clj-oa3-vtn-full.edn` | clj-oa3-vtn 0.4.0 | Two-port, all VEN routes enabled |
 
 ### Test Configuration
 

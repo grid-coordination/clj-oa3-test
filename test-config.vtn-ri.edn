@@ -1,0 +1,26 @@
+;; Test configuration — OpenADR 3 VTN Reference Implementation (Python)
+;; Single-port, all VEN routes enabled, BasicAuth tokens.
+;;
+;; Usage:
+;;   cp test-config.vtn-ri.edn test-config.edn
+;;   bin/test-stack-start-anon && clojure -M:test
+
+{:vtn-url "http://localhost:8080/openadr3/3.1.0"
+
+ ;; VTN-RI uses BasicAuthProvider: base64(client_id:secret)
+ :tokens {:ven1 "dmVuX2NsaWVudDo5OTk="       ;; ven_client:999
+          :ven2 "dmVuX2NsaWVudDI6OTk5OQ=="    ;; ven_client2:9999
+          :bl   "YmxfY2xpZW50OjEwMDE="        ;; bl_client:1001
+          :bad  "bad_token"}
+
+ ;; VTN-RI supports both notifier types
+ :expected-notifiers #{:WEBHOOK :MQTT}
+
+ ;; VTN-RI serves all routes on a single port — all VEN routes enabled
+ :ven-routes {:subscriptions :full
+              :vens          :full
+              :resources     :full
+              :reports       :full}
+
+ ;; Small delay for VTN-RI's async startup
+ :inter-suite-delay-ms 1000}

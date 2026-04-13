@@ -34,4 +34,13 @@
  ;; does not advertise MQTT broker URIs. Normally the broker URLs are
  ;; discovered automatically from the VTN.
  ;; :mqtt-brokers ["tcp://127.0.0.1:1883"]
+
+ ;; VEN port route enablement — override when VTN enables additional
+ ;; routes on the VEN port. Defaults match clj-oa3-vtn 0.4.0 defaults:
+ ;; programs and events are :read-only, everything else is disabled (false).
+ ;; Values: :full, :read-only, or false (disabled).
+ ;; :ven-routes {:subscriptions false   ;; VEN subscription CRUD
+ ;;              :vens          false
+ ;;              :resources     false
+ ;;              :reports       false}
  }
