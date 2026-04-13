@@ -9,6 +9,12 @@
 
 (def program1-request {:programName "Program1"})
 (def program2-request {:programName "Program2"})
+(def price-program-request
+  {:programName "PriceProgram"
+   :payloadDescriptors [{:objectType "EVENT_PAYLOAD_DESCRIPTOR"
+                         :payloadType "PRICE"
+                         :units "KWH"
+                         :currency "USD"}]})
 (def test-program-requests [program1-request program2-request])
 
 ;; ---------------------------------------------------------------------------
@@ -35,6 +41,7 @@
     (delete-program-by-name bl "UpdateTest")
     (delete-program-by-name bl "DeleteTest")
     (delete-program-by-name bl "BadTokenTest")
+    (delete-program-by-name bl "PriceProgram")
     (delete-program-by-name bl "PaginationA")
     (delete-program-by-name bl "PaginationB")
     (delete-program-by-name bl "PaginationC")
@@ -53,6 +60,35 @@
   (testing "Create Program2 with BL token"
     (let [resp (client/create-program bl program2-request)]
       (is (= 201 (:status resp)) "BL should create a program (201)"))))
+
+;; ---------------------------------------------------------------------------
+;; Program with payloadDescriptors (EVENT_PAYLOAD_DESCRIPTOR)
+;; ---------------------------------------------------------------------------
+
+(deftest test-create-program-with-payload-descriptors
+  (testing "Create program with EVENT_PAYLOAD_DESCRIPTOR payloadDescriptors"
+    (let [resp (client/create-program bl price-program-request)]
+      (is (= 201 (:status resp)) "BL should create a program with payloadDescriptors")
+      (is (some? (-> resp :body :id)) "Response should include program ID"))))
+
+(deftest test-payload-descriptors-round-trip
+  (testing "payloadDescriptors round-trip through GET"
+    (let [program (client/find-program-by-name bl "PriceProgram")]
+      (is (some? program) "PriceProgram should exist")
+      (when program
+        (let [resp (client/get-program-by-id bl (:id program))
+              pds  (-> resp :body :payloadDescriptors)]
+          (is (= 200 (:status resp)))
+          (is (= 1 (count pds)) "Should have one payloadDescriptor")
+          (let [pd (first pds)]
+            (is (= "EVENT_PAYLOAD_DESCRIPTOR" (:objectType pd))
+                "objectType discriminator should round-trip")
+            (is (= "PRICE" (:payloadType pd))
+                "payloadType should round-trip")
+            (is (= "KWH" (:units pd))
+                "units should round-trip")
+            (is (= "USD" (:currency pd))
+                "currency should round-trip")))))))
 
 ;; ---------------------------------------------------------------------------
 ;; Authorization: VEN cannot create programs

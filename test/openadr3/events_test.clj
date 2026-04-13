@@ -12,6 +12,11 @@
   []
   (:id (client/find-program-by-name bl "Program1")))
 
+(defn- find-price-program-id
+  "Get PriceProgram's ID (created by programs-test suite)."
+  []
+  (:id (client/find-program-by-name bl "PriceProgram")))
+
 (defn- event-body
   "Create a basic event request body for a program."
   [program-id]
@@ -245,6 +250,52 @@
       (let [resp (client/update-event bl "nonexistent-id-12345"
                                       {:programID pid :intervals []})]
         (is (= 404 (:status resp)) "Should return 404 NOT_FOUND")))))
+
+;; ---------------------------------------------------------------------------
+;; Event with PRICE payloads on PriceProgram (payloadDescriptor round-trip)
+;; ---------------------------------------------------------------------------
+
+(deftest test-create-event-with-price-payloads
+  (testing "Create event with PRICE interval payloads on PriceProgram"
+    (let [pid  (find-price-program-id)
+          resp (client/create-event bl
+                                    {:programID pid
+                                     :intervals [{:id 0
+                                                  :payloads [{:type "PRICE" :values [0.15]}]}
+                                                 {:id 1
+                                                  :payloads [{:type "PRICE" :values [0.25]}]}]})]
+      (is (some? pid) "PriceProgram should exist")
+      (when pid
+        (is (= 201 (:status resp)) "Should create event with PRICE payloads")
+        (when-let [event-id (-> resp :body :id)]
+          (client/delete-event bl event-id))))))
+
+(deftest test-event-price-intervals-round-trip
+  (testing "Event PRICE interval payloads round-trip through GET"
+    (let [pid     (find-price-program-id)
+          created (client/create-event bl
+                                       {:programID pid
+                                        :intervals [{:id 0
+                                                     :payloads [{:type "PRICE" :values [0.15]}]}
+                                                    {:id 1
+                                                     :payloads [{:type "PRICE" :values [0.25]}]}]})]
+      (is (some? pid) "PriceProgram should exist")
+      (when-let [event-id (-> created :body :id)]
+        (let [resp      (client/get-event-by-id bl event-id)
+              intervals (-> resp :body :intervals)]
+          (is (= 200 (:status resp)))
+          (is (= 2 (count intervals)) "Should have two intervals")
+          (let [i0 (first intervals)
+                i1 (second intervals)]
+            (is (= 0 (:id i0)))
+            (is (= "PRICE" (-> i0 :payloads first :type))
+                "Interval 0 payload type should round-trip")
+            (is (= [0.15] (-> i0 :payloads first :values))
+                "Interval 0 payload values should round-trip")
+            (is (= 1 (:id i1)))
+            (is (= [0.25] (-> i1 :payloads first :values))
+                "Interval 1 payload values should round-trip")))
+        (client/delete-event bl event-id)))))
 
 ;; ---------------------------------------------------------------------------
 ;; Pagination (skip / limit)
