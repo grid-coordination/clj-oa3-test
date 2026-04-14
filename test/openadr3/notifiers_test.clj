@@ -1,7 +1,7 @@
 (ns openadr3.notifiers-test
   (:require [openadr3.client.base :as client]
             [openadr3.common-test :refer [ven1 expected-notifiers]]
-            [clojure.test :refer :all]))
+            [clojure.test :refer [deftest is testing]]))
 
 (deftest test-notifiers
   (testing "GET /notifiers"

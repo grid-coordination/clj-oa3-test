@@ -2,7 +2,7 @@
   (:require [openadr3.client.base :as client]
             [openadr3.client.ven :as ven]
             [openadr3.common-test :refer [ven1 ven2 bl bad-token]]
-            [clojure.test :refer :all]))
+            [clojure.test :refer [deftest is testing use-fixtures]]))
 
 ;; ---------------------------------------------------------------------------
 ;; Test data

@@ -1,7 +1,7 @@
 (ns openadr3.events-test
   (:require [openadr3.client.base :as client]
             [openadr3.common-test :refer [ven1 bl bad-token inter-suite-delay-ms]]
-            [clojure.test :refer :all]))
+            [clojure.test :refer [deftest is testing use-fixtures]]))
 
 ;; ---------------------------------------------------------------------------
 ;; Helpers
@@ -250,10 +250,10 @@
 
 (deftest test-update-event-bad-id
   (testing "Update non-existent event returns 404"
-    (let [pid (find-program-id)]
-      (let [resp (client/update-event bl "nonexistent-id-12345"
-                                      {:programID pid :intervals []})]
-        (is (= 404 (:status resp)) "Should return 404 NOT_FOUND")))))
+    (let [pid  (find-program-id)
+          resp (client/update-event bl "nonexistent-id-12345"
+                                    {:programID pid :intervals []})]
+      (is (= 404 (:status resp)) "Should return 404 NOT_FOUND"))))
 
 ;; ---------------------------------------------------------------------------
 ;; Event with PRICE payloads on PriceProgram (payloadDescriptor round-trip)

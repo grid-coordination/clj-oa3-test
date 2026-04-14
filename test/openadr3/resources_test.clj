@@ -1,8 +1,8 @@
 (ns openadr3.resources-test
   (:require [openadr3.client.base :as client]
             [openadr3.client.ven :as ven]
-            [openadr3.common-test :refer [ven1 ven2 bl bad-token inter-suite-delay-ms]]
-            [clojure.test :refer :all]))
+            [openadr3.common-test :refer [ven1 bl bad-token inter-suite-delay-ms]]
+            [clojure.test :refer [deftest is testing use-fixtures]]))
 
 ;; ---------------------------------------------------------------------------
 ;; Helpers

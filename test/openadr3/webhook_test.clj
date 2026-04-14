@@ -2,7 +2,7 @@
   (:require [openadr3.client.base :as client]
             [openadr3.channel :as ch]
             [openadr3.common-test :refer [ven1 bl inter-suite-delay-ms]]
-            [clojure.test :refer :all]))
+            [clojure.test :refer [deftest is testing use-fixtures]]))
 
 ;; ---------------------------------------------------------------------------
 ;; Webhook channel — created/destroyed per test run

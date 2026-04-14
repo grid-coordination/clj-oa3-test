@@ -10,7 +10,7 @@
             [openadr3.common-test :refer [ven1 ven2 bl MQTT-broker-url mqtt-available?
                                           inter-suite-delay-ms
                                           mqtt-settle-ms mqtt-await-ms]]
-            [clojure.test :refer :all])
+            [clojure.test :refer [deftest is testing use-fixtures]])
   (:import [org.eclipse.paho.client.mqttv3 MqttSecurityException MqttException]))
 
 ;; ---------------------------------------------------------------------------
@@ -67,11 +67,6 @@
   "Try to connect to the MQTT broker with no credentials."
   [broker-url]
   (-> (ch/mqtt-channel broker-url) ch/channel-start))
-
-(defn- delete-ven-by-name [c ven-name]
-  (let [{ven-id :id} (client/find-ven-by-name c ven-name)]
-    (when ven-id
-      (client/delete-ven c ven-id))))
 
 (defn- subscribe-clear-wait!
   "Subscribe mqtt-ch to topics from topic-fn, clear messages, and wait to settle."

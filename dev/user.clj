@@ -85,8 +85,8 @@
 (defn restart-mqtt
   "Restart the Mosquitto MQTT broker via Homebrew services."
   []
-  (let [{:keys [exit out err]} (shell {:out :string :err :string}
-                                      "brew" "services" "restart" "mosquitto")]
+  (let [{:keys [exit out _err]} (shell {:out :string :err :string}
+                                       "brew" "services" "restart" "mosquitto")]
     (println (str "Mosquitto restart — exit: " exit "\n" out))))
 
 ;; ---------------------------------------------------------------------------

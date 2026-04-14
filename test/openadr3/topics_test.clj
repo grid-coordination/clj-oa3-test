@@ -3,7 +3,7 @@
             [openadr3.client.ven :as ven]
             [openadr3.common-test :refer [ven1 ven2 bl bad-token inter-suite-delay-ms
                                           ven-route-enabled?]]
-            [clojure.test :refer :all]))
+            [clojure.test :refer [deftest is testing use-fixtures]]))
 
 (use-fixtures :once
   (fn [f]

@@ -1,0 +1,8 @@
+{:config-paths ["imports/metosin/malli" "imports/prismatic/schema"]
+
+ ;; kaocha's defplugin macro generates defmethod forms with a qualified
+ ;; multimethod name (e.g. kaocha.plugin/suite-deps) and implicit bindings.
+ ;; clj-kondo cannot analyze this without a custom hook, so we exclude
+ ;; the plugin files from linting.
+ :output {:exclude-files ["test/kaocha/plugin/suite_deps.clj"
+                          "test/kaocha/plugin/test_report.clj"]}}

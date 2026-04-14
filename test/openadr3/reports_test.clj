@@ -1,7 +1,7 @@
 (ns openadr3.reports-test
   (:require [openadr3.client.base :as client]
             [openadr3.common-test :refer [ven1 ven2 bl bad-token inter-suite-delay-ms]]
-            [clojure.test :refer :all]))
+            [clojure.test :refer [deftest is testing use-fixtures]]))
 
 ;; ---------------------------------------------------------------------------
 ;; Shared state — event created once in fixture, reused by all tests

@@ -1,7 +1,7 @@
 (ns openadr3.programs-test
   (:require [openadr3.client.base :as client]
             [openadr3.common-test :refer [ven1 bl bad-token]]
-            [clojure.test :refer :all]))
+            [clojure.test :refer [deftest is testing use-fixtures]]))
 
 ;; ---------------------------------------------------------------------------
 ;; Test data

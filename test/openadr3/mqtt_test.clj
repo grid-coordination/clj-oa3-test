@@ -5,7 +5,7 @@
             [openadr3.common-test :refer [ven1 bl MQTT-broker-url mqtt-available?
                                           inter-suite-delay-ms
                                           mqtt-settle-ms mqtt-await-ms mqtt-credentials]]
-            [clojure.test :refer :all]))
+            [clojure.test :refer [deftest is testing use-fixtures]]))
 
 ;; ---------------------------------------------------------------------------
 ;; MQTT channels — created/destroyed per test run
@@ -37,11 +37,6 @@
 (defn- delete-program-by-name [c name]
   (let [{id :id} (client/find-program-by-name c name)]
     (when id (client/delete-program c id))))
-
-(defn- delete-event-by-program [c program-id]
-  (let [events (-> (client/search-events c {:programID program-id}) :body)]
-    (doseq [{id :id} events]
-      (client/delete-event c id))))
 
 (defn- find-notification
   "Find a notification in the messages matching a predicate on the payload.

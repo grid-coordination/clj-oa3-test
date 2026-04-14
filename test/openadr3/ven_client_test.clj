@@ -6,7 +6,7 @@
             [openadr3.channel :as ch]
             [openadr3.common-test :refer [ven1 bl MQTT-broker-url inter-suite-delay-ms
                                           mqtt-credentials expected-notifiers]]
-            [clojure.test :refer :all]))
+            [clojure.test :refer [deftest is testing use-fixtures]]))
 
 (use-fixtures :once
   (fn [f]

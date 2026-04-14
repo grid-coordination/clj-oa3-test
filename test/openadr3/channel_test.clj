@@ -6,7 +6,7 @@
             [openadr3.channel :as ch]
             [openadr3.common-test :refer [ven1 bl MQTT-broker-url mqtt-available?
                                           inter-suite-delay-ms mqtt-credentials]]
-            [clojure.test :refer :all]
+            [clojure.test :refer [deftest is testing use-fixtures]]
             [com.stuartsierra.component :as component]))
 
 (use-fixtures :once
