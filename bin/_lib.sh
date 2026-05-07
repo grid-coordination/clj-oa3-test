@@ -118,6 +118,13 @@ cfg['mqtt']['broker']['auth'] = auth
 cfg['mqtt']['broker']['username'] = None if username == 'null' else username
 cfg['mqtt']['broker']['password'] = None if password == 'null' else password
 
+# Ensure MQTT binding is advertised in /notifiers (VTN-RI requires this
+# explicitly in addition to the mqtt.broker config).
+bindings = cfg.setdefault('notifications', {}).setdefault('bindings', [])
+for b in ('WEBHOOK', 'MQTT'):
+    if b not in bindings:
+        bindings.append(b)
+
 with open(config_path, 'w') as f:
     yaml.dump(cfg, f, default_flow_style=False, sort_keys=False)
 PYEOF
