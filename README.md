@@ -2,6 +2,8 @@
 
 Integration test suite for OpenADR 3 VTN implementations, using the [clj-oa3-client](https://github.com/grid-coordination/clj-oa3-client) and [clj-oa3](https://github.com/grid-coordination/clj-oa3) Clojure libraries as the test harness.
 
+> **Disclaimer.** This project is independently developed and is **not affiliated with, endorsed by, or reviewed by the [OpenADR Alliance](https://www.openadr.org/)**. The tests here do not constitute, and are not a substitute for, official OpenADR Alliance certification or conformance testing. Passing this suite is not a claim of compliance with OpenADR 3. See [CONTRIBUTING.md](CONTRIBUTING.md#important-notice) for the full notice.
+
 ## Architecture
 
 ```
@@ -392,6 +394,13 @@ Dependencies are available from [Clojars](https://clojars.org/energy.grid-coordi
 | [clj-oa3](https://github.com/grid-coordination/clj-oa3) | Pure client library |
 | [clj-oa3-client](https://github.com/grid-coordination/clj-oa3-client) | Component lifecycle wrapper |
 | [clj-oa3-vtn](https://github.com/grid-coordination/clj-oa3-vtn) | Clojure VTN implementation |
+
+## Contributing
+
+Issues, Discussions, and pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow (and the dev commands: tests, lint, nREPL). In short:
+
+- **Questions, design discussion, spec-interpretation gaps** → [Discussions](https://github.com/grid-coordination/clj-oa3-test/discussions)
+- **Confirmed bugs, missing coverage, doc errors, bin-script issues** → [Issues](https://github.com/grid-coordination/clj-oa3-test/issues)
 
 ## License
 
