@@ -40,17 +40,23 @@
           :bl   "YmxfY2xpZW50OjEwMDE="        ;; bl_client:1001
           :bad  "bad_token"}
 
- ;; clj-oa3-vtn supports MQTT only (no WEBHOOK yet)
- :expected-notifiers #{:MQTT}
+ ;; VTN capability profile. :handlers and per-port reachability are
+ ;; auto-detected at startup; declare here only what auto-detection can't
+ ;; know (or what we want to assert in the report regardless).
+ :capabilities
+ {:notifiers   #{:MQTT}                       ;; clj-oa3-vtn supports MQTT only (no WEBHOOK yet)
+  :http-auth   {:enforced? false}             ;; doesn't currently support auth — skips ^:auth tests
+  :ven-routes  {:subscriptions false}}        ;; subscriptions disabled on VEN port by default
 
- ;; clj-oa3-vtn doesn't currently support auth — skip ^:auth-tagged tests
- :auth-enforced? false
+ ;; Defaults (not overridden here): programs and events default to
+ ;; :read-only on the VEN port. vens/resources/reports handlers aren't
+ ;; implemented yet, so their absence is auto-detected and the
+ ;; corresponding suites get gated to N/A by the capability-gate plugin.
 
- ;; Default VEN routes: subscriptions disabled on VEN port.
- ;; Programs and events default to :read-only (not configurable here).
- ;; vens/resources/reports handlers are not yet implemented in the VTN,
- ;; so their ven-routes values have no effect until those handlers exist.
- :ven-routes {:subscriptions false}
+ ;; --- Legacy keys (kept commented for one deprecation cycle) ---
+ ;; :expected-notifiers #{:MQTT}
+ ;; :auth-enforced? false
+ ;; :ven-routes {:subscriptions false}
 
  ;; No delay needed — Clojure VTN handles connections properly
  :inter-suite-delay-ms 0}

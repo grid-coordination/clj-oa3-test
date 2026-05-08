@@ -87,32 +87,35 @@ VTNs that serve BL (write) and VEN (read) clients on separate ports can use `:bl
 
 If omitted, both fall back to `:vtn-url`. Single-port VTNs (like the Python RI) need only `:vtn-url`.
 
-#### Expected Notifiers
+#### Capability Profile
 
-By default the test suite expects the VTN to advertise both `:WEBHOOK` and `:MQTT` notifier types. For VTNs that only support a subset:
+Per-VTN configuration lives under a `:capabilities` map that the harness merges with auto-detected facts (HTTP probes + `GET /notifiers`) at startup. Each fact in the merged profile carries its source (`:declared` / `:advertised` / `:auto-detected` / `:defaulted`) for the report.
 
-```edn
-{:expected-notifiers #{:MQTT}}   ;; only MQTT, no WEBHOOK
-```
-
-#### VEN Route Enablement
-
-VTNs may disable certain routes on the VEN port (e.g., subscriptions, vens, resources, reports). The test suite adapts its assertions based on the `:ven-routes` config — testing that disabled routes return 404 and enabled routes work normally.
-
-Defaults match clj-oa3-vtn 0.12.1 (programs and events `:read-only`, everything else `false`):
+Typical declarations:
 
 ```edn
-{:ven-routes {:subscriptions false   ;; VEN subscription CRUD disabled
-              :vens          false
-              :resources     false
-              :reports       false}}
+{:capabilities
+ {:notifiers   #{:MQTT}                  ;; only MQTT, no WEBHOOK
+  :http-auth   {:enforced? false}        ;; VTN doesn't enforce auth
+  :ven-routes  {:subscriptions :full     ;; per-resource VEN port enablement
+                :vens          :full
+                :resources     :full
+                :reports       :full}}}
 ```
 
-To test a VTN with VEN subscription routes enabled:
+`:handlers`, `:transport`, and `:notifiers` are auto-detected, so you typically don't need to declare them. `:ven-routes` granularity (`:full` vs `:read-only`) and `:http-auth :enforced?` cannot be reliably probed and are best declared.
 
-```edn
-{:ven-routes {:subscriptions :full}}
-```
+The `kaocha.plugin/capability-gate` plugin uses the merged profile to elide tests whose `:requires` aren't met (e.g. `^{:requires {:handlers #{:reports}}}`) — these show up in the report as **N/A** with a reason like *"VTN doesn't expose handler(s): reports"*, distinct from `FAIL` or `SKIP`.
+
+##### Legacy keys (deprecated)
+
+Three top-level keys are still accepted for one deprecation cycle and emit a one-time warning at startup:
+
+| Legacy key | Migrate to |
+|---|---|
+| `:auth-enforced? false` | `:capabilities {:http-auth {:enforced? false}}` |
+| `:expected-notifiers #{:MQTT}` | `:capabilities {:notifiers #{:MQTT}}` |
+| `:ven-routes {...}` | `:capabilities {:ven-routes {...}}` |
 
 #### MQTT Broker Discovery
 
@@ -133,8 +136,9 @@ clojure -M:test --focus :mqtt --focus :mqtt-auth
 # Skip auth enforcement tests (for VTNs without authentication)
 clojure -M:test --exclude-meta :auth
 
-# (preferred) Set :auth-enforced? false in test-config.edn to skip the
-# same tests across CLI and REPL workflows without a CLI flag.
+# (preferred) Set in test-config.edn to skip the same tests across CLI
+# and REPL workflows without a CLI flag:
+#   :capabilities {:http-auth {:enforced? false}}
 ```
 
 ### Via nREPL
@@ -217,12 +221,11 @@ All 51 tests that assert 403 (role enforcement and bad-token rejection) are tagg
 # CLI flag — one-off
 clojure -M:test --exclude-meta :auth
 
-# test-config.edn — sticky (preferred for VTNs known not to enforce auth)
-;; in test-config.edn:
-;;   :auth-enforced? false
+# test-config.edn — sticky (preferred for VTNs known not to enforce auth):
+;;   :capabilities {:http-auth {:enforced? false}}
 ```
 
-The `:auth-enforced?` flag is honored by the `kaocha.plugin/auth-gate` plugin (defaults to `true`). It survives `nREPL` / `(kaocha.repl/run-all)` workflows where the CLI flag would be lost.
+The `kaocha.plugin/auth-gate` plugin reads `[:capabilities :http-auth :enforced?]` (defaults to `true`) and skips `^:auth`-tagged tests when the VTN doesn't enforce auth. Survives `nREPL` / `(kaocha.repl/run-all)` workflows where the CLI flag would be lost.
 
 The tagged tests span 7 suites: programs (8), events (8), vens (5), resources (5), reports (8), subscriptions (5), topics (12).
 
@@ -274,7 +277,7 @@ Tests accommodate VTN-specific behavior:
 - Update with a nonexistent ID may return 400 or 404 (tests accept either)
 - VEN registration uses `clientID` for conflict detection, not `venName`
 - `inter-suite-delay-ms` in `test-config.edn` adds a configurable pause between suites (set to 0 for fast VTNs, 1000-5000 if you see connection errors)
-- VEN port route enablement is configurable via `:ven-routes` (see example configs)
+- VEN port route enablement is configurable via `:capabilities :ven-routes` (see example configs)
 - Events include `intervalPeriod.start` to work with VTNs that apply default date window filtering
 
 Example configs for common VTN setups are in `test-config.*.edn`:

@@ -70,6 +70,37 @@
   [config]
   (get config :capabilities {}))
 
+;; ---------------------------------------------------------------------------
+;; Legacy top-level keys (Phase 3 deprecation-and-coexist)
+;; ---------------------------------------------------------------------------
+
+(def ^:private warned-legacy (atom #{}))
+
+(defn- warn-deprecated-once! [old-key new-path]
+  (when-not (@warned-legacy old-key)
+    (swap! warned-legacy conj old-key)
+    (println (format "[capabilities] DEPRECATED: %s in test-config.edn — migrate to :capabilities %s"
+                     (pr-str old-key) (pr-str new-path)))))
+
+(defn from-legacy-keys
+  "Translate legacy top-level keys into the :capabilities shape, emitting a
+  one-time deprecation warning for each one encountered. Treated as a
+  declared source — but at lower priority than :capabilities, so a config
+  that has both ends up using the new shape (which is what we want)."
+  [config]
+  (cond-> {}
+    (contains? config :auth-enforced?)
+    (as-> m (do (warn-deprecated-once! :auth-enforced? [:http-auth :enforced?])
+                (assoc-in m [:http-auth :enforced?] (:auth-enforced? config))))
+
+    (contains? config :ven-routes)
+    (as-> m (do (warn-deprecated-once! :ven-routes [:ven-routes])
+                (assoc m :ven-routes (:ven-routes config))))
+
+    (contains? config :expected-notifiers)
+    (as-> m (do (warn-deprecated-once! :expected-notifiers [:notifiers])
+                (assoc m :notifiers (:expected-notifiers config))))))
+
 (defn from-config-shape
   "Derive a few transport-shape capabilities from non-:capabilities keys
   already in test-config.edn (:vtn-url / :bl-url / :ven-url). Treated as a
@@ -242,5 +273,6 @@
    [[:defaulted     defaults]
     [:auto-detected (from-probed clients)]
     [:advertised    (from-advertised (:bl-client clients))]
+    [:declared      (from-legacy-keys config)]    ; deprecated, lowest declared priority
     [:declared      (from-config-shape config)]
-    [:declared      (from-declared config)]]))
+    [:declared      (from-declared config)]]))    ; canonical :capabilities, wins

@@ -12,7 +12,7 @@ Use [Discussions](https://github.com/grid-coordination/clj-oa3-test/discussions)
 
 - Questions about running the suite — `bin/test-stack-*` scripts, mosquitto setup, dynsec vs anonymous MQTT, dual-port vs single-port VTN configs, `--focus` and `--exclude-meta` usage
 - Suite-design judgment calls — when a new test belongs in this integration suite vs a unit test in the underlying lib, how to scope shared state across suites, how to model VTN-specific quirks
-- Adding a new VTN target — `test-config.<vtn>.edn` for a different implementation, what `:expected-notifiers` / `:ven-routes` / `:auth-enforced?` shape the new target needs
+- Adding a new VTN target — `test-config.<vtn>.edn` for a different implementation, what `:capabilities` profile (notifiers, http-auth, ven-routes, handlers) the new target needs
 - Suite-dependency questions — when a new suite depends on data created by another, how to wire `:suite-deps/requires` correctly
 - Cross-implementation parity discoveries — "VTN A returns 200 here, VTN B returns 400, what does the spec say?"
 - Coordination with sibling repos: [clj-oa3](https://github.com/grid-coordination/clj-oa3) (client lib, shared schemas), [clj-oa3-client](https://github.com/grid-coordination/clj-oa3-client) (Component lifecycle), [clj-oa3-vtn](https://github.com/grid-coordination/clj-oa3-vtn) (Clojure VTN), [openadr3-specification](https://github.com/grid-coordination/openadr3-specification) (upstream OpenAPI specs), and the [OpenADR Alliance VTN-RI](https://github.com/oadr3-org/openadr3-vtn-reference-implementation)
@@ -49,7 +49,7 @@ Pull requests are welcome.
 clojure -M:test                                    # run the full Kaocha suite
 clojure -M:test --focus :programs                  # one suite + its prerequisites
 clojure -M:test --focus :mqtt --focus :webhook     # multiple suites
-clojure -M:test --exclude-meta :auth               # skip auth tests (no-auth VTNs; or set :auth-enforced? false in test-config.edn)
+clojure -M:test --exclude-meta :auth               # skip auth tests (no-auth VTNs; or set :capabilities {:http-auth {:enforced? false}} in test-config.edn)
 clojure -M:nrepl                                   # nREPL — port written to .nrepl-port
 clj-kondo --lint test                              # lint
 ```

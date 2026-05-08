@@ -82,8 +82,16 @@
 
 (def expected-notifiers
   "Set of notifier types the VTN is expected to advertise.
-  Defaults to #{:WEBHOOK :MQTT} per the OA3 spec."
-  (get config :expected-notifiers #{:WEBHOOK :MQTT}))
+  Defaults to #{:WEBHOOK :MQTT} per the OA3 spec.
+
+  Resolution order:
+    1. :capabilities :notifiers (canonical, Phase 3)
+    2. :expected-notifiers (legacy; deprecation warning emitted by the
+       capabilities namespace's from-legacy-keys translation)
+    3. default."
+  (or (get-in config [:capabilities :notifiers])
+      (get config :expected-notifiers)
+      #{:WEBHOOK :MQTT}))
 
 ;; ---------------------------------------------------------------------------
 ;; VEN port route enablement — configurable per VTN
@@ -93,14 +101,21 @@
   "VEN port route enablement map. Keys are resource types, values are
   :full, :read-only, or false (disabled). Programs and events default
   to :read-only; everything else defaults to false (disabled).
-  Configure in test-config.edn via :ven-routes."
+
+  Resolution order (Phase 3):
+    1. :capabilities :ven-routes (canonical)
+    2. :ven-routes (legacy; deprecation warning emitted by the capabilities
+       namespace's from-legacy-keys translation)
+    3. defaults."
   (merge {:programs      :read-only
           :events        :read-only
           :subscriptions false
           :vens          false
           :resources     false
           :reports       false}
-         (get config :ven-routes {})))
+         (or (get-in config [:capabilities :ven-routes])
+             (get config :ven-routes)
+             {})))
 
 (defn ven-route-enabled?
   "True if the given resource route is enabled on the VEN port.

@@ -13,14 +13,19 @@
           :bl   "YmxfY2xpZW50OjEwMDE="        ;; bl_client:1001
           :bad  "bad_token"}
 
- ;; VTN-RI supports both notifier types
- :expected-notifiers #{:WEBHOOK :MQTT}
+ ;; VTN capability profile — see openadr3.capabilities for schema.
+ ;; :handlers, :transport, etc. are auto-detected at startup; declare here
+ ;; only what auto-detection can't know.
+ :capabilities
+ {:notifiers   #{:WEBHOOK :MQTT}                  ;; advertises both
+  :ven-routes  {:subscriptions :full              ;; single-port — all routes
+                :vens          :full
+                :resources     :full
+                :reports       :full}}
 
- ;; VTN-RI serves all routes on a single port — all VEN routes enabled
- :ven-routes {:subscriptions :full
-              :vens          :full
-              :resources     :full
-              :reports       :full}
+ ;; --- Legacy keys (kept commented for one deprecation cycle) ---
+ ;; :expected-notifiers #{:WEBHOOK :MQTT}
+ ;; :ven-routes {:subscriptions :full :vens :full :resources :full :reports :full}
 
  ;; Small delay for VTN-RI's async startup
  :inter-suite-delay-ms 1000}

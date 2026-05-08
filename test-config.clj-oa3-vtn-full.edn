@@ -35,15 +35,18 @@
           :bl   "YmxfY2xpZW50OjEwMDE="        ;; bl_client:1001
           :bad  "bad_token"}
 
- ;; clj-oa3-vtn supports MQTT only (no WEBHOOK yet)
- :expected-notifiers #{:MQTT}
+ ;; VTN capability profile. :handlers and per-port reachability are
+ ;; auto-detected at startup. Requires VTN started with VEN subscription
+ ;; routes enabled (CLJ_OA3_VTN_CONFIG with {:ven-routes {:subscriptions :full}}).
+ :capabilities
+ {:notifiers   #{:MQTT}                       ;; clj-oa3-vtn supports MQTT only (no WEBHOOK yet)
+  :http-auth   {:enforced? false}             ;; doesn't currently support auth — skips ^:auth tests
+  :ven-routes  {:subscriptions :full}}        ;; VEN subscription CRUD on VEN port
 
- ;; clj-oa3-vtn doesn't currently support auth — skip ^:auth-tagged tests
- :auth-enforced? false
-
- ;; All implemented VEN routes enabled — VEN subscription CRUD on VEN port.
- ;; Requires VTN config: {:ven-routes {:subscriptions :full}}
- :ven-routes {:subscriptions :full}
+ ;; --- Legacy keys (kept commented for one deprecation cycle) ---
+ ;; :expected-notifiers #{:MQTT}
+ ;; :auth-enforced? false
+ ;; :ven-routes {:subscriptions :full}
 
  ;; No delay needed — Clojure VTN handles connections properly
  :inter-suite-delay-ms 0}
