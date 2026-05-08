@@ -26,6 +26,28 @@
  ;; --exclude-meta :auth CLI flag.
  ;; :auth-enforced? false
 
+ ;; ---- Capabilities (OA3T-80j Phase 1; advisory in Phase 1) ----
+ ;; The harness builds a merged capability profile at load time from four
+ ;; sources, in priority order: declared (this map) → advertised (GET
+ ;; /notifiers) → auto-detected (HTTP probes) → defaulted. Each fact carries
+ ;; its source for the report. In Phase 1 the profile is exposed but no
+ ;; test consumes it; the existing :ven-routes / :auth-enforced? /
+ ;; :expected-notifiers keys above still drive behavior. Phase 3 will
+ ;; migrate them under :capabilities.
+ ;;
+ ;; :capabilities
+ ;; {:transport         {:single-port? false :bl-port 8081 :ven-port 8080}
+ ;;  :http-auth         {:method :bearer-jwt :enforced? true
+ ;;                      :on-bl? true :on-ven? true}
+ ;;  :handlers          #{:programs :events :subscriptions :vens :resources :reports}
+ ;;  :ven-routes        {:programs :read-only :events :read-only
+ ;;                      :subscriptions :full :vens :full
+ ;;                      :resources :full :reports :full}
+ ;;  :notifiers         #{:WEBHOOK :MQTT}
+ ;;  :mqtt-auth         {:method :anonymous}
+ ;;  :webhook-delivery? false
+ ;;  :discovery         #{:static-url}}
+
  ;; MQTT settle time in ms — how long to wait after clearing the message
  ;; buffer for retained messages to drain. Increase for slow brokers.
  ;; :mqtt-settle-ms 1000

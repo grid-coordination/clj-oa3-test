@@ -70,6 +70,18 @@
   [config]
   (get config :capabilities {}))
 
+(defn from-config-shape
+  "Derive a few transport-shape capabilities from non-:capabilities keys
+  already in test-config.edn (:vtn-url / :bl-url / :ven-url). Treated as a
+  declared source — if the user spelled out two different URLs they meant
+  dual-port."
+  [config]
+  (let [bl-url  (or (:bl-url config) (:vtn-url config))
+        ven-url (or (:ven-url config) (:vtn-url config))]
+    (cond-> {}
+      (and bl-url ven-url)
+      (assoc :transport {:single-port? (= bl-url ven-url)}))))
+
 ;; ---------------------------------------------------------------------------
 ;; Source 2: advertised (GET /notifiers)
 ;; ---------------------------------------------------------------------------
@@ -155,26 +167,39 @@
                     h)))
           (keys handler-probes))))
 
+(defn- probe-auth-enforcement
+  "Hit one endpoint with the bad-token client. Returns boolean (auth
+  enforced on this port) or nil if the probe couldn't determine."
+  [bad-token-client]
+  (when bad-token-client
+    (try
+      (let [status (-> (base/get-programs bad-token-client) :status)]
+        (when (number? status)
+          (boolean (#{401 403} status))))
+      (catch Exception _ nil))))
+
 (defn from-probed
   "Probe the running VTN via the BL and VEN clients. Returns a (partial)
   capability map populated from what we observe. Requires that the clients
   be authenticated (use the configured tokens) — auth-failure responses
   still count as 'route present'."
-  [{:keys [bl-client ven-client bad-token-client]}]
-  (let [bl-handlers  (probe-port bl-client)
-        ven-handlers (probe-port ven-client)
-        ;; auth enforcement: a request with the bad-token client should
-        ;; come back 401/403 if the VTN enforces auth on that port.
-        unauth-bl    (when bad-token-client
-                       (try (-> (base/get-programs bad-token-client) :status)
-                            (catch Exception _ nil)))
-        auth-enforced? (when (number? unauth-bl)
-                         (#{401 403} unauth-bl))]
+  [{:keys [bl-client ven-client bad-token-client bad-token-ven-client]}]
+  (let [bl-handlers   (probe-port bl-client)
+        ven-handlers  (probe-port ven-client)
+        on-bl?        (probe-auth-enforcement bad-token-client)
+        on-ven?       (probe-auth-enforcement bad-token-ven-client)
+        enforced?     (cond
+                        (and (some? on-bl?) (some? on-ven?))
+                        (or on-bl? on-ven?)
+
+                        (some? on-bl?)  on-bl?
+                        (some? on-ven?) on-ven?)]
     (cond-> {:handlers     (into bl-handlers ven-handlers)
              :handlers-bl  bl-handlers
              :handlers-ven ven-handlers}
-      (some? auth-enforced?)
-      (assoc-in [:http-auth :enforced?] auth-enforced?))))
+      (some? enforced?) (assoc-in [:http-auth :enforced?] enforced?)
+      (some? on-bl?)    (assoc-in [:http-auth :on-bl?] on-bl?)
+      (some? on-ven?)   (assoc-in [:http-auth :on-ven?] on-ven?))))
 
 ;; ---------------------------------------------------------------------------
 ;; Merge with source tracking
@@ -214,7 +239,8 @@
   :defaulted layers contribute."
   [config clients]
   (deep-merge-with-sources
-   [[:defaulted    defaults]
+   [[:defaulted     defaults]
     [:auto-detected (from-probed clients)]
-    [:advertised   (from-advertised (:bl-client clients))]
-    [:declared     (from-declared config)]]))
+    [:advertised    (from-advertised (:bl-client clients))]
+    [:declared      (from-config-shape config)]
+    [:declared      (from-declared config)]]))
