@@ -1,9 +1,28 @@
-;; Test configuration — clj-oa3-vtn 0.5.0 (default VEN routes)
-;; Two-port architecture, VEN subscriptions disabled by default.
+;; Test configuration — clj-oa3-vtn 0.12.1 (default VEN routes)
+;; Two-port architecture (BL on 8081, VEN on 8080), VEN subscriptions
+;; disabled by default.
 ;;
-;; clj-oa3-vtn 0.5.0 implements: programs, events, subscriptions, notifiers,
-;; and MQTT topic discovery. VEN/resource/report handlers are not yet
-;; implemented — skip those suites.
+;; clj-oa3-vtn 0.12.1 implements: programs, events, subscriptions, notifiers,
+;; MQTT publish, and the 12 MQTT topic discovery endpoints. VENs, resources,
+;; and reports handlers are not yet implemented — focus only the suites that
+;; the VTN supports.
+;;
+;; Auth: not enforced in 0.12.1 (Phase 1 — BL is trusted by topology, VEN is
+;; public-read). :auth-enforced? false below short-circuits the ^:auth tests.
+;; Notifiers: MQTT only — no WEBHOOK delivery yet.
+;;
+;; Known failures observed against 0.12.1 (2026-05-08, anonymous MQTT):
+;;   - programs / test-update-program-bl: PUT /programs returns 500 when
+;;     :targets is a vector of strings (e.g. ["group1"]). Update path
+;;     regression vs. 0.5.0.
+;;   - events / test-search-all-events-bl: GET /events returns an empty body
+;;     even when events exist.
+;;   - events / test-search-events-by-program-id: same — filter doesn't return
+;;     matches.
+;;   - events / test-search-events-pagination: skip/limit return 0 items when
+;;     1 is expected.
+;; All other tests in the focused suites pass (notifiers + subscriptions clean;
+;; programs 14/15 non-auth, events 12/15 non-auth).
 ;;
 ;; Usage:
 ;;   cp test-config.clj-oa3-vtn.edn test-config.edn
@@ -24,7 +43,7 @@
  ;; clj-oa3-vtn supports MQTT only (no WEBHOOK yet)
  :expected-notifiers #{:MQTT}
 
- ;; clj-oa3-vtn 0.5.0 does not enforce auth — skip ^:auth-tagged tests
+ ;; clj-oa3-vtn doesn't currently support auth — skip ^:auth-tagged tests
  :auth-enforced? false
 
  ;; Default VEN routes: subscriptions disabled on VEN port.

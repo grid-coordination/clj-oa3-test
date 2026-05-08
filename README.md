@@ -99,7 +99,7 @@ By default the test suite expects the VTN to advertise both `:WEBHOOK` and `:MQT
 
 VTNs may disable certain routes on the VEN port (e.g., subscriptions, vens, resources, reports). The test suite adapts its assertions based on the `:ven-routes` config — testing that disabled routes return 404 and enabled routes work normally.
 
-Defaults match clj-oa3-vtn 0.4.0 (programs and events `:read-only`, everything else `false`):
+Defaults match clj-oa3-vtn 0.12.1 (programs and events `:read-only`, everything else `false`):
 
 ```edn
 {:ven-routes {:subscriptions false   ;; VEN subscription CRUD disabled
@@ -283,8 +283,8 @@ Example configs for common VTN setups are in `test-config.*.edn`:
 |------|-----|-------------|
 | `test-config.example.edn` | Generic | Template with all options documented |
 | `test-config.vtn-ri.edn` | VTN-RI (Python) | Single-port, all VEN routes enabled |
-| `test-config.clj-oa3-vtn.edn` | clj-oa3-vtn 0.5.0 | Two-port, default VEN routes (subscriptions disabled) |
-| `test-config.clj-oa3-vtn-full.edn` | clj-oa3-vtn 0.5.0 | Two-port, VEN subscriptions enabled |
+| `test-config.clj-oa3-vtn.edn` | clj-oa3-vtn 0.12.1 | Two-port, default VEN routes (subscriptions disabled) |
+| `test-config.clj-oa3-vtn-full.edn` | clj-oa3-vtn 0.12.1 | Two-port, VEN subscriptions enabled |
 
 ### Test Configuration
 
