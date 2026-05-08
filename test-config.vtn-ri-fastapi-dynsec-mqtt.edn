@@ -1,0 +1,35 @@
+;; Test configuration — VTN-RI refactor/fastapi branch, dynsec MQTT mode.
+;;
+;; Currently blocked by a known dynsec gap on this branch (the VTN advertises
+;; an MQTT username that doesn't exist in the broker — see the 2026-05-07
+;; campaign report for finding #7). Profile is provided so the campaign can
+;; be re-run when the gap is resolved upstream.
+;;
+;; Usage:
+;;   cd <vtn-ri repo> && git checkout refactor/fastapi
+;;   # Configure compose for dynsec (see vtn-ri docs/mqtt-auth.md)
+;;   VTN_CONFIG=config-mqtt.yaml docker compose up -d --build
+;;   cp test-config.vtn-ri-fastapi-dynsec-mqtt.edn test-config.edn
+;;   clojure -M:test
+
+{:vtn-url "http://localhost:8080/openadr3/3.1.0"
+
+ :tokens {:ven1 "<paste fresh JWT for ven_client here>"
+          :ven2 "<paste fresh JWT for ven_client2 here>"
+          :bl   "<paste fresh JWT for bl_client here>"
+          :bad  "bad_token"}
+
+ :vtn {:implementation "openadr3-vtn-reference-implementation"
+       :version        "refactor/fastapi"
+       :deployment     "vtn-ri-fastapi-dynsec-mqtt"}
+
+ :capabilities
+ {:transport   {:single-port? true :ven-port 8080}
+  :http-auth   {:method :bearer-jwt :enforced? true :on-bl? true :on-ven? true}
+  :notifiers   #{:WEBHOOK :MQTT}
+  :mqtt-auth   {:method :dynsec}
+  :ven-routes  {:subscriptions :full :vens :full :resources :full :reports :full}}
+
+ :mqtt-brokers ["tcp://127.0.0.1:1883"]
+
+ :inter-suite-delay-ms 1000}

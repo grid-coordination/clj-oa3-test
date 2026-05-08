@@ -202,3 +202,8 @@
 (def capability-sources
   "Map of [path...] → source-keyword for each fact in the merged profile."
   (:sources capability-profile))
+
+(def vtn-identity
+  "Optional :vtn map from test-config.edn — implementation, version, commit,
+  deployment name, URL — surfaced in the report header. Purely informational."
+  (get config :vtn))

@@ -123,6 +123,8 @@ MQTT broker URLs are discovered automatically from the VTN's `GET /notifiers` en
 
 ## Running Tests
 
+For the campaign workflow (recommended for cross-VTN comparisons), see [WORKFLOW.md](WORKFLOW.md). The TL;DR:
+
 ```bash
 # Run all suites in order
 clojure -M:test
@@ -140,6 +142,8 @@ clojure -M:test --exclude-meta :auth
 # and REPL workflows without a CLI flag:
 #   :capabilities {:http-auth {:enforced? false}}
 ```
+
+After a run, `bin/format-report` produces a markdown campaign-report skeleton from `report/test-report.edn` — see [WORKFLOW.md](WORKFLOW.md) for the full filing convention.
 
 ### Via nREPL
 
@@ -282,12 +286,15 @@ Tests accommodate VTN-specific behavior:
 
 Example configs for common VTN setups are in `test-config.*.edn`:
 
-| File | VTN | Description |
-|------|-----|-------------|
+| File | VTN deployment | Description |
+|------|----------------|-------------|
 | `test-config.example.edn` | Generic | Template with all options documented |
-| `test-config.vtn-ri.edn` | VTN-RI (Python) | Single-port, all VEN routes enabled |
+| `test-config.vtn-ri.edn` | VTN-RI `main` | Single-port, all VEN routes, BasicAuth, anonymous MQTT |
+| `test-config.vtn-ri-fastapi-anon-mqtt.edn` | VTN-RI `refactor/fastapi` | Docker-compose, JWT auth, anonymous MQTT |
+| `test-config.vtn-ri-fastapi-dynsec-mqtt.edn` | VTN-RI `refactor/fastapi` | Docker-compose, JWT auth, dynsec MQTT |
 | `test-config.clj-oa3-vtn.edn` | clj-oa3-vtn 0.12.1 | Two-port, default VEN routes (subscriptions disabled) |
 | `test-config.clj-oa3-vtn-full.edn` | clj-oa3-vtn 0.12.1 | Two-port, VEN subscriptions enabled |
+| `test-config.oa3-gateway.edn` | OA3-gateway (stub) | Forward-declared stub for future gateway implementations |
 
 ### Test Configuration
 

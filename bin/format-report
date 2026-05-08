@@ -1,0 +1,11 @@
+#!/bin/bash
+# format-report — generate a markdown campaign-report skeleton from an EDN
+# test-report. See dev/format_report.clj for the renderer.
+#
+# Usage:
+#   bin/format-report                          # reads ./report/test-report.edn
+#   bin/format-report path/to/report.edn       # explicit path
+#   bin/format-report > campaigns/foo.md       # redirect to a campaign report
+
+set -e
+exec clojure -M:format-report "$@"

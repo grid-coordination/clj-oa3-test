@@ -136,20 +136,44 @@
                      :skip             (count (filter #(= :skip (:test/result %)) tests))
                      :skip-capability  (count (filter #(= :skip-capability (:test/result %)) tests))}}))
 
+(defn- load-capability-profile
+  "Pull the merged capability profile + sources from openadr3.common-test
+  if it has been loaded (which it has been if any tests ran). Returns nil
+  if the namespace is unavailable."
+  []
+  (try
+    (require 'openadr3.common-test)
+    {:capabilities @(resolve 'openadr3.common-test/capabilities)
+     :sources      @(resolve 'openadr3.common-test/capability-sources)}
+    (catch Exception _ nil)))
+
+(defn- load-vtn-identity
+  "Pull :vtn identity from test-config.edn if set. Optional — purely
+  informational on the report header."
+  []
+  (try
+    @(resolve 'openadr3.common-test/vtn-identity)
+    (catch Exception _ nil)))
+
 (defn build-report
   "Build a complete EDN report from a Kaocha result tree.
   Filters out suites with no tests (not focused or not loaded)."
   [result descriptions failures]
-  (let [suites  (->> (:kaocha.result/tests result)
-                     (mapv #(extract-suite % descriptions failures))
-                     (filterv #(pos? (get-in % [:suite/summary :total]))))
-        summary (reduce (fn [acc s]
-                          (merge-with + acc (:suite/summary s)))
-                        {:total 0 :pass 0 :fail 0 :error 0 :pending 0 :skip 0 :skip-capability 0}
-                        suites)]
-    {:report/timestamp (str (Instant/now))
-     :report/summary   summary
-     :report/suites    suites}))
+  (let [suites    (->> (:kaocha.result/tests result)
+                       (mapv #(extract-suite % descriptions failures))
+                       (filterv #(pos? (get-in % [:suite/summary :total]))))
+        summary   (reduce (fn [acc s]
+                            (merge-with + acc (:suite/summary s)))
+                          {:total 0 :pass 0 :fail 0 :error 0 :pending 0 :skip 0 :skip-capability 0}
+                          suites)
+        profile   (load-capability-profile)
+        vtn       (load-vtn-identity)]
+    (cond-> {:report/timestamp (str (Instant/now))
+             :report/summary   summary
+             :report/suites    suites}
+      vtn     (assoc :report/vtn vtn)
+      profile (assoc :report/capabilities       (:capabilities profile)
+                     :report/capability-sources (:sources profile)))))
 
 ;; ---------------------------------------------------------------------------
 ;; EDN file output
