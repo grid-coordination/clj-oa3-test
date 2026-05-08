@@ -49,7 +49,7 @@ Pull requests are welcome.
 clojure -M:test                                    # run the full Kaocha suite
 clojure -M:test --focus :programs                  # one suite + its prerequisites
 clojure -M:test --focus :mqtt --focus :webhook     # multiple suites
-clojure -M:test --exclude-meta :auth               # skip auth tests (no-auth VTNs)
+clojure -M:test --exclude-meta :auth               # skip auth tests (no-auth VTNs; or set :auth-enforced? false in test-config.edn)
 clojure -M:nrepl                                   # nREPL — port written to .nrepl-port
 clj-kondo --lint test                              # lint
 ```

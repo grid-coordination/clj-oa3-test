@@ -12,7 +12,7 @@
 ;;   cp test-config.clj-oa3-vtn-full.edn test-config.edn
 ;;   # Start clj-oa3-vtn with subscription routes enabled, then:
 ;;   clojure -M:test --focus :notifiers --focus :programs --focus :events \
-;;                   --focus :subscriptions --skip-meta :auth
+;;                   --focus :subscriptions
 
 {;; Dual-URL config for two-port VTN
  :bl-url  "http://localhost:8081/openadr3/3.1.0"
@@ -26,6 +26,9 @@
 
  ;; clj-oa3-vtn supports MQTT only (no WEBHOOK yet)
  :expected-notifiers #{:MQTT}
+
+ ;; clj-oa3-vtn 0.5.0 does not enforce auth — skip ^:auth-tagged tests
+ :auth-enforced? false
 
  ;; All implemented VEN routes enabled — VEN subscription CRUD on VEN port.
  ;; Requires VTN config: {:ven-routes {:subscriptions :full}}

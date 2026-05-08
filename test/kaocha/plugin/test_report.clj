@@ -71,16 +71,17 @@
 ;; ---------------------------------------------------------------------------
 
 (defn- test-result-keyword
-  "Determine :pass, :fail, :error, or :pending for a leaf testable."
+  "Determine :pass, :fail, :error, :pending, or :skip for a leaf testable."
   [testable]
   (let [fail  (or (:kaocha.result/fail testable) 0)
         error (or (:kaocha.result/error testable) 0)
         pending (or (:kaocha.result/pending testable) 0)]
     (cond
-      (pos? error)   :error
-      (pos? fail)    :fail
-      (pos? pending) :pending
-      :else          :pass)))
+      (pos? error)                       :error
+      (pos? fail)                        :fail
+      (:kaocha.testable/skip testable)   :skip
+      (pos? pending)                     :pending
+      :else                              :pass)))
 
 (defn- extract-test
   "Convert a leaf testable into a test report map."
@@ -113,7 +114,8 @@
                      :pass    (count (filter #(= :pass (:test/result %)) tests))
                      :fail    (count (filter #(= :fail (:test/result %)) tests))
                      :error   (count (filter #(= :error (:test/result %)) tests))
-                     :pending (count (filter #(= :pending (:test/result %)) tests))}}))
+                     :pending (count (filter #(= :pending (:test/result %)) tests))
+                     :skip    (count (filter #(= :skip (:test/result %)) tests))}}))
 
 (defn build-report
   "Build a complete EDN report from a Kaocha result tree.
@@ -124,7 +126,7 @@
                      (filterv #(pos? (get-in % [:suite/summary :total]))))
         summary (reduce (fn [acc s]
                           (merge-with + acc (:suite/summary s)))
-                        {:total 0 :pass 0 :fail 0 :error 0 :pending 0}
+                        {:total 0 :pass 0 :fail 0 :error 0 :pending 0 :skip 0}
                         suites)]
     {:report/timestamp (str (Instant/now))
      :report/summary   summary
@@ -147,20 +149,22 @@
 
 (defn- result-label [r]
   (case r
-    :pass  "PASS"
-    :fail  "FAIL"
-    :error "ERROR"
-    :pending "SKIP"
+    :pass    "PASS"
+    :fail    "FAIL"
+    :error   "ERROR"
+    :pending "PEND"
+    :skip    "SKIP"
     (str r)))
 
 (defn- pad-right [s width]
   (format (str "%-" width "s") (or s "")))
 
-(defn- suite-header-line [{:keys [total pass fail error pending]}]
+(defn- suite-header-line [{:keys [total pass fail error pending skip]}]
   (let [parts (cond-> [(str pass "/" total " passed")]
                 (pos? fail)    (conj (str fail " failed"))
                 (pos? error)   (conj (str error " errors"))
-                (pos? pending) (conj (str pending " skipped")))]
+                (pos? pending) (conj (str pending " pending"))
+                (pos? skip)    (conj (str skip " skipped")))]
     (str/join ", " parts)))
 
 (defn- test-table
@@ -217,10 +221,11 @@
         title   (str "  OpenADR3 Test Report — " timestamp)
         tables  (str/join "\n\n" (map test-table suites))
         fails   (failure-section report)
-        {:keys [total pass fail error]} summary
+        {:keys [total pass fail error skip]} summary
         sum-line (str "  Summary: " total " tests, " pass " passed"
                       (when (pos? fail) (str ", " fail " failed"))
-                      (when (pos? error) (str ", " error " errors")))]
+                      (when (pos? error) (str ", " error " errors"))
+                      (when (pos? skip) (str ", " skip " skipped")))]
     (str/join "\n"
               (cond-> ["" border title border "" tables]
                 fails (conj (str "\n  " thin) fails (str "  " thin))

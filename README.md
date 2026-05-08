@@ -132,6 +132,9 @@ clojure -M:test --focus :mqtt --focus :mqtt-auth
 
 # Skip auth enforcement tests (for VTNs without authentication)
 clojure -M:test --exclude-meta :auth
+
+# (preferred) Set :auth-enforced? false in test-config.edn to skip the
+# same tests across CLI and REPL workflows without a CLI flag.
 ```
 
 ### Via nREPL
@@ -208,11 +211,18 @@ OpenADR 3 has role-based access:
 
 ### Auth Metadata
 
-All 51 tests that assert 403 (role enforcement and bad-token rejection) are tagged with `^:auth` metadata. This allows skipping them for VTNs that don't implement authentication:
+All 51 tests that assert 403 (role enforcement and bad-token rejection) are tagged with `^:auth` metadata. This allows skipping them for VTNs that don't implement authentication. Two equivalent ways:
 
 ```bash
+# CLI flag — one-off
 clojure -M:test --exclude-meta :auth
+
+# test-config.edn — sticky (preferred for VTNs known not to enforce auth)
+;; in test-config.edn:
+;;   :auth-enforced? false
 ```
+
+The `:auth-enforced?` flag is honored by the `kaocha.plugin/auth-gate` plugin (defaults to `true`). It survives `nREPL` / `(kaocha.repl/run-all)` workflows where the CLI flag would be lost.
 
 The tagged tests span 7 suites: programs (8), events (8), vens (5), resources (5), reports (8), subscriptions (5), topics (12).
 
