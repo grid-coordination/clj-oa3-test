@@ -1,8 +1,11 @@
 (ns openadr3.vens-test
   (:require [openadr3.client.base :as client]
             [openadr3.client.ven :as ven]
-            [openadr3.common-test :refer [ven1 ven2 bl bad-token]]
+            [openadr3.common-test :refer [ven1 ven2 bl bad-token
+                                          ven-route-enabled?]]
             [clojure.test :refer [deftest is testing use-fixtures]]))
+
+(def ^:private ven-vens? (ven-route-enabled? :vens))
 
 ;; ---------------------------------------------------------------------------
 ;; Test data
@@ -34,9 +37,12 @@
   (fn [f]
     (delete-test-vens bl)
     ;; Register ven1 and ven2 in the fixture so all tests can use ven-id
-    ;; regardless of kaocha test ordering.
-    (ven/register! ven1 "ven1")
-    (ven/register! ven2 "ven2")
+    ;; regardless of kaocha test ordering. Skip when the VEN port doesn't
+    ;; expose /vens — registration would 404 and the suite asserts that
+    ;; case below instead of registering.
+    (when ven-vens?
+      (ven/register! ven1 "ven1")
+      (ven/register! ven2 "ven2"))
     (f)))
 
 ;; ---------------------------------------------------------------------------
@@ -44,12 +50,18 @@
 ;; ---------------------------------------------------------------------------
 
 (deftest test-register-ven1
-  (testing "ven1 is registered (done in fixture)"
-    (is (some? (ven/ven-id ven1)) "ven1 should have a ven-id")))
+  (if ven-vens?
+    (testing "ven1 is registered (done in fixture)"
+      (is (some? (ven/ven-id ven1)) "ven1 should have a ven-id"))
+    (testing "ven1 registration skipped (VEN /vens route disabled)"
+      (is (nil? (ven/ven-id ven1)) "ven1 should not have a ven-id"))))
 
 (deftest test-register-ven2
-  (testing "ven2 is registered (done in fixture)"
-    (is (some? (ven/ven-id ven2)) "ven2 should have a ven-id")))
+  (if ven-vens?
+    (testing "ven2 is registered (done in fixture)"
+      (is (some? (ven/ven-id ven2)) "ven2 should have a ven-id"))
+    (testing "ven2 registration skipped (VEN /vens route disabled)"
+      (is (nil? (ven/ven-id ven2)) "ven2 should not have a ven-id"))))
 
 ;; ---------------------------------------------------------------------------
 ;; VEN creation: BL and VEN roles
@@ -64,15 +76,20 @@
       (is (some? (-> resp :body :id)) "Response should include VEN ID"))))
 
 (deftest test-create-ven-ven
-  (testing "VEN can create a VEN"
-    ;; Note: VEN token ties to a clientID. Since ven1 is already registered,
-    ;; creating another VEN with ven1's token conflicts (409). This is expected
-    ;; VTN behavior — each VEN token can only have one VEN registration.
-    ;; We verify the VTN correctly rejects with 409.
-    (let [resp (client/create-ven ven1 {:objectType "VEN_VEN_REQUEST"
-                                        :venName "VENCreatedVEN"})]
-      (is (= 409 (:status resp))
-          "VEN token already registered, should conflict on clientID"))))
+  (if ven-vens?
+    (testing "VEN can create a VEN"
+      ;; Note: VEN token ties to a clientID. Since ven1 is already registered,
+      ;; creating another VEN with ven1's token conflicts (409). This is expected
+      ;; VTN behavior — each VEN token can only have one VEN registration.
+      ;; We verify the VTN correctly rejects with 409.
+      (let [resp (client/create-ven ven1 {:objectType "VEN_VEN_REQUEST"
+                                          :venName "VENCreatedVEN"})]
+        (is (= 409 (:status resp))
+            "VEN token already registered, should conflict on clientID")))
+    (testing "VEN cannot create VENs (route disabled)"
+      (let [resp (client/create-ven ven1 {:objectType "VEN_VEN_REQUEST"
+                                          :venName "VENCreatedVEN"})]
+        (is (= 404 (:status resp)) "VEN /vens route should return 404")))))
 
 ;; ---------------------------------------------------------------------------
 ;; Conflict detection (clientID uniqueness — VTN-RI does not enforce venName)
@@ -100,10 +117,14 @@
       (is (>= (count (:body resp)) 2) "Should find at least ven1 and ven2"))))
 
 (deftest test-search-all-vens-ven
-  (testing "VEN can search VENs (sees own VENs)"
-    (let [resp (client/get-vens ven1)]
-      (is (= 200 (:status resp)) "VEN search should succeed")
-      (is (pos? (count (:body resp))) "VEN should see at least one VEN"))))
+  (if ven-vens?
+    (testing "VEN can search VENs (sees own VENs)"
+      (let [resp (client/get-vens ven1)]
+        (is (= 200 (:status resp)) "VEN search should succeed")
+        (is (pos? (count (:body resp))) "VEN should see at least one VEN")))
+    (testing "VEN cannot search VENs (route disabled)"
+      (let [resp (client/get-vens ven1)]
+        (is (= 404 (:status resp)) "VEN /vens route should return 404")))))
 
 (deftest test-search-ven-by-id-bl
   (testing "BL can get a VEN by ID"
@@ -115,12 +136,16 @@
           (is (= "ven1" (-> resp :body :venName)) "Should return correct VEN"))))))
 
 (deftest test-search-ven-by-id-ven
-  (testing "VEN can get own VEN by ID"
-    (let [ven-id (ven/ven-id ven1)]
-      (is (some? ven-id) "ven1 should be registered")
-      (when ven-id
-        (let [resp (client/get-ven-by-id ven1 ven-id)]
-          (is (= 200 (:status resp)) "VEN should get own VEN by ID"))))))
+  (if ven-vens?
+    (testing "VEN can get own VEN by ID"
+      (let [ven-id (ven/ven-id ven1)]
+        (is (some? ven-id) "ven1 should be registered")
+        (when ven-id
+          (let [resp (client/get-ven-by-id ven1 ven-id)]
+            (is (= 200 (:status resp)) "VEN should get own VEN by ID")))))
+    (testing "VEN cannot get VEN by ID (route disabled)"
+      (let [resp (client/get-ven-by-id ven1 "any-id")]
+        (is (= 404 (:status resp)) "VEN /vens route should return 404")))))
 
 ;; ---------------------------------------------------------------------------
 ;; Update VENs
@@ -144,13 +169,18 @@
               "Attribute should be set"))))))
 
 (deftest test-update-ven-ven
-  (testing "VEN can update own VEN"
-    (let [ven-id (ven/ven-id ven1)]
-      (is (some? ven-id) "ven1 should be registered")
-      (when ven-id
-        (let [resp (client/update-ven ven1 ven-id {:objectType "VEN_VEN_REQUEST"
-                                                   :venName "ven1"})]
-          (is (= 200 (:status resp)) "VEN should update own VEN"))))))
+  (if ven-vens?
+    (testing "VEN can update own VEN"
+      (let [ven-id (ven/ven-id ven1)]
+        (is (some? ven-id) "ven1 should be registered")
+        (when ven-id
+          (let [resp (client/update-ven ven1 ven-id {:objectType "VEN_VEN_REQUEST"
+                                                     :venName "ven1"})]
+            (is (= 200 (:status resp)) "VEN should update own VEN")))))
+    (testing "VEN cannot update VENs (route disabled)"
+      (let [resp (client/update-ven ven1 "any-id"
+                                    {:objectType "VEN_VEN_REQUEST" :venName "x"})]
+        (is (= 404 (:status resp)) "VEN /vens route should return 404")))))
 
 ;; ---------------------------------------------------------------------------
 ;; Delete VENs

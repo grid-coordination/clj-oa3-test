@@ -1,8 +1,11 @@
 (ns openadr3.resources-test
   (:require [openadr3.client.base :as client]
             [openadr3.client.ven :as ven]
-            [openadr3.common-test :refer [ven1 bl bad-token inter-suite-delay-ms]]
+            [openadr3.common-test :refer [ven1 bl bad-token inter-suite-delay-ms
+                                          ven-route-enabled?]]
             [clojure.test :refer [deftest is testing use-fixtures]]))
+
+(def ^:private ven-resources? (ven-route-enabled? :resources))
 
 ;; ---------------------------------------------------------------------------
 ;; Helpers
@@ -28,9 +31,10 @@
 (defn- delete-all-resources-for-ven
   "Delete all resources for a VEN."
   [ven-id]
-  (let [resources (-> (client/search-ven-resources bl {:venID ven-id}) :body)]
-    (doseq [{id :id} resources]
-      (client/delete-resource bl id))))
+  (let [resp (client/search-ven-resources bl {:venID ven-id})]
+    (when (= 200 (:status resp))
+      (doseq [{id :id} (:body resp)]
+        (client/delete-resource bl id)))))
 
 ;; ---------------------------------------------------------------------------
 ;; Fixture
@@ -48,11 +52,19 @@
 ;; ---------------------------------------------------------------------------
 
 (deftest test-create-resource-ven
-  (testing "VEN can create a resource"
-    (let [vid  (ven1-id)
-          resp (client/create-resource ven1 (resource-body vid "Resource1"))]
-      (is (= 201 (:status resp)) "VEN should create a resource (201)")
-      (is (some? (-> resp :body :id)) "Response should include resource ID"))))
+  (if ven-resources?
+    (testing "VEN can create a resource"
+      (let [vid  (ven1-id)
+            resp (client/create-resource ven1 (resource-body vid "Resource1"))]
+        (is (= 201 (:status resp)) "VEN should create a resource (201)")
+        (is (some? (-> resp :body :id)) "Response should include resource ID")))
+    (testing "VEN cannot create resources (route disabled)"
+      ;; Use a stub venID so the client-side schema check doesn't throw when
+      ;; ven1 isn't registered (e.g. when :vens is also disabled).
+      (let [resp (client/create-resource ven1 {:venID "stub-ven"
+                                               :objectType "VEN_RESOURCE_REQUEST"
+                                               :resourceName "stub"})]
+        (is (= 404 (:status resp)) "VEN resource route should return 404")))))
 
 (deftest test-create-resource-bl
   (testing "BL can create a resource for a VEN"
@@ -80,11 +92,15 @@
       (is (>= (count (:body resp)) 1) "Should find at least one resource"))))
 
 (deftest test-search-all-resources-ven
-  (testing "VEN can search own resources"
-    (let [vid  (ven1-id)
-          resp (client/search-ven-resources ven1 {:venID vid})]
-      (is (= 200 (:status resp)) "VEN search should succeed")
-      (is (>= (count (:body resp)) 1) "Should find at least one resource"))))
+  (if ven-resources?
+    (testing "VEN can search own resources"
+      (let [vid  (ven1-id)
+            resp (client/search-ven-resources ven1 {:venID vid})]
+        (is (= 200 (:status resp)) "VEN search should succeed")
+        (is (>= (count (:body resp)) 1) "Should find at least one resource")))
+    (testing "VEN cannot search resources (route disabled)"
+      (let [resp (client/search-ven-resources ven1 {:venID "stub-ven"})]
+        (is (= 404 (:status resp)) "VEN resource route should return 404")))))
 
 (deftest test-search-resource-by-id-bl
   (testing "BL can get a resource by ID"
@@ -97,14 +113,18 @@
           (is (= 200 (:status resp)) "Get by ID should succeed"))))))
 
 (deftest test-search-resource-by-id-ven
-  (testing "VEN can get own resource by ID"
-    (let [vid       (ven1-id)
-          resources (-> (client/search-ven-resources ven1 {:venID vid}) :body)
-          res-id    (:id (first resources))]
-      (is (some? res-id) "Need a resource ID")
-      (when res-id
-        (let [resp (client/get-resource-by-id ven1 res-id)]
-          (is (= 200 (:status resp)) "VEN should get own resource"))))))
+  (if ven-resources?
+    (testing "VEN can get own resource by ID"
+      (let [vid       (ven1-id)
+            resources (-> (client/search-ven-resources ven1 {:venID vid}) :body)
+            res-id    (:id (first resources))]
+        (is (some? res-id) "Need a resource ID")
+        (when res-id
+          (let [resp (client/get-resource-by-id ven1 res-id)]
+            (is (= 200 (:status resp)) "VEN should get own resource")))))
+    (testing "VEN cannot get resource by ID (route disabled)"
+      (let [resp (client/get-resource-by-id ven1 "any-id")]
+        (is (= 404 (:status resp)) "VEN resource route should return 404")))))
 
 ;; ---------------------------------------------------------------------------
 ;; Update resources
@@ -128,17 +148,24 @@
               "Attribute should be set"))))))
 
 (deftest test-update-resource-ven
-  (testing "VEN can update own resource"
-    (let [vid     (ven1-id)
-          created (client/create-resource ven1 (resource-body vid "VENUpdateResource"))
-          res-id  (-> created :body :id)]
-      (is (some? res-id) "Need a resource ID")
-      (when res-id
-        (let [resp (client/update-resource ven1 res-id
-                                           {:objectType "VEN_RESOURCE_REQUEST"
-                                            :venID vid
-                                            :resourceName "VENUpdateResource"})]
-          (is (= 200 (:status resp)) "VEN should update own resource"))))))
+  (if ven-resources?
+    (testing "VEN can update own resource"
+      (let [vid     (ven1-id)
+            created (client/create-resource ven1 (resource-body vid "VENUpdateResource"))
+            res-id  (-> created :body :id)]
+        (is (some? res-id) "Need a resource ID")
+        (when res-id
+          (let [resp (client/update-resource ven1 res-id
+                                             {:objectType "VEN_RESOURCE_REQUEST"
+                                              :venID vid
+                                              :resourceName "VENUpdateResource"})]
+            (is (= 200 (:status resp)) "VEN should update own resource")))))
+    (testing "VEN cannot update resources (route disabled)"
+      (let [resp (client/update-resource ven1 "any-id"
+                                         {:objectType "VEN_RESOURCE_REQUEST"
+                                          :venID "stub-ven"
+                                          :resourceName "stub"})]
+        (is (= 404 (:status resp)) "VEN resource route should return 404")))))
 
 ;; ---------------------------------------------------------------------------
 ;; Delete resources
@@ -155,14 +182,18 @@
           (is (= 200 (:status resp)) "Delete should succeed"))))))
 
 (deftest test-delete-resource-ven
-  (testing "VEN can delete own resource"
-    (let [vid     (ven1-id)
-          created (client/create-resource ven1 (resource-body vid "VENDeleteResource"))
-          res-id  (-> created :body :id)]
-      (is (some? res-id) "Need a resource ID")
-      (when res-id
-        (let [resp (client/delete-resource ven1 res-id)]
-          (is (= 200 (:status resp)) "VEN should delete own resource"))))))
+  (if ven-resources?
+    (testing "VEN can delete own resource"
+      (let [vid     (ven1-id)
+            created (client/create-resource ven1 (resource-body vid "VENDeleteResource"))
+            res-id  (-> created :body :id)]
+        (is (some? res-id) "Need a resource ID")
+        (when res-id
+          (let [resp (client/delete-resource ven1 res-id)]
+            (is (= 200 (:status resp)) "VEN should delete own resource")))))
+    (testing "VEN cannot delete resources (route disabled)"
+      (let [resp (client/delete-resource ven1 "any-id")]
+        (is (= 404 (:status resp)) "VEN resource route should return 404")))))
 
 ;; ---------------------------------------------------------------------------
 ;; Bad token tests

@@ -1,7 +1,10 @@
 (ns openadr3.reports-test
   (:require [openadr3.client.base :as client]
-            [openadr3.common-test :refer [ven1 ven2 bl bad-token inter-suite-delay-ms]]
+            [openadr3.common-test :refer [ven1 ven2 bl bad-token inter-suite-delay-ms
+                                          ven-route-enabled?]]
             [clojure.test :refer [deftest is testing use-fixtures]]))
+
+(def ^:private ven-reports? (ven-route-enabled? :reports))
 
 ;; ---------------------------------------------------------------------------
 ;; Shared state — event created once in fixture, reused by all tests
@@ -25,10 +28,11 @@
                               :payloads [{:type "USAGE" :values [100]}]}]}]}))
 
 (defn- delete-all-reports []
-  (let [reports (-> (client/get-reports bl) :body)]
-    (doseq [{id :id} reports]
-      (client/delete-report ven1 id)
-      (client/delete-report ven2 id))))
+  (let [resp (client/get-reports bl)]
+    (when (= 200 (:status resp))
+      (doseq [{id :id} (:body resp)]
+        (client/delete-report ven1 id)
+        (client/delete-report ven2 id)))))
 
 ;; ---------------------------------------------------------------------------
 ;; Fixture: create shared event, clean up after
@@ -56,10 +60,21 @@
 ;; ---------------------------------------------------------------------------
 
 (deftest test-create-report-ven
-  (testing "VEN can create a report"
-    (let [resp (client/create-report ven1 (report-body))]
-      (is (= 201 (:status resp)) "VEN should create a report (201)")
-      (is (some? (-> resp :body :id)) "Response should include report ID"))))
+  (if ven-reports?
+    (testing "VEN can create a report"
+      (let [resp (client/create-report ven1 (report-body))]
+        (is (= 201 (:status resp)) "VEN should create a report (201)")
+        (is (some? (-> resp :body :id)) "Response should include report ID")))
+    (testing "VEN cannot create reports (route disabled)"
+      ;; Use stub body (not fixture-derived) so the client-side schema check
+      ;; doesn't throw before the request reaches the VTN. We only care that
+      ;; the server returns 404.
+      (let [resp (client/create-report ven1 {:programID "stub-program"
+                                             :eventID "stub-event"
+                                             :clientName "stub"
+                                             :reportName "stub"
+                                             :resources []})]
+        (is (= 404 (:status resp)) "VEN report route should return 404")))))
 
 (deftest ^:auth test-create-report-bl-forbidden
   (testing "BL cannot create a report"
@@ -78,9 +93,13 @@
       (is (>= (count (:body resp)) 1) "Should find at least one report"))))
 
 (deftest test-search-all-reports-ven
-  (testing "VEN can search reports (sees own)"
-    (let [resp (client/get-reports ven1)]
-      (is (= 200 (:status resp)) "VEN search should succeed"))))
+  (if ven-reports?
+    (testing "VEN can search reports (sees own)"
+      (let [resp (client/get-reports ven1)]
+        (is (= 200 (:status resp)) "VEN search should succeed")))
+    (testing "VEN cannot search reports (route disabled)"
+      (let [resp (client/get-reports ven1)]
+        (is (= 404 (:status resp)) "VEN report route should return 404")))))
 
 (deftest test-search-report-by-id-bl
   (testing "BL can get a report by ID"
@@ -92,36 +111,48 @@
           (is (= 200 (:status resp)) "Get by ID should succeed"))))))
 
 (deftest test-search-report-by-id-ven
-  (testing "VEN can get own report by ID"
-    (let [created   (client/create-report ven1 (report-body "ByIdVEN"))
-          report-id (-> created :body :id)]
-      (is (some? report-id) "Need a report ID")
-      (when report-id
-        (let [resp (client/get-report-by-id ven1 report-id)]
-          (is (= 200 (:status resp)) "VEN should get own report"))))))
+  (if ven-reports?
+    (testing "VEN can get own report by ID"
+      (let [created   (client/create-report ven1 (report-body "ByIdVEN"))
+            report-id (-> created :body :id)]
+        (is (some? report-id) "Need a report ID")
+        (when report-id
+          (let [resp (client/get-report-by-id ven1 report-id)]
+            (is (= 200 (:status resp)) "VEN should get own report")))))
+    (testing "VEN cannot get report by ID (route disabled)"
+      (let [resp (client/get-report-by-id ven1 "any-id")]
+        (is (= 404 (:status resp)) "VEN report route should return 404")))))
 
 ;; ---------------------------------------------------------------------------
 ;; Update reports — VEN only
 ;; ---------------------------------------------------------------------------
 
 (deftest test-update-report-ven
-  (testing "VEN can update own report"
-    (let [created   (client/create-report ven1 (report-body "UpdateMe"))
-          report-id (-> created :body :id)]
-      (is (some? report-id) "Need a report ID")
-      (when report-id
-        (let [resp (client/update-report ven1 report-id
-                                         {:programID (pid)
-                                          :eventID (eid)
-                                          :clientName "updated-client"
-                                          :reportName "UpdatedReport"
-                                          :resources [{:resourceName "resource-1"
-                                                       :intervals [{:id 0
-                                                                    :payloads [{:type "USAGE"
-                                                                                :values [200]}]}]}]})]
-          (is (= 200 (:status resp)) "Update should succeed")
-          (is (= "UpdatedReport" (-> resp :body :reportName))
-              "Report name should be updated"))))))
+  (if ven-reports?
+    (testing "VEN can update own report"
+      (let [created   (client/create-report ven1 (report-body "UpdateMe"))
+            report-id (-> created :body :id)]
+        (is (some? report-id) "Need a report ID")
+        (when report-id
+          (let [resp (client/update-report ven1 report-id
+                                           {:programID (pid)
+                                            :eventID (eid)
+                                            :clientName "updated-client"
+                                            :reportName "UpdatedReport"
+                                            :resources [{:resourceName "resource-1"
+                                                         :intervals [{:id 0
+                                                                      :payloads [{:type "USAGE"
+                                                                                  :values [200]}]}]}]})]
+            (is (= 200 (:status resp)) "Update should succeed")
+            (is (= "UpdatedReport" (-> resp :body :reportName))
+                "Report name should be updated")))))
+    (testing "VEN cannot update reports (route disabled)"
+      (let [resp (client/update-report ven1 "any-id"
+                                       {:programID "stub-program"
+                                        :eventID "stub-event"
+                                        :clientName "stub" :reportName "stub"
+                                        :resources []})]
+        (is (= 404 (:status resp)) "VEN report route should return 404")))))
 
 (deftest ^:auth test-update-report-bl-forbidden
   (testing "BL cannot update a report"
@@ -140,13 +171,17 @@
 ;; ---------------------------------------------------------------------------
 
 (deftest test-delete-report-ven
-  (testing "VEN can delete own report"
-    (let [created   (client/create-report ven1 (report-body "DeleteMe"))
-          report-id (-> created :body :id)]
-      (is (some? report-id) "Need a report ID")
-      (when report-id
-        (let [resp (client/delete-report ven1 report-id)]
-          (is (= 200 (:status resp)) "VEN should delete own report"))))))
+  (if ven-reports?
+    (testing "VEN can delete own report"
+      (let [created   (client/create-report ven1 (report-body "DeleteMe"))
+            report-id (-> created :body :id)]
+        (is (some? report-id) "Need a report ID")
+        (when report-id
+          (let [resp (client/delete-report ven1 report-id)]
+            (is (= 200 (:status resp)) "VEN should delete own report")))))
+    (testing "VEN cannot delete reports (route disabled)"
+      (let [resp (client/delete-report ven1 "any-id")]
+        (is (= 404 (:status resp)) "VEN report route should return 404")))))
 
 (deftest ^:auth test-delete-report-bl-forbidden
   (testing "BL cannot delete a report"
