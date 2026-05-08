@@ -118,13 +118,20 @@
 ;; ---------------------------------------------------------------------------
 
 (def MQTT-broker-urls
-  "Vector of MQTT broker URIs discovered from the VTN's notifiers endpoint.
-  Returns nil if the VTN does not advertise MQTT support."
-  (let [resp      (base/get-notifiers bl)
-        mqtt-info (-> resp :body :MQTT)
-        uris      (:URIS mqtt-info)]
-    (when (seq uris)
-      (vec uris))))
+  "Vector of MQTT broker URIs.
+
+  When :mqtt-brokers is set in test-config.edn it wins over discovery —
+  useful when the VTN advertises a URI that's not reachable from the test
+  host (e.g. Docker-internal hostname). Otherwise discovered from the VTN's
+  GET /notifiers MQTT.URIS array. Returns nil if neither is set."
+  (let [override (:mqtt-brokers config)]
+    (if (seq override)
+      (vec override)
+      (let [resp      (base/get-notifiers bl)
+            mqtt-info (-> resp :body :MQTT)
+            uris      (:URIS mqtt-info)]
+        (when (seq uris)
+          (vec uris))))))
 
 (def mqtt-available?
   "True if the VTN advertises MQTT broker URIs via GET /notifiers."

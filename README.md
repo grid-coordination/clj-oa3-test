@@ -116,7 +116,7 @@ To test a VTN with VEN subscription routes enabled:
 
 #### MQTT Broker Discovery
 
-MQTT broker URLs are discovered automatically from the VTN's `GET /notifiers` endpoint, which returns the `MQTT.URIS` array per the OpenADR 3 spec. If the VTN doesn't advertise MQTT, you can set a `:mqtt-brokers` fallback in the config.
+MQTT broker URLs are discovered automatically from the VTN's `GET /notifiers` endpoint, which returns the `MQTT.URIS` array per the OpenADR 3 spec. Set `:mqtt-brokers` in the config to override discovery — useful when the VTN advertises a URI that's not reachable from the test host (e.g. a Docker-internal hostname like `mqtt://mqtt`), or as a fallback when the VTN doesn't advertise MQTT at all.
 
 ## Running Tests
 

@@ -30,9 +30,10 @@
  ;; Defaults to #{:WEBHOOK :MQTT}. For a VTN that only supports MQTT:
  ;; :expected-notifiers #{:MQTT}
 
- ;; MQTT broker fallback — only used if the VTN's GET /notifiers endpoint
- ;; does not advertise MQTT broker URIs. Normally the broker URLs are
- ;; discovered automatically from the VTN.
+ ;; MQTT broker URI override. When set, wins over discovery from /notifiers —
+ ;; useful when the VTN advertises a URI that's not reachable from the test
+ ;; host (e.g. a Docker-internal hostname). Also serves as a fallback when
+ ;; the VTN doesn't advertise MQTT at all.
  ;; :mqtt-brokers ["tcp://127.0.0.1:1883"]
 
  ;; VEN port route enablement — override when VTN enables additional
