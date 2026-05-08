@@ -1,0 +1,1896 @@
+#:report{:timestamp "2026-05-08T23:36:42.911632Z",
+         :summary
+         {:total 196,
+          :pass 43,
+          :fail 7,
+          :error 0,
+          :pending 0,
+          :skip 21,
+          :skip-capability 125},
+         :suites
+         [#:suite{:id :notifiers,
+                  :tests
+                  [#:test{:id :openadr3.notifiers-test/test-notifiers,
+                          :name "test-notifiers",
+                          :desc "GET /notifiers",
+                          :result :pass,
+                          :file "openadr3/notifiers_test.clj",
+                          :line 6}],
+                  :summary
+                  {:total 1,
+                   :pass 1,
+                   :fail 0,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 0}}
+          #:suite{:id :programs,
+                  :tests
+                  [#:test{:id
+                          :openadr3.programs-test/test-create-program-bad-token,
+                          :name "test-create-program-bad-token",
+                          :desc "test-create-program-bad-token",
+                          :result :skip,
+                          :file "openadr3/programs_test.clj",
+                          :line 197}
+                   #:test{:id
+                          :openadr3.programs-test/test-create-program-conflict,
+                          :name "test-create-program-conflict",
+                          :desc
+                          "Duplicate programName should conflict",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 106}
+                   #:test{:id
+                          :openadr3.programs-test/test-create-program-ven-forbidden,
+                          :name "test-create-program-ven-forbidden",
+                          :desc "test-create-program-ven-forbidden",
+                          :result :skip,
+                          :file "openadr3/programs_test.clj",
+                          :line 97}
+                   #:test{:id
+                          :openadr3.programs-test/test-create-program-with-payload-descriptors,
+                          :name
+                          "test-create-program-with-payload-descriptors",
+                          :desc
+                          "Create program with EVENT_PAYLOAD_DESCRIPTOR payloadDescriptors",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 68}
+                   #:test{:id
+                          :openadr3.programs-test/test-create-program1,
+                          :name "test-create-program1",
+                          :desc "Create Program1 with BL token",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 54}
+                   #:test{:id
+                          :openadr3.programs-test/test-create-program2,
+                          :name "test-create-program2",
+                          :desc "Create Program2 with BL token",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 59}
+                   #:test{:id
+                          :openadr3.programs-test/test-delete-program-bad-id,
+                          :name "test-delete-program-bad-id",
+                          :desc
+                          "Delete non-existent program returns 404",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 241}
+                   #:test{:id
+                          :openadr3.programs-test/test-delete-program-bad-token,
+                          :name "test-delete-program-bad-token",
+                          :desc "test-delete-program-bad-token",
+                          :result :skip,
+                          :file "openadr3/programs_test.clj",
+                          :line 224}
+                   #:test{:id
+                          :openadr3.programs-test/test-delete-program-bl,
+                          :name "test-delete-program-bl",
+                          :desc "BL can delete a program",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 176}
+                   #:test{:id
+                          :openadr3.programs-test/test-delete-program-ven-forbidden,
+                          :name "test-delete-program-ven-forbidden",
+                          :desc "test-delete-program-ven-forbidden",
+                          :result :skip,
+                          :file "openadr3/programs_test.clj",
+                          :line 185}
+                   #:test{:id
+                          :openadr3.programs-test/test-payload-descriptors-round-trip,
+                          :name "test-payload-descriptors-round-trip",
+                          :desc
+                          "payloadDescriptors round-trip through GET",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 74}
+                   #:test{:id
+                          :openadr3.programs-test/test-search-all-programs-bl,
+                          :name "test-search-all-programs-bl",
+                          :desc "BL can search all programs",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 117}
+                   #:test{:id
+                          :openadr3.programs-test/test-search-all-programs-ven,
+                          :name "test-search-all-programs-ven",
+                          :desc "VEN can search programs",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 123}
+                   #:test{:id
+                          :openadr3.programs-test/test-search-program-bad-id,
+                          :name "test-search-program-bad-id",
+                          :desc "Non-existent program ID returns 404",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 236}
+                   #:test{:id
+                          :openadr3.programs-test/test-search-program-by-id-bad-token,
+                          :name "test-search-program-by-id-bad-token",
+                          :desc "test-search-program-by-id-bad-token",
+                          :result :skip,
+                          :file "openadr3/programs_test.clj",
+                          :line 207}
+                   #:test{:id
+                          :openadr3.programs-test/test-search-program-by-id-bl,
+                          :name "test-search-program-by-id-bl",
+                          :desc "BL can get a program by ID",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 129}
+                   #:test{:id
+                          :openadr3.programs-test/test-search-program-by-id-ven,
+                          :name "test-search-program-by-id-ven",
+                          :desc "VEN can get a program by ID",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 138}
+                   #:test{:id
+                          :openadr3.programs-test/test-search-programs-bad-token,
+                          :name "test-search-programs-bad-token",
+                          :desc "test-search-programs-bad-token",
+                          :result :skip,
+                          :file "openadr3/programs_test.clj",
+                          :line 202}
+                   #:test{:id
+                          :openadr3.programs-test/test-search-programs-pagination,
+                          :name "test-search-programs-pagination",
+                          :desc "Pagination with skip and limit",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 256}
+                   #:test{:id
+                          :openadr3.programs-test/test-update-program-bad-id,
+                          :name "test-update-program-bad-id",
+                          :desc
+                          "Update non-existent program returns 404",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 246}
+                   #:test{:id
+                          :openadr3.programs-test/test-update-program-bad-token,
+                          :name "test-update-program-bad-token",
+                          :desc "test-update-program-bad-token",
+                          :result :skip,
+                          :file "openadr3/programs_test.clj",
+                          :line 215}
+                   #:test{:id
+                          :openadr3.programs-test/test-update-program-bl,
+                          :name "test-update-program-bl",
+                          :desc "BL can update a program",
+                          :result :fail,
+                          :failures
+                          [{:type :fail,
+                            :message "Update should succeed",
+                            :expected "(= 200 (:status resp))",
+                            :actual "(not (= 200 500))"}
+                           {:type :fail,
+                            :message "Target should be updated",
+                            :expected
+                            "(= \"group1\" (-> resp :body :targets first))",
+                            :actual "(not (= \"group1\" nil))"}],
+                          :file "openadr3/programs_test.clj",
+                          :line 150}
+                   #:test{:id
+                          :openadr3.programs-test/test-update-program-ven-forbidden,
+                          :name "test-update-program-ven-forbidden",
+                          :desc "test-update-program-ven-forbidden",
+                          :result :skip,
+                          :file "openadr3/programs_test.clj",
+                          :line 163}],
+                  :summary
+                  {:total 23,
+                   :pass 14,
+                   :fail 1,
+                   :error 0,
+                   :pending 0,
+                   :skip 8,
+                   :skip-capability 0}}
+          #:suite{:id :vens,
+                  :tests
+                  [#:test{:id
+                          :openadr3.vens-test/test-create-ven-bad-token,
+                          :name "test-create-ven-bad-token",
+                          :desc "test-create-ven-bad-token",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/vens_test.clj",
+                          :line 204}
+                   #:test{:id :openadr3.vens-test/test-create-ven-bl,
+                          :name "test-create-ven-bl",
+                          :desc "test-create-ven-bl",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/vens_test.clj",
+                          :line 70}
+                   #:test{:id
+                          :openadr3.vens-test/test-create-ven-conflict-client-id,
+                          :name "test-create-ven-conflict-client-id",
+                          :desc "test-create-ven-conflict-client-id",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/vens_test.clj",
+                          :line 98}
+                   #:test{:id :openadr3.vens-test/test-create-ven-ven,
+                          :name "test-create-ven-ven",
+                          :desc "test-create-ven-ven",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/vens_test.clj",
+                          :line 78}
+                   #:test{:id
+                          :openadr3.vens-test/test-delete-ven-bad-id,
+                          :name "test-delete-ven-bad-id",
+                          :desc "test-delete-ven-bad-id",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/vens_test.clj",
+                          :line 250}
+                   #:test{:id
+                          :openadr3.vens-test/test-delete-ven-bad-token,
+                          :name "test-delete-ven-bad-token",
+                          :desc "test-delete-ven-bad-token",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/vens_test.clj",
+                          :line 233}
+                   #:test{:id :openadr3.vens-test/test-delete-ven-bl,
+                          :name "test-delete-ven-bl",
+                          :desc "test-delete-ven-bl",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/vens_test.clj",
+                          :line 189}
+                   #:test{:id :openadr3.vens-test/test-register-ven1,
+                          :name "test-register-ven1",
+                          :desc "test-register-ven1",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/vens_test.clj",
+                          :line 52}
+                   #:test{:id :openadr3.vens-test/test-register-ven2,
+                          :name "test-register-ven2",
+                          :desc "test-register-ven2",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/vens_test.clj",
+                          :line 59}
+                   #:test{:id
+                          :openadr3.vens-test/test-search-all-vens-bl,
+                          :name "test-search-all-vens-bl",
+                          :desc "test-search-all-vens-bl",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/vens_test.clj",
+                          :line 113}
+                   #:test{:id
+                          :openadr3.vens-test/test-search-all-vens-ven,
+                          :name "test-search-all-vens-ven",
+                          :desc "test-search-all-vens-ven",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/vens_test.clj",
+                          :line 119}
+                   #:test{:id
+                          :openadr3.vens-test/test-search-ven-bad-id,
+                          :name "test-search-ven-bad-id",
+                          :desc "test-search-ven-bad-id",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/vens_test.clj",
+                          :line 245}
+                   #:test{:id
+                          :openadr3.vens-test/test-search-ven-by-id-bad-token,
+                          :name "test-search-ven-by-id-bad-token",
+                          :desc "test-search-ven-by-id-bad-token",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/vens_test.clj",
+                          :line 216}
+                   #:test{:id
+                          :openadr3.vens-test/test-search-ven-by-id-bl,
+                          :name "test-search-ven-by-id-bl",
+                          :desc "test-search-ven-by-id-bl",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/vens_test.clj",
+                          :line 129}
+                   #:test{:id
+                          :openadr3.vens-test/test-search-ven-by-id-ven,
+                          :name "test-search-ven-by-id-ven",
+                          :desc "test-search-ven-by-id-ven",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/vens_test.clj",
+                          :line 138}
+                   #:test{:id
+                          :openadr3.vens-test/test-search-vens-bad-token,
+                          :name "test-search-vens-bad-token",
+                          :desc "test-search-vens-bad-token",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/vens_test.clj",
+                          :line 211}
+                   #:test{:id
+                          :openadr3.vens-test/test-search-vens-pagination,
+                          :name "test-search-vens-pagination",
+                          :desc "test-search-vens-pagination",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/vens_test.clj",
+                          :line 267}
+                   #:test{:id
+                          :openadr3.vens-test/test-update-ven-bad-id,
+                          :name "test-update-ven-bad-id",
+                          :desc "test-update-ven-bad-id",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/vens_test.clj",
+                          :line 255}
+                   #:test{:id
+                          :openadr3.vens-test/test-update-ven-bad-token,
+                          :name "test-update-ven-bad-token",
+                          :desc "test-update-ven-bad-token",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/vens_test.clj",
+                          :line 224}
+                   #:test{:id :openadr3.vens-test/test-update-ven-bl,
+                          :name "test-update-ven-bl",
+                          :desc "test-update-ven-bl",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/vens_test.clj",
+                          :line 154}
+                   #:test{:id :openadr3.vens-test/test-update-ven-ven,
+                          :name "test-update-ven-ven",
+                          :desc "test-update-ven-ven",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/vens_test.clj",
+                          :line 171}],
+                  :summary
+                  {:total 21,
+                   :pass 0,
+                   :fail 0,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 21}}
+          #:suite{:id :events,
+                  :tests
+                  [#:test{:id
+                          :openadr3.events-test/test-create-event-bad-program-id,
+                          :name "test-create-event-bad-program-id",
+                          :desc
+                          "Event creation with invalid programID returns 400",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 68}
+                   #:test{:id
+                          :openadr3.events-test/test-create-event-bad-token,
+                          :name "test-create-event-bad-token",
+                          :desc "test-create-event-bad-token",
+                          :result :skip,
+                          :file "openadr3/events_test.clj",
+                          :line 191}
+                   #:test{:id
+                          :openadr3.events-test/test-create-event-bl,
+                          :name "test-create-event-bl",
+                          :desc "BL can create an event",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 52}
+                   #:test{:id
+                          :openadr3.events-test/test-create-event-ven-forbidden,
+                          :name "test-create-event-ven-forbidden",
+                          :desc "test-create-event-ven-forbidden",
+                          :result :skip,
+                          :file "openadr3/events_test.clj",
+                          :line 62}
+                   #:test{:id
+                          :openadr3.events-test/test-create-event-with-price-payloads,
+                          :name
+                          "test-create-event-with-price-payloads",
+                          :desc
+                          "Create event with PRICE interval payloads on PriceProgram",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 262}
+                   #:test{:id
+                          :openadr3.events-test/test-delete-event-bad-id,
+                          :name "test-delete-event-bad-id",
+                          :desc
+                          "Delete non-existent event returns 404",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 246}
+                   #:test{:id
+                          :openadr3.events-test/test-delete-event-bad-token,
+                          :name "test-delete-event-bad-token",
+                          :desc "test-delete-event-bad-token",
+                          :result :skip,
+                          :file "openadr3/events_test.clj",
+                          :line 226}
+                   #:test{:id
+                          :openadr3.events-test/test-delete-event-bl,
+                          :name "test-delete-event-bl",
+                          :desc "BL can delete an event",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 166}
+                   #:test{:id
+                          :openadr3.events-test/test-delete-event-ven-forbidden,
+                          :name "test-delete-event-ven-forbidden",
+                          :desc "test-delete-event-ven-forbidden",
+                          :result :skip,
+                          :file "openadr3/events_test.clj",
+                          :line 176}
+                   #:test{:id
+                          :openadr3.events-test/test-event-price-intervals-round-trip,
+                          :name
+                          "test-event-price-intervals-round-trip",
+                          :desc
+                          "Event PRICE interval payloads round-trip through GET",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 278}
+                   #:test{:id
+                          :openadr3.events-test/test-search-all-events-bl,
+                          :name "test-search-all-events-bl",
+                          :desc "BL can search all events",
+                          :result :fail,
+                          :failures
+                          [{:type :fail,
+                            :message "Should find at least one event",
+                            :expected "(>= (count (:body resp)) 1)",
+                            :actual "(not (>= 0 1))"}],
+                          :file "openadr3/events_test.clj",
+                          :line 77}
+                   #:test{:id
+                          :openadr3.events-test/test-search-all-events-ven,
+                          :name "test-search-all-events-ven",
+                          :desc "VEN can search events",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 85}
+                   #:test{:id
+                          :openadr3.events-test/test-search-event-bad-id,
+                          :name "test-search-event-bad-id",
+                          :desc "Non-existent event ID returns 404",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 241}
+                   #:test{:id
+                          :openadr3.events-test/test-search-event-by-id-bad-token,
+                          :name "test-search-event-by-id-bad-token",
+                          :desc "test-search-event-by-id-bad-token",
+                          :result :skip,
+                          :file "openadr3/events_test.clj",
+                          :line 202}
+                   #:test{:id
+                          :openadr3.events-test/test-search-event-by-id-bl,
+                          :name "test-search-event-by-id-bl",
+                          :desc "BL can get an event by ID",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 90}
+                   #:test{:id
+                          :openadr3.events-test/test-search-event-by-id-ven,
+                          :name "test-search-event-by-id-ven",
+                          :desc "VEN can get an event by ID",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 102}
+                   #:test{:id
+                          :openadr3.events-test/test-search-events-bad-token,
+                          :name "test-search-events-bad-token",
+                          :desc "test-search-events-bad-token",
+                          :result :skip,
+                          :file "openadr3/events_test.clj",
+                          :line 197}
+                   #:test{:id
+                          :openadr3.events-test/test-search-events-by-program-id,
+                          :name "test-search-events-by-program-id",
+                          :desc "Search events filtered by programID",
+                          :result :fail,
+                          :failures
+                          [{:type :fail,
+                            :message
+                            "Should find events for this program",
+                            :expected "(>= (count (:body resp)) 1)",
+                            :actual "(not (>= 0 1))"}],
+                          :file "openadr3/events_test.clj",
+                          :line 113}
+                   #:test{:id
+                          :openadr3.events-test/test-search-events-pagination,
+                          :name "test-search-events-pagination",
+                          :desc
+                          "Pagination with skip and limit > limit=1 returns exactly 1",
+                          :result :fail,
+                          :failures
+                          [{:type :fail,
+                            :expected "(= 1 (count (:body resp)))",
+                            :actual "(not (= 1 0))"}
+                           {:type :fail,
+                            :expected
+                            "(= (dec all) (count (:body resp)))",
+                            :actual "(not (= -1 0))"}
+                           {:type :fail,
+                            :expected "(= 1 (count (:body resp)))",
+                            :actual "(not (= 1 0))"}],
+                          :file "openadr3/events_test.clj",
+                          :line 310}
+                   #:test{:id
+                          :openadr3.events-test/test-update-event-bad-id,
+                          :name "test-update-event-bad-id",
+                          :desc
+                          "Update non-existent event returns 404",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 251}
+                   #:test{:id
+                          :openadr3.events-test/test-update-event-bad-token,
+                          :name "test-update-event-bad-token",
+                          :desc "test-update-event-bad-token",
+                          :result :skip,
+                          :file "openadr3/events_test.clj",
+                          :line 213}
+                   #:test{:id
+                          :openadr3.events-test/test-update-event-bl,
+                          :name "test-update-event-bl",
+                          :desc "BL can update an event",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 128}
+                   #:test{:id
+                          :openadr3.events-test/test-update-event-ven-forbidden,
+                          :name "test-update-event-ven-forbidden",
+                          :desc "test-update-event-ven-forbidden",
+                          :result :skip,
+                          :file "openadr3/events_test.clj",
+                          :line 147}],
+                  :summary
+                  {:total 23,
+                   :pass 12,
+                   :fail 3,
+                   :error 0,
+                   :pending 0,
+                   :skip 8,
+                   :skip-capability 0}}
+          #:suite{:id :resources,
+                  :tests
+                  [#:test{:id
+                          :openadr3.resources-test/test-create-resource-bad-token,
+                          :name "test-create-resource-bad-token",
+                          :desc "test-create-resource-bad-token",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): resources",
+                          :file "openadr3/resources_test.clj",
+                          :line 202}
+                   #:test{:id
+                          :openadr3.resources-test/test-create-resource-bl,
+                          :name "test-create-resource-bl",
+                          :desc "test-create-resource-bl",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): resources",
+                          :file "openadr3/resources_test.clj",
+                          :line 69}
+                   #:test{:id
+                          :openadr3.resources-test/test-create-resource-conflict,
+                          :name "test-create-resource-conflict",
+                          :desc "test-create-resource-conflict",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): resources",
+                          :file "openadr3/resources_test.clj",
+                          :line 75}
+                   #:test{:id
+                          :openadr3.resources-test/test-create-resource-ven,
+                          :name "test-create-resource-ven",
+                          :desc "test-create-resource-ven",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): resources",
+                          :file "openadr3/resources_test.clj",
+                          :line 54}
+                   #:test{:id
+                          :openadr3.resources-test/test-delete-resource-bad-id,
+                          :name "test-delete-resource-bad-id",
+                          :desc "test-delete-resource-bad-id",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): resources",
+                          :file "openadr3/resources_test.clj",
+                          :line 253}
+                   #:test{:id
+                          :openadr3.resources-test/test-delete-resource-bad-token,
+                          :name "test-delete-resource-bad-token",
+                          :desc "test-delete-resource-bad-token",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): resources",
+                          :file "openadr3/resources_test.clj",
+                          :line 234}
+                   #:test{:id
+                          :openadr3.resources-test/test-delete-resource-bl,
+                          :name "test-delete-resource-bl",
+                          :desc "test-delete-resource-bl",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): resources",
+                          :file "openadr3/resources_test.clj",
+                          :line 174}
+                   #:test{:id
+                          :openadr3.resources-test/test-delete-resource-ven,
+                          :name "test-delete-resource-ven",
+                          :desc "test-delete-resource-ven",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): resources",
+                          :file "openadr3/resources_test.clj",
+                          :line 184}
+                   #:test{:id
+                          :openadr3.resources-test/test-search-all-resources-bl,
+                          :name "test-search-all-resources-bl",
+                          :desc "test-search-all-resources-bl",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): resources",
+                          :file "openadr3/resources_test.clj",
+                          :line 87}
+                   #:test{:id
+                          :openadr3.resources-test/test-search-all-resources-ven,
+                          :name "test-search-all-resources-ven",
+                          :desc "test-search-all-resources-ven",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): resources",
+                          :file "openadr3/resources_test.clj",
+                          :line 94}
+                   #:test{:id
+                          :openadr3.resources-test/test-search-resource-bad-id,
+                          :name "test-search-resource-bad-id",
+                          :desc "test-search-resource-bad-id",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): resources",
+                          :file "openadr3/resources_test.clj",
+                          :line 248}
+                   #:test{:id
+                          :openadr3.resources-test/test-search-resource-by-id-bad-token,
+                          :name "test-search-resource-by-id-bad-token",
+                          :desc "test-search-resource-by-id-bad-token",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): resources",
+                          :file "openadr3/resources_test.clj",
+                          :line 214}
+                   #:test{:id
+                          :openadr3.resources-test/test-search-resource-by-id-bl,
+                          :name "test-search-resource-by-id-bl",
+                          :desc "test-search-resource-by-id-bl",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): resources",
+                          :file "openadr3/resources_test.clj",
+                          :line 105}
+                   #:test{:id
+                          :openadr3.resources-test/test-search-resource-by-id-ven,
+                          :name "test-search-resource-by-id-ven",
+                          :desc "test-search-resource-by-id-ven",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): resources",
+                          :file "openadr3/resources_test.clj",
+                          :line 115}
+                   #:test{:id
+                          :openadr3.resources-test/test-search-resources-bad-token,
+                          :name "test-search-resources-bad-token",
+                          :desc "test-search-resources-bad-token",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): resources",
+                          :file "openadr3/resources_test.clj",
+                          :line 208}
+                   #:test{:id
+                          :openadr3.resources-test/test-search-resources-pagination,
+                          :name "test-search-resources-pagination",
+                          :desc "test-search-resources-pagination",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): resources",
+                          :file "openadr3/resources_test.clj",
+                          :line 269}
+                   #:test{:id
+                          :openadr3.resources-test/test-update-resource-bad-id,
+                          :name "test-update-resource-bad-id",
+                          :desc "test-update-resource-bad-id",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): resources",
+                          :file "openadr3/resources_test.clj",
+                          :line 258}
+                   #:test{:id
+                          :openadr3.resources-test/test-update-resource-bad-token,
+                          :name "test-update-resource-bad-token",
+                          :desc "test-update-resource-bad-token",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): resources",
+                          :file "openadr3/resources_test.clj",
+                          :line 224}
+                   #:test{:id
+                          :openadr3.resources-test/test-update-resource-bl,
+                          :name "test-update-resource-bl",
+                          :desc "test-update-resource-bl",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): resources",
+                          :file "openadr3/resources_test.clj",
+                          :line 133}
+                   #:test{:id
+                          :openadr3.resources-test/test-update-resource-ven,
+                          :name "test-update-resource-ven",
+                          :desc "test-update-resource-ven",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): resources",
+                          :file "openadr3/resources_test.clj",
+                          :line 150}],
+                  :summary
+                  {:total 20,
+                   :pass 0,
+                   :fail 0,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 20}}
+          #:suite{:id :reports,
+                  :tests
+                  [#:test{:id
+                          :openadr3.reports-test/test-create-report-bad-token,
+                          :name "test-create-report-bad-token",
+                          :desc "test-create-report-bad-token",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): reports",
+                          :file "openadr3/reports_test.clj",
+                          :line 199}
+                   #:test{:id
+                          :openadr3.reports-test/test-create-report-bl-forbidden,
+                          :name "test-create-report-bl-forbidden",
+                          :desc "test-create-report-bl-forbidden",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): reports",
+                          :file "openadr3/reports_test.clj",
+                          :line 79}
+                   #:test{:id
+                          :openadr3.reports-test/test-create-report-ven,
+                          :name "test-create-report-ven",
+                          :desc "test-create-report-ven",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): reports",
+                          :file "openadr3/reports_test.clj",
+                          :line 62}
+                   #:test{:id
+                          :openadr3.reports-test/test-delete-report-bad-id,
+                          :name "test-delete-report-bad-id",
+                          :desc "test-delete-report-bad-id",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): reports",
+                          :file "openadr3/reports_test.clj",
+                          :line 248}
+                   #:test{:id
+                          :openadr3.reports-test/test-delete-report-bad-token,
+                          :name "test-delete-report-bad-token",
+                          :desc "test-delete-report-bad-token",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): reports",
+                          :file "openadr3/reports_test.clj",
+                          :line 230}
+                   #:test{:id
+                          :openadr3.reports-test/test-delete-report-bl-forbidden,
+                          :name "test-delete-report-bl-forbidden",
+                          :desc "test-delete-report-bl-forbidden",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): reports",
+                          :file "openadr3/reports_test.clj",
+                          :line 186}
+                   #:test{:id
+                          :openadr3.reports-test/test-delete-report-ven,
+                          :name "test-delete-report-ven",
+                          :desc "test-delete-report-ven",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): reports",
+                          :file "openadr3/reports_test.clj",
+                          :line 173}
+                   #:test{:id
+                          :openadr3.reports-test/test-search-all-reports-bl,
+                          :name "test-search-all-reports-bl",
+                          :desc "test-search-all-reports-bl",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): reports",
+                          :file "openadr3/reports_test.clj",
+                          :line 88}
+                   #:test{:id
+                          :openadr3.reports-test/test-search-all-reports-ven,
+                          :name "test-search-all-reports-ven",
+                          :desc "test-search-all-reports-ven",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): reports",
+                          :file "openadr3/reports_test.clj",
+                          :line 95}
+                   #:test{:id
+                          :openadr3.reports-test/test-search-report-bad-id,
+                          :name "test-search-report-bad-id",
+                          :desc "test-search-report-bad-id",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): reports",
+                          :file "openadr3/reports_test.clj",
+                          :line 243}
+                   #:test{:id
+                          :openadr3.reports-test/test-search-report-by-id-bad-token,
+                          :name "test-search-report-by-id-bad-token",
+                          :desc "test-search-report-by-id-bad-token",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): reports",
+                          :file "openadr3/reports_test.clj",
+                          :line 209}
+                   #:test{:id
+                          :openadr3.reports-test/test-search-report-by-id-bl,
+                          :name "test-search-report-by-id-bl",
+                          :desc "test-search-report-by-id-bl",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): reports",
+                          :file "openadr3/reports_test.clj",
+                          :line 104}
+                   #:test{:id
+                          :openadr3.reports-test/test-search-report-by-id-ven,
+                          :name "test-search-report-by-id-ven",
+                          :desc "test-search-report-by-id-ven",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): reports",
+                          :file "openadr3/reports_test.clj",
+                          :line 113}
+                   #:test{:id
+                          :openadr3.reports-test/test-search-reports-bad-token,
+                          :name "test-search-reports-bad-token",
+                          :desc "test-search-reports-bad-token",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): reports",
+                          :file "openadr3/reports_test.clj",
+                          :line 204}
+                   #:test{:id
+                          :openadr3.reports-test/test-search-reports-pagination,
+                          :name "test-search-reports-pagination",
+                          :desc "test-search-reports-pagination",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): reports",
+                          :file "openadr3/reports_test.clj",
+                          :line 266}
+                   #:test{:id
+                          :openadr3.reports-test/test-update-report-bad-id,
+                          :name "test-update-report-bad-id",
+                          :desc "test-update-report-bad-id",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): reports",
+                          :file "openadr3/reports_test.clj",
+                          :line 253}
+                   #:test{:id
+                          :openadr3.reports-test/test-update-report-bad-token,
+                          :name "test-update-report-bad-token",
+                          :desc "test-update-report-bad-token",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): reports",
+                          :file "openadr3/reports_test.clj",
+                          :line 218}
+                   #:test{:id
+                          :openadr3.reports-test/test-update-report-bl-forbidden,
+                          :name "test-update-report-bl-forbidden",
+                          :desc "test-update-report-bl-forbidden",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): reports",
+                          :file "openadr3/reports_test.clj",
+                          :line 157}
+                   #:test{:id
+                          :openadr3.reports-test/test-update-report-ven,
+                          :name "test-update-report-ven",
+                          :desc "test-update-report-ven",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): reports",
+                          :file "openadr3/reports_test.clj",
+                          :line 130}],
+                  :summary
+                  {:total 19,
+                   :pass 0,
+                   :fail 0,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 19}}
+          #:suite{:id :subscriptions,
+                  :tests
+                  [#:test{:id
+                          :openadr3.subscriptions-test/test-create-subscription-bad-token,
+                          :name "test-create-subscription-bad-token",
+                          :desc "test-create-subscription-bad-token",
+                          :result :skip,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 192}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-create-subscription-bl,
+                          :name "test-create-subscription-bl",
+                          :desc "BL can create a subscription",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 48}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-create-subscription-ven,
+                          :name "test-create-subscription-ven",
+                          :desc
+                          "VEN cannot create subscriptions (route disabled)",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 56}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-delete-subscription-bad-id,
+                          :name "test-delete-subscription-bad-id",
+                          :desc
+                          "Delete non-existent subscription returns 404",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 242}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-delete-subscription-bad-token,
+                          :name "test-delete-subscription-bad-token",
+                          :desc "test-delete-subscription-bad-token",
+                          :result :skip,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 223}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-delete-subscription-bl,
+                          :name "test-delete-subscription-bl",
+                          :desc "BL can delete a subscription",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 162}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-delete-subscription-ven,
+                          :name "test-delete-subscription-ven",
+                          :desc
+                          "VEN cannot delete subscriptions (route disabled)",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 171}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-search-all-subscriptions-bl,
+                          :name "test-search-all-subscriptions-bl",
+                          :desc "BL can search all subscriptions",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 72}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-search-all-subscriptions-ven,
+                          :name "test-search-all-subscriptions-ven",
+                          :desc
+                          "VEN cannot search subscriptions (route disabled)",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 81}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-search-subscription-bad-id,
+                          :name "test-search-subscription-bad-id",
+                          :desc
+                          "Non-existent subscription ID returns 404",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 237}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-search-subscription-by-id-bad-token,
+                          :name
+                          "test-search-subscription-by-id-bad-token",
+                          :desc
+                          "test-search-subscription-by-id-bad-token",
+                          :result :skip,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 202}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-search-subscription-by-id-bl,
+                          :name "test-search-subscription-by-id-bl",
+                          :desc "BL can get a subscription by ID",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 93}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-search-subscription-by-id-ven,
+                          :name "test-search-subscription-by-id-ven",
+                          :desc
+                          "VEN cannot get subscription by ID (route disabled)",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 103}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-search-subscriptions-bad-token,
+                          :name "test-search-subscriptions-bad-token",
+                          :desc "test-search-subscriptions-bad-token",
+                          :result :skip,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 197}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-search-subscriptions-by-client-name,
+                          :name
+                          "test-search-subscriptions-by-client-name",
+                          :desc
+                          "Search subscriptions filtered by clientName",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 308}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-search-subscriptions-by-program-id,
+                          :name
+                          "test-search-subscriptions-by-program-id",
+                          :desc
+                          "Search subscriptions filtered by programID",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 297}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-search-subscriptions-pagination,
+                          :name "test-search-subscriptions-pagination",
+                          :desc "Pagination with skip and limit",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 258}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-update-subscription-bad-id,
+                          :name "test-update-subscription-bad-id",
+                          :desc
+                          "Update non-existent subscription returns 404 or 400",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 247}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-update-subscription-bad-token,
+                          :name "test-update-subscription-bad-token",
+                          :desc "test-update-subscription-bad-token",
+                          :result :skip,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 212}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-update-subscription-bl,
+                          :name "test-update-subscription-bl",
+                          :desc "BL can update a subscription",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 125}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-update-subscription-ven,
+                          :name "test-update-subscription-ven",
+                          :desc
+                          "VEN cannot update subscriptions (route disabled)",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 138}],
+                  :summary
+                  {:total 21,
+                   :pass 16,
+                   :fail 0,
+                   :error 0,
+                   :pending 0,
+                   :skip 5,
+                   :skip-capability 0}}
+          #:suite{:id :topics,
+                  :tests
+                  [#:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-events,
+                          :name "test-mqtt-topics-bad-token-events",
+                          :desc "test-mqtt-topics-bad-token-events",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/topics_test.clj",
+                          :line 143}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-program,
+                          :name "test-mqtt-topics-bad-token-program",
+                          :desc "test-mqtt-topics-bad-token-program",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/topics_test.clj",
+                          :line 129}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-program-events,
+                          :name
+                          "test-mqtt-topics-bad-token-program-events",
+                          :desc
+                          "test-mqtt-topics-bad-token-program-events",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/topics_test.clj",
+                          :line 136}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-programs,
+                          :name "test-mqtt-topics-bad-token-programs",
+                          :desc "test-mqtt-topics-bad-token-programs",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/topics_test.clj",
+                          :line 124}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-reports,
+                          :name "test-mqtt-topics-bad-token-reports",
+                          :desc "test-mqtt-topics-bad-token-reports",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/topics_test.clj",
+                          :line 148}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-resources,
+                          :name "test-mqtt-topics-bad-token-resources",
+                          :desc "test-mqtt-topics-bad-token-resources",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/topics_test.clj",
+                          :line 163}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-subscriptions,
+                          :name
+                          "test-mqtt-topics-bad-token-subscriptions",
+                          :desc
+                          "test-mqtt-topics-bad-token-subscriptions",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/topics_test.clj",
+                          :line 153}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-ven,
+                          :name "test-mqtt-topics-bad-token-ven",
+                          :desc "test-mqtt-topics-bad-token-ven",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/topics_test.clj",
+                          :line 168}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-ven-events,
+                          :name
+                          "test-mqtt-topics-bad-token-ven-events",
+                          :desc
+                          "test-mqtt-topics-bad-token-ven-events",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/topics_test.clj",
+                          :line 189}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-ven-programs,
+                          :name
+                          "test-mqtt-topics-bad-token-ven-programs",
+                          :desc
+                          "test-mqtt-topics-bad-token-ven-programs",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/topics_test.clj",
+                          :line 182}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-ven-resources,
+                          :name
+                          "test-mqtt-topics-bad-token-ven-resources",
+                          :desc
+                          "test-mqtt-topics-bad-token-ven-resources",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/topics_test.clj",
+                          :line 175}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-vens,
+                          :name "test-mqtt-topics-bad-token-vens",
+                          :desc "test-mqtt-topics-bad-token-vens",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/topics_test.clj",
+                          :line 158}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bl,
+                          :name "test-mqtt-topics-bl",
+                          :desc "test-mqtt-topics-bl",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/topics_test.clj",
+                          :line 112}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-ven1,
+                          :name "test-mqtt-topics-ven1",
+                          :desc "test-mqtt-topics-ven1",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/topics_test.clj",
+                          :line 94}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-ven2,
+                          :name "test-mqtt-topics-ven2",
+                          :desc "test-mqtt-topics-ven2",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/topics_test.clj",
+                          :line 103}],
+                  :summary
+                  {:total 15,
+                   :pass 0,
+                   :fail 0,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 15}}
+          #:suite{:id :channel,
+                  :tests
+                  [#:test{:id
+                          :openadr3.channel-test/test-mqtt-channel-lifecycle,
+                          :name "test-mqtt-channel-lifecycle",
+                          :desc "test-mqtt-channel-lifecycle",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/channel_test.clj",
+                          :line 21}
+                   #:test{:id
+                          :openadr3.channel-test/test-mqtt-channel-subscribe-before-start-throws,
+                          :name
+                          "test-mqtt-channel-subscribe-before-start-throws",
+                          :desc
+                          "test-mqtt-channel-subscribe-before-start-throws",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/channel_test.clj",
+                          :line 54}
+                   #:test{:id
+                          :openadr3.channel-test/test-mqtt-channel-with-on-message,
+                          :name "test-mqtt-channel-with-on-message",
+                          :desc "test-mqtt-channel-with-on-message",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/channel_test.clj",
+                          :line 62}
+                   #:test{:id
+                          :openadr3.channel-test/test-mqtt-conn-accessor,
+                          :name "test-mqtt-conn-accessor",
+                          :desc "test-mqtt-conn-accessor",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/channel_test.clj",
+                          :line 132}
+                   #:test{:id
+                          :openadr3.channel-test/test-ven-component-stop-closes-channels,
+                          :name
+                          "test-ven-component-stop-closes-channels",
+                          :desc
+                          "test-ven-component-stop-closes-channels",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/channel_test.clj",
+                          :line 199}
+                   #:test{:id
+                          :openadr3.channel-test/test-ven-mqtt-end-to-end,
+                          :name "test-ven-mqtt-end-to-end",
+                          :desc "test-ven-mqtt-end-to-end",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/channel_test.clj",
+                          :line 156}
+                   #:test{:id
+                          :openadr3.channel-test/test-webhook-channel-custom-path,
+                          :name "test-webhook-channel-custom-path",
+                          :desc "test-webhook-channel-custom-path",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/channel_test.clj",
+                          :line 117}
+                   #:test{:id
+                          :openadr3.channel-test/test-webhook-channel-lifecycle,
+                          :name "test-webhook-channel-lifecycle",
+                          :desc "test-webhook-channel-lifecycle",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/channel_test.clj",
+                          :line 82}
+                   #:test{:id
+                          :openadr3.channel-test/test-webhook-receiver-accessor,
+                          :name "test-webhook-receiver-accessor",
+                          :desc "test-webhook-receiver-accessor",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/channel_test.clj",
+                          :line 142}],
+                  :summary
+                  {:total 9,
+                   :pass 0,
+                   :fail 0,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 9}}
+          #:suite{:id :ven-client,
+                  :tests
+                  [#:test{:id
+                          :openadr3.ven-client-test/test-add-mqtt-and-get-channel,
+                          :name "test-add-mqtt-and-get-channel",
+                          :desc "test-add-mqtt-and-get-channel",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/ven_client_test.clj",
+                          :line 110}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-add-webhook-and-get-channel,
+                          :name "test-add-webhook-and-get-channel",
+                          :desc "test-add-webhook-and-get-channel",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/ven_client_test.clj",
+                          :line 123}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-client-type-field,
+                          :name "test-client-type-field",
+                          :desc "test-client-type-field",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/ven_client_test.clj",
+                          :line 180}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-discover-notifiers,
+                          :name "test-discover-notifiers",
+                          :desc "test-discover-notifiers",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/ven_client_test.clj",
+                          :line 47}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-get-channel-nil-when-absent,
+                          :name "test-get-channel-nil-when-absent",
+                          :desc "test-get-channel-nil-when-absent",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/ven_client_test.clj",
+                          :line 137}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-mqtt-broker-urls,
+                          :name "test-mqtt-broker-urls",
+                          :desc "test-mqtt-broker-urls",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/ven_client_test.clj",
+                          :line 61}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-poll-events,
+                          :name "test-poll-events",
+                          :desc "test-poll-events",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/ven_client_test.clj",
+                          :line 73}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-resolve-program-id,
+                          :name "test-resolve-program-id",
+                          :desc "test-resolve-program-id",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/ven_client_test.clj",
+                          :line 29}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-resolve-program-id-not-found,
+                          :name "test-resolve-program-id-not-found",
+                          :desc "test-resolve-program-id-not-found",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/ven_client_test.clj",
+                          :line 39}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-subscribe-mqtt,
+                          :name "test-subscribe-mqtt",
+                          :desc "test-subscribe-mqtt",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/ven_client_test.clj",
+                          :line 141}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-ven-id-and-name,
+                          :name "test-ven-id-and-name",
+                          :desc "test-ven-id-and-name",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/ven_client_test.clj",
+                          :line 20}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-ven-scoped-topics-auto-id,
+                          :name "test-ven-scoped-topics-auto-id",
+                          :desc "test-ven-scoped-topics-auto-id",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/ven_client_test.clj",
+                          :line 160}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-vtn-supports-mqtt,
+                          :name "test-vtn-supports-mqtt",
+                          :desc "test-vtn-supports-mqtt",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/ven_client_test.clj",
+                          :line 55}],
+                  :summary
+                  {:total 13,
+                   :pass 0,
+                   :fail 0,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 13}}
+          #:suite{:id :mqtt,
+                  :tests
+                  [#:test{:id
+                          :openadr3.mqtt-test/test-event-create-notification,
+                          :name "test-event-create-notification",
+                          :desc "test-event-create-notification",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_test.clj",
+                          :line 161}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-event-delete-notification,
+                          :name "test-event-delete-notification",
+                          :desc "test-event-delete-notification",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_test.clj",
+                          :line 229}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-event-update-notification,
+                          :name "test-event-update-notification",
+                          :desc "test-event-update-notification",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_test.clj",
+                          :line 192}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-program-create-notification,
+                          :name "test-program-create-notification",
+                          :desc "test-program-create-notification",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_test.clj",
+                          :line 67}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-program-delete-notification,
+                          :name "test-program-delete-notification",
+                          :desc "test-program-delete-notification",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_test.clj",
+                          :line 136}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-program-update-notification,
+                          :name "test-program-update-notification",
+                          :desc "test-program-update-notification",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_test.clj",
+                          :line 107}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-report-create-notification,
+                          :name "test-report-create-notification",
+                          :desc "test-report-create-notification",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_test.clj",
+                          :line 380}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-report-delete-notification,
+                          :name "test-report-delete-notification",
+                          :desc "test-report-delete-notification",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_test.clj",
+                          :line 473}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-report-update-notification,
+                          :name "test-report-update-notification",
+                          :desc "test-report-update-notification",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_test.clj",
+                          :line 422}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-resource-create-notification,
+                          :name "test-resource-create-notification",
+                          :desc "test-resource-create-notification",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_test.clj",
+                          :line 290}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-resource-delete-notification,
+                          :name "test-resource-delete-notification",
+                          :desc "test-resource-delete-notification",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_test.clj",
+                          :line 351}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-resource-update-notification,
+                          :name "test-resource-update-notification",
+                          :desc "test-resource-update-notification",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_test.clj",
+                          :line 317}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-subscription-create-notification,
+                          :name
+                          "test-subscription-create-notification",
+                          :desc
+                          "test-subscription-create-notification",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_test.clj",
+                          :line 515}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-subscription-delete-notification,
+                          :name
+                          "test-subscription-delete-notification",
+                          :desc
+                          "test-subscription-delete-notification",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_test.clj",
+                          :line 541}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-targeted-event-notification,
+                          :name "test-targeted-event-notification",
+                          :desc "test-targeted-event-notification",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_test.clj",
+                          :line 603}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-targeted-program-notification,
+                          :name "test-targeted-program-notification",
+                          :desc "test-targeted-program-notification",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_test.clj",
+                          :line 572}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-ven-update-notification,
+                          :name "test-ven-update-notification",
+                          :desc "test-ven-update-notification",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_test.clj",
+                          :line 260}],
+                  :summary
+                  {:total 17,
+                   :pass 0,
+                   :fail 0,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 17}}
+          #:suite{:id :mqtt-auth,
+                  :tests
+                  [#:test{:id
+                          :openadr3.mqtt-auth-test/test-anonymous-mode-no-credentials,
+                          :name "test-anonymous-mode-no-credentials",
+                          :desc "test-anonymous-mode-no-credentials",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 313}
+                   #:test{:id
+                          :openadr3.mqtt-auth-test/test-connect-anonymous-rejected,
+                          :name "test-connect-anonymous-rejected",
+                          :desc "test-connect-anonymous-rejected",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 169}
+                   #:test{:id
+                          :openadr3.mqtt-auth-test/test-connect-with-valid-credentials,
+                          :name "test-connect-with-valid-credentials",
+                          :desc "test-connect-with-valid-credentials",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 145}
+                   #:test{:id
+                          :openadr3.mqtt-auth-test/test-connect-with-wrong-password-rejected,
+                          :name
+                          "test-connect-with-wrong-password-rejected",
+                          :desc
+                          "test-connect-with-wrong-password-rejected",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 159}
+                   #:test{:id
+                          :openadr3.mqtt-auth-test/test-notifiers-no-credentials-for-bl,
+                          :name "test-notifiers-no-credentials-for-bl",
+                          :desc "test-notifiers-no-credentials-for-bl",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 118}
+                   #:test{:id
+                          :openadr3.mqtt-auth-test/test-notifiers-returns-ven-credentials,
+                          :name
+                          "test-notifiers-returns-ven-credentials",
+                          :desc
+                          "test-notifiers-returns-ven-credentials",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 103}
+                   #:test{:id
+                          :openadr3.mqtt-auth-test/test-ven-can-subscribe-to-allowed-topics,
+                          :name
+                          "test-ven-can-subscribe-to-allowed-topics",
+                          :desc
+                          "test-ven-can-subscribe-to-allowed-topics",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 180}
+                   #:test{:id
+                          :openadr3.mqtt-auth-test/test-ven-can-subscribe-to-own-targeted-topics,
+                          :name
+                          "test-ven-can-subscribe-to-own-targeted-topics",
+                          :desc
+                          "test-ven-can-subscribe-to-own-targeted-topics",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 208}
+                   #:test{:id
+                          :openadr3.mqtt-auth-test/test-ven-cannot-subscribe-to-other-ven-topics,
+                          :name
+                          "test-ven-cannot-subscribe-to-other-ven-topics",
+                          :desc
+                          "test-ven-cannot-subscribe-to-other-ven-topics",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 238}
+                   #:test{:id
+                          :openadr3.mqtt-auth-test/test-ven-deletion-invalidates-credentials,
+                          :name
+                          "test-ven-deletion-invalidates-credentials",
+                          :desc
+                          "test-ven-deletion-invalidates-credentials",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 280}
+                   #:test{:id
+                          :openadr3.mqtt-auth-test/test-ven2-gets-different-credentials,
+                          :name "test-ven2-gets-different-credentials",
+                          :desc "test-ven2-gets-different-credentials",
+                          :result :skip-capability,
+                          :skip-reason
+                          "VTN doesn't expose handler(s): vens",
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 128}],
+                  :summary
+                  {:total 11,
+                   :pass 0,
+                   :fail 0,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 11}}
+          #:suite{:id :webhook,
+                  :tests
+                  [#:test{:id
+                          :openadr3.webhook-test/test-webhook-event-create-notification,
+                          :name
+                          "test-webhook-event-create-notification",
+                          :desc
+                          "Webhook notification for event creation via subscription",
+                          :result :fail,
+                          :failures
+                          [{:type :fail,
+                            :message
+                            "Subscription creation should succeed",
+                            :expected "(= 201 (:status sub-resp))",
+                            :actual "(not (= 201 404))"}],
+                          :file "openadr3/webhook_test.clj",
+                          :line 59}
+                   #:test{:id
+                          :openadr3.webhook-test/test-webhook-program-create-notification,
+                          :name
+                          "test-webhook-program-create-notification",
+                          :desc
+                          "Webhook notification for program creation via subscription",
+                          :result :fail,
+                          :failures
+                          [{:type :fail,
+                            :message
+                            "Subscription creation should succeed",
+                            :expected "(= 201 (:status sub-resp))",
+                            :actual "(not (= 201 404))"}],
+                          :file "openadr3/webhook_test.clj",
+                          :line 122}
+                   #:test{:id
+                          :openadr3.webhook-test/test-webhook-program-delete-notification,
+                          :name
+                          "test-webhook-program-delete-notification",
+                          :desc
+                          "test-webhook-program-delete-notification",
+                          :result :fail,
+                          :file "openadr3/webhook_test.clj",
+                          :line 168}],
+                  :summary
+                  {:total 3,
+                   :pass 0,
+                   :fail 3,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 0}}],
+         :vtn
+         {:implementation "clj-oa3-vtn",
+          :version "0.12.1",
+          :commit "44900c6",
+          :deployment "clj-oa3-vtn-dev-no-auth"},
+         :capabilities
+         {:transport {:single-port? false},
+          :ven-routes {:subscriptions false},
+          :discovery #{:static-url},
+          :mqtt-auth {:method :anonymous},
+          :handlers #{:events :subscriptions :programs},
+          :handlers-bl #{:events :subscriptions :programs},
+          :webhook-delivery? false,
+          :http-auth
+          {:method :none,
+           :enforced? false,
+           :on-bl? false,
+           :on-ven? false},
+          :handlers-ven #{:events :programs},
+          :notifiers #{:MQTT}},
+         :capability-sources
+         {[:handlers-ven] :auto-detected,
+          [:http-auth :on-bl?] :auto-detected,
+          [:handlers] :auto-detected,
+          [:http-auth :on-ven?] :auto-detected,
+          [:notifiers] :declared,
+          [:http-auth :method] :defaulted,
+          [:webhook-delivery?] :defaulted,
+          [:handlers-bl] :auto-detected,
+          [:ven-routes :subscriptions] :declared,
+          [:transport :single-port?] :declared,
+          [:http-auth :enforced?] :declared,
+          [:mqtt-auth :method] :advertised,
+          [:discovery] :defaulted}}

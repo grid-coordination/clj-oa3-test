@@ -2,14 +2,22 @@
   "Generate a markdown campaign-report skeleton from an EDN test-report.
 
   Reads report/test-report.edn (or a path passed on the command line) and
-  prints a markdown skeleton to stdout. The skeleton is meant to be saved
-  into <shadow-repo>/clj-oa3-test/reports/campaigns/<deployment>/YYYY-MM-DD.md
-  and then expanded with human narrative — findings, severities,
-  reproducers, etc.
+  prints a markdown skeleton to stdout, OR — with --file — writes both the
+  markdown and the EDN to the canonical campaign-report location:
+
+    <campaigns-dir>/<deployment>/<YYYY-MM-DD>.md
+    <campaigns-dir>/<deployment>/<YYYY-MM-DD>.edn
+
+  `<campaigns-dir>` defaults to ./reports/campaigns/. Override per-user via
+  :campaigns-dir in test-config.edn (e.g. point at an external scratch dir
+  outside the repo). `<deployment>` comes from :vtn :deployment in the same
+  config; if absent, --file errors. See WORKFLOW.md.
 
   Usage:
-    bin/format-report                        # reads ./report/test-report.edn
-    bin/format-report path/to/report.edn     # explicit path"
+    bin/format-report                        # stdout
+    bin/format-report path/to/report.edn     # explicit input path
+    bin/format-report --file                 # auto-write to campaigns dir
+    bin/format-report --file path/...edn"
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.string :as str]))
@@ -222,12 +230,60 @@
 ;; Entry point
 ;; ---------------------------------------------------------------------------
 
+(defn- read-test-config
+  "Read test-config.edn from cwd. Returns {} if absent."
+  []
+  (let [f (io/file "test-config.edn")]
+    (if (.exists f)
+      (edn/read-string (slurp f))
+      {})))
+
+(defn- file-paths
+  "Compute the campaign-report destination from the report and test-config.
+  Returns {:md <path> :edn <path> :dir <path>} or throws if :deployment
+  isn't known."
+  [report test-config]
+  (let [deployment (or (get-in report [:report/vtn :deployment])
+                       (throw (ex-info
+                               (str "format-report --file: cannot derive output path — "
+                                    ":deployment isn't set under :vtn in test-config.edn. "
+                                    "Either set it (e.g. :vtn {:deployment \"my-vtn\"}) "
+                                    "or invoke without --file and pipe to your own path.")
+                               {})))
+        date       (subs (:report/timestamp report) 0 10)
+        camp-dir   (or (:campaigns-dir test-config) "reports/campaigns")
+        dir        (str camp-dir "/" deployment)
+        base       (str dir "/" date)]
+    {:dir dir
+     :md  (str base ".md")
+     :edn (str base ".edn")}))
+
+(defn- write-file! [path content]
+  (let [f (io/file path)]
+    (.mkdirs (.getParentFile f))
+    (spit f content)
+    (binding [*out* *err*]
+      (println (str "  wrote " path " (" (count content) " bytes)")))))
+
 (defn -main [& args]
-  (let [path (or (first args) "report/test-report.edn")
+  (let [{:keys [file? input-path]} (reduce (fn [acc a]
+                                             (cond
+                                               (= a "--file") (assoc acc :file? true)
+                                               :else          (assoc acc :input-path a)))
+                                           {:file? false :input-path nil}
+                                           args)
+        path (or input-path "report/test-report.edn")
         f    (io/file path)]
     (when-not (.exists f)
       (binding [*out* *err*]
         (println (str "format-report: " path " does not exist. Run the suite first to produce it.")))
       (System/exit 1))
-    (let [report (edn/read-string {:default tagged-literal} (slurp f))]
-      (println (render-markdown report)))))
+    (let [report   (edn/read-string {:default tagged-literal} (slurp f))
+          markdown (render-markdown report)]
+      (if file?
+        (let [{:keys [md edn dir]} (file-paths report (read-test-config))]
+          (binding [*out* *err*]
+            (println (str "format-report --file: writing campaign artifacts to " dir "/")))
+          (write-file! md markdown)
+          (write-file! edn (slurp f)))
+        (println markdown)))))

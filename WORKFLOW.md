@@ -46,28 +46,37 @@ Two artifacts land in `report/`:
 
 ## Filing a campaign report
 
-For meaningful comparisons over time (a "campaign"), wrap the run into a dated markdown narrative under your shadow-repo:
-
-```
-<shadow-repo>/clj-oa3-test/reports/campaigns/<deployment>/YYYY-MM-DD[-<sha>].md
-```
+The convention is `<campaigns-dir>/<deployment>/<YYYY-MM-DD>[-<sha>].md` — auto-organized by deployment name. `<campaigns-dir>` defaults to `reports/campaigns` in the repo, overridable via `:campaigns-dir` in `test-config.edn`. The deployment name comes from `:vtn :deployment` in the same config.
 
 `bin/format-report` produces a markdown skeleton from the EDN report — header (VTN identity, capability profile with sources, headline numbers), per-suite tables, failure detail, and placeholders for narrative (Findings, Setup notes). You expand the placeholders with prose.
 
-```bash
-mkdir -p ~/projects/grid/shadow-repo/clj-oa3-test/reports/campaigns/clj-oa3-vtn
-bin/format-report > ~/projects/grid/shadow-repo/clj-oa3-test/reports/campaigns/clj-oa3-vtn/2026-05-08.md
-# Edit the skeleton — fill in Headline, Findings, Setup notes
-```
-
-Optionally archive the raw artifacts alongside the markdown for later re-analysis:
+The easy path: set `:vtn :deployment` in `test-config.edn`, then:
 
 ```bash
-cp report/test-report.edn ~/projects/grid/shadow-repo/clj-oa3-test/reports/campaigns/clj-oa3-vtn/2026-05-08.edn
-cp report/test-report.txt ~/projects/grid/shadow-repo/clj-oa3-test/reports/campaigns/clj-oa3-vtn/2026-05-08.txt
+bin/format-report --file
+# Writes <campaigns-dir>/<deployment>/<YYYY-MM-DD>.md and .edn for you
+# Then edit the .md to fill in Headline, Findings, Setup notes
 ```
 
-For a worked example, see the existing `vtn-ri-fastapi/2026-05-07.md` and `2026-05-08.md` in the shadow-repo.
+Or pipe explicitly if you'd rather route by hand:
+
+```bash
+bin/format-report > reports/campaigns/clj-oa3-vtn/2026-05-08.md
+cp report/test-report.edn reports/campaigns/clj-oa3-vtn/2026-05-08.edn
+```
+
+Inside `reports/campaigns/`, `.md` and `.edn` files are kept under git; `.txt` summaries and `.log` files are gitignored (redundant / large noise).
+
+### Where do reports go long-term?
+
+A few options, depending on your relationship to the project:
+
+- **A — contribute back to `clj-oa3-test`** (preferred for canonical examples). Open a PR with your campaign report under `reports/campaigns/<deployment>/`. New VTN flavors are especially valuable as community resources.
+- **B — fork and commit to your fork.** Useful if you're tracking a private VTN that shouldn't be public.
+- **C — external storage** (a private repo, an S3 bucket, a personal "shadow repo" that mirrors this layout, etc.). The maintainer of this project uses a local shadow-repo at `~/projects/grid/shadow-repo/clj-oa3-test/reports/` — that's a personal pattern, not a community convention.
+- **D — ephemeral.** Skip the filing step; just look at the markdown skeleton on-the-fly.
+
+For canonical worked examples, see [`reports/campaigns/clj-oa3-vtn/2026-05-08.md`](reports/campaigns/clj-oa3-vtn/2026-05-08.md) and the [`vtn-ri-fastapi/`](reports/campaigns/vtn-ri-fastapi/) series (three runs over 2026-05-07/08/09 against successive states of the same VTN — the campaign concept in action).
 
 ---
 
@@ -112,7 +121,7 @@ To add a new VTN deployment to your campaign matrix:
 2. Fill in `:vtn-url`, `:tokens`, and the `:capabilities` map. Run the suite once and let auto-detection populate what it can — anything that comes back as `:auto-detected` you don't need to declare.
 3. Document the deployment-specific setup in a comment block at the top of the file (how to start the VTN to match this profile).
 4. Add a row to the README's "Configuration files" table.
-5. (Optional) seed `<shadow-repo>/.../campaigns/<deployment>/` with a baseline report.
+5. (Optional) seed `reports/campaigns/<deployment>/` with a baseline report.
 
 ---
 

@@ -1,0 +1,17 @@
+# clj-oa3-test/reports/
+#
+# What lives here: campaign reports, organized by deployment under
+# campaigns/<deployment>/<date>.md. See ../WORKFLOW.md for the convention.
+#
+# Committed:
+#   - *.md  — narrative reports (the deliverable)
+#   - *.edn — structured run output (the source of truth, useful for
+#             archeology and diffs across runs)
+#
+# Gitignored:
+#   - *.txt — terminal-friendly tabular summary (redundant with .md/.edn,
+#             noisy in diffs)
+#   - *.log — VTN container logs (often large, mostly noise)
+
+*.txt
+*.log
