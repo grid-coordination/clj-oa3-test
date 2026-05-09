@@ -71,10 +71,10 @@ Inside `reports/campaigns/`, `.md` and `.edn` files are kept under git; `.txt` s
 
 A few options, depending on your relationship to the project:
 
-- **A — contribute back to `clj-oa3-test`** (preferred for canonical examples). Open a PR with your campaign report under `reports/campaigns/<deployment>/`. New VTN flavors are especially valuable as community resources.
-- **B — fork and commit to your fork.** Useful if you're tracking a private VTN that shouldn't be public.
-- **C — external storage** (a private repo, an S3 bucket, a personal "shadow repo" that mirrors this layout, etc.). The maintainer of this project uses a local shadow-repo at `~/projects/grid/shadow-repo/clj-oa3-test/reports/` — that's a personal pattern, not a community convention.
-- **D — ephemeral.** Skip the filing step; just look at the markdown skeleton on-the-fly.
+- **External storage** (a private repo, an S3 bucket, a personal "shadow repo" that mirrors this layout, etc.). Set `:campaigns-dir` in `test-config.edn` to point there. The maintainer of this project uses a local shadow-repo at `~/projects/grid/shadow-repo/clj-oa3-test/reports/` — that's a personal pattern, not a community convention.
+- **Fork and commit to your fork.** Useful if you're tracking a private VTN that shouldn't be public.
+- **Ephemeral** — skip the filing step; just look at the markdown skeleton on-the-fly with `bin/format-report` (no `--file`).
+- **Contribute back to `clj-oa3-test`** via PR — for canonical examples that are useful to the wider community. New VTN flavors are especially valuable as community resources.
 
 For canonical worked examples, see [`reports/campaigns/clj-oa3-vtn/2026-05-08.md`](reports/campaigns/clj-oa3-vtn/2026-05-08.md) and the [`vtn-ri-fastapi/`](reports/campaigns/vtn-ri-fastapi/) series (three runs over 2026-05-07/08/09 against successive states of the same VTN — the campaign concept in action).
 
