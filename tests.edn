@@ -4,7 +4,7 @@
 ;; Example: `clojure -M:test --focus :mqtt` will also run :programs and :vens.
 
 #kaocha/v1
- {:plugins [:kaocha.plugin/auth-gate :kaocha.plugin/suite-deps :kaocha.plugin/test-report]
+ {:plugins [:kaocha.plugin/auth-gate :kaocha.plugin/capability-gate :kaocha.plugin/suite-deps :kaocha.plugin/test-report]
   :tests [{:id          :notifiers
            :type        :kaocha.type/clojure.test
            :source-paths []
@@ -19,7 +19,8 @@
            :type        :kaocha.type/clojure.test
            :source-paths []
            :test-paths  ["test"]
-           :ns-patterns ["vens-test$"]}
+           :ns-patterns ["vens-test$"]
+           :capabilities/requires {:handlers #{:vens}}}
           {:id          :events
            :type        :kaocha.type/clojure.test
            :source-paths []
@@ -31,13 +32,15 @@
            :source-paths []
            :test-paths  ["test"]
            :ns-patterns ["resources-test$"]
-           :suite-deps/requires [:vens]}
+           :suite-deps/requires [:vens]
+           :capabilities/requires {:handlers #{:resources}}}
           {:id          :reports
            :type        :kaocha.type/clojure.test
            :source-paths []
            :test-paths  ["test"]
            :ns-patterns ["reports-test$"]
-           :suite-deps/requires [:programs]}
+           :suite-deps/requires [:programs]
+           :capabilities/requires {:handlers #{:reports}}}
           {:id          :subscriptions
            :type        :kaocha.type/clojure.test
            :source-paths []
@@ -49,31 +52,36 @@
            :source-paths []
            :test-paths  ["test"]
            :ns-patterns ["topics-test$"]
-           :suite-deps/requires [:vens]}
+           :suite-deps/requires [:vens]
+           :capabilities/requires {:handlers #{:vens}}}
           {:id          :channel
            :type        :kaocha.type/clojure.test
            :source-paths []
            :test-paths  ["test"]
            :ns-patterns ["channel-test$"]
-           :suite-deps/requires [:programs :vens]}
+           :suite-deps/requires [:programs :vens]
+           :capabilities/requires {:handlers #{:vens}}}
           {:id          :ven-client
            :type        :kaocha.type/clojure.test
            :source-paths []
            :test-paths  ["test"]
            :ns-patterns ["ven-client-test$"]
-           :suite-deps/requires [:programs :vens]}
+           :suite-deps/requires [:programs :vens]
+           :capabilities/requires {:handlers #{:vens}}}
           {:id          :mqtt
            :type        :kaocha.type/clojure.test
            :source-paths []
            :test-paths  ["test"]
            :ns-patterns ["mqtt-test$"]
-           :suite-deps/requires [:programs :vens]}
+           :suite-deps/requires [:programs :vens]
+           :capabilities/requires {:handlers #{:vens}}}
           {:id          :mqtt-auth
            :type        :kaocha.type/clojure.test
            :source-paths []
            :test-paths  ["test"]
            :ns-patterns ["mqtt-auth-test$"]
-           :suite-deps/requires [:programs :vens]}
+           :suite-deps/requires [:programs :vens]
+           :capabilities/requires {:handlers #{:vens}}}
           {:id          :webhook
            :type        :kaocha.type/clojure.test
            :source-paths []

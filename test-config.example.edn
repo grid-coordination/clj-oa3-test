@@ -19,13 +19,6 @@
  ;; Set to 0 for fast VTNs, 1000-5000 if you see connection errors.
  :inter-suite-delay-ms 1000
 
- ;; Whether the VTN enforces authentication. Defaults to true.
- ;; Set to false for VTNs that don't check tokens (clj-oa3-vtn 0.12.1,
- ;; VTN-RI with AUTH__DISABLED=true) — ^:auth-tagged tests will be
- ;; skipped automatically by the auth-gate plugin. Replaces the
- ;; --exclude-meta :auth CLI flag.
- ;; :auth-enforced? false
-
  ;; MQTT settle time in ms — how long to wait after clearing the message
  ;; buffer for retained messages to drain. Increase for slow brokers.
  ;; :mqtt-settle-ms 1000
@@ -33,21 +26,60 @@
  ;; MQTT await timeout in ms — max time to wait for expected notifications.
  ;; :mqtt-await-ms 10000
 
- ;; Expected notifier types the VTN should advertise.
- ;; Defaults to #{:WEBHOOK :MQTT}. For a VTN that only supports MQTT:
- ;; :expected-notifiers #{:MQTT}
-
  ;; MQTT broker URI override. When set, wins over discovery from /notifiers —
  ;; useful when the VTN advertises a URI that's not reachable from the test
  ;; host (e.g. a Docker-internal hostname). Also serves as a fallback when
  ;; the VTN doesn't advertise MQTT at all.
  ;; :mqtt-brokers ["tcp://127.0.0.1:1883"]
 
- ;; VEN port route enablement — override when VTN enables additional
- ;; routes on the VEN port. Defaults match clj-oa3-vtn 0.4.0 defaults:
- ;; programs and events are :read-only, everything else is disabled (false).
- ;; Values: :full, :read-only, or false (disabled).
- ;; :ven-routes {:subscriptions false   ;; VEN subscription CRUD
+ ;; Campaign-report destination. Used by `bin/format-report --file` to know
+ ;; where to land the .md and .edn artifacts. Defaults to in-repo
+ ;; "reports/campaigns" (which is what the included canonical examples
+ ;; under reports/campaigns/clj-oa3-vtn/ etc. live in). Override to point
+ ;; at an external location (private repo, scratch dir, S3 mount, etc.).
+ ;; The deployment subdir is derived from :vtn :deployment below.
+ ;; :campaigns-dir "reports/campaigns"
+
+ ;; Optional VTN identity, surfaced in the report header. Purely informational
+ ;; — populates the "VTN identity" section of `bin/format-report` output.
+ ;; :vtn {:implementation "clj-oa3-vtn"
+ ;;       :version        "0.12.1"
+ ;;       :commit         "abc123"
+ ;;       :deployment     "dev-local-no-auth"
+ ;;       :url            "http://localhost:8080/openadr3/3.1.0"}
+
+ ;; ---- Capabilities — the canonical place to describe your VTN ----
+ ;; The harness builds a merged capability profile at load time from four
+ ;; sources, in priority order: declared (this map, highest) → advertised
+ ;; (GET /notifiers) → auto-detected (HTTP probes) → defaulted. Each fact
+ ;; carries its source in the report.
+ ;;
+ ;; You typically declare only what auto-detection can't know (or what you
+ ;; want to assert in the report). :handlers, :transport, and :notifiers
+ ;; are auto-detected; :ven-routes granularity (:full vs :read-only) and
+ ;; :http-auth :enforced? cannot be reliably probed and are best declared.
+ ;;
+ ;; :capabilities
+ ;; {:transport         {:single-port? false :bl-port 8081 :ven-port 8080}
+ ;;  :http-auth         {:method :bearer-jwt :enforced? true
+ ;;                      :on-bl? true :on-ven? true}
+ ;;  :handlers          #{:programs :events :subscriptions :vens :resources :reports}
+ ;;  :ven-routes        {:programs :read-only :events :read-only
+ ;;                      :subscriptions :full :vens :full
+ ;;                      :resources :full :reports :full}
+ ;;  :notifiers         #{:WEBHOOK :MQTT}
+ ;;  :mqtt-auth         {:method :anonymous}
+ ;;  :webhook-delivery? false
+ ;;  :discovery         #{:static-url}}
+
+ ;; ---- Legacy keys (DEPRECATED — migrate to :capabilities above) ----
+ ;; These are still accepted for one deprecation cycle. Each emits a
+ ;; one-time warning at startup if used. New code should use the
+ ;; :capabilities map above.
+ ;;
+ ;; :auth-enforced? false               ;; → :capabilities {:http-auth {:enforced? false}}
+ ;; :expected-notifiers #{:MQTT}        ;; → :capabilities {:notifiers #{:MQTT}}
+ ;; :ven-routes {:subscriptions false   ;; → :capabilities {:ven-routes {...}}
  ;;              :vens          false
  ;;              :resources     false
  ;;              :reports       false}

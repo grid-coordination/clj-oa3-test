@@ -1,0 +1,38 @@
+;; Test configuration — VTN-RI refactor/fastapi branch, docker-compose stack,
+;; JWT HTTP auth via mock-oauth2-server, anonymous MQTT.
+;;
+;; Usage:
+;;   cd <vtn-ri repo> && git checkout refactor/fastapi
+;;   VTN_CONFIG=config-mqtt.yaml docker compose up -d --build
+;;   # Wait for the VTN to be ready, then fetch JWTs from mock-oauth2-server
+;;   # for bl_client / ven_client / ven_client2 and paste into :tokens below.
+;;   cp test-config.vtn-ri-fastapi-anon-mqtt.edn test-config.edn
+;;   clojure -M:test
+;;
+;; Token-fetch reproducer (each token is good for ~1h):
+;;   curl -s -X POST -d 'grant_type=client_credentials&client_id=bl_client&client_secret=x&scope=test/BL' \
+;;        http://localhost:9090/default/token | jq -r .access_token
+
+{:vtn-url "http://localhost:8080/openadr3/3.1.0"
+
+ :tokens {:ven1 "<paste fresh JWT for ven_client here>"
+          :ven2 "<paste fresh JWT for ven_client2 here>"
+          :bl   "<paste fresh JWT for bl_client here>"
+          :bad  "bad_token"}
+
+ :vtn {:implementation "openadr3-vtn-reference-implementation"
+       :version        "refactor/fastapi"
+       :deployment     "vtn-ri-fastapi-anon-mqtt"}
+
+ :capabilities
+ {:transport   {:single-port? true :ven-port 8080}
+  :http-auth   {:method :bearer-jwt :enforced? true :on-bl? true :on-ven? true}
+  :notifiers   #{:WEBHOOK :MQTT}
+  :mqtt-auth   {:method :anonymous}
+  :ven-routes  {:subscriptions :full :vens :full :resources :full :reports :full}}
+
+ ;; The compose-internal MQTT broker hostname (mqtt://mqtt) isn't reachable
+ ;; from the host. Override discovery with the host port forwarding.
+ :mqtt-brokers ["tcp://127.0.0.1:1883"]
+
+ :inter-suite-delay-ms 1000}

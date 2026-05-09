@@ -71,17 +71,19 @@
 ;; ---------------------------------------------------------------------------
 
 (defn- test-result-keyword
-  "Determine :pass, :fail, :error, :pending, or :skip for a leaf testable."
+  "Determine :pass, :fail, :error, :pending, :skip-capability, or :skip for
+  a leaf testable."
   [testable]
   (let [fail  (or (:kaocha.result/fail testable) 0)
         error (or (:kaocha.result/error testable) 0)
         pending (or (:kaocha.result/pending testable) 0)]
     (cond
-      (pos? error)                       :error
-      (pos? fail)                        :fail
-      (:kaocha.testable/skip testable)   :skip
-      (pos? pending)                     :pending
-      :else                              :pass)))
+      (pos? error)                            :error
+      (pos? fail)                             :fail
+      (:capabilities/skip-reason testable)    :skip-capability
+      (:kaocha.testable/skip testable)        :skip
+      (pos? pending)                          :pending
+      :else                                   :pass)))
 
 (defn- extract-test
   "Convert a leaf testable into a test report map."
@@ -97,40 +99,81 @@
       (seq details)
       (assoc :test/failures details)
 
+      (:capabilities/skip-reason testable)
+      (assoc :test/skip-reason (:capabilities/skip-reason testable))
+
       (:kaocha.testable/meta testable)
       (assoc :test/file (get-in testable [:kaocha.testable/meta :file])
              :test/line (get-in testable [:kaocha.testable/meta :line])))))
+
+(defn- suite-children
+  "Return the var-level children of a suite testable. Prefers
+  :kaocha.result/tests (populated when the suite ran) and falls back to
+  :kaocha.test-plan/tests (preserved even when the suite was skipped, so
+  a gated suite still surfaces its individual tests in the report)."
+  [suite]
+  (let [from-result (mapcat :kaocha.result/tests (:kaocha.result/tests suite))
+        ;; result tree drops children for skipped suites — use the plan
+        ;; in that case so we still surface the var list as N/A entries
+        from-plan   (when (empty? from-result)
+                      (mapcat :kaocha.test-plan/tests
+                              (:kaocha.test-plan/tests suite)))]
+    (or (seq from-result) from-plan [])))
 
 (defn- extract-suite
   "Convert a suite testable (with namespace children) into a suite report map."
   [suite descriptions failures]
   (let [suite-id (:kaocha.testable/id suite)
-        tests    (->> (:kaocha.result/tests suite)
-                      (mapcat :kaocha.result/tests)
-                      (mapv #(extract-test % descriptions failures)))]
+        tests    (mapv #(extract-test % descriptions failures)
+                       (suite-children suite))]
     {:suite/id      suite-id
      :suite/tests   tests
-     :suite/summary {:total   (count tests)
-                     :pass    (count (filter #(= :pass (:test/result %)) tests))
-                     :fail    (count (filter #(= :fail (:test/result %)) tests))
-                     :error   (count (filter #(= :error (:test/result %)) tests))
-                     :pending (count (filter #(= :pending (:test/result %)) tests))
-                     :skip    (count (filter #(= :skip (:test/result %)) tests))}}))
+     :suite/summary {:total            (count tests)
+                     :pass             (count (filter #(= :pass (:test/result %)) tests))
+                     :fail             (count (filter #(= :fail (:test/result %)) tests))
+                     :error            (count (filter #(= :error (:test/result %)) tests))
+                     :pending          (count (filter #(= :pending (:test/result %)) tests))
+                     :skip             (count (filter #(= :skip (:test/result %)) tests))
+                     :skip-capability  (count (filter #(= :skip-capability (:test/result %)) tests))}}))
+
+(defn- load-capability-profile
+  "Pull the merged capability profile + sources from openadr3.common-test
+  if it has been loaded (which it has been if any tests ran). Returns nil
+  if the namespace is unavailable."
+  []
+  (try
+    (require 'openadr3.common-test)
+    {:capabilities @(resolve 'openadr3.common-test/capabilities)
+     :sources      @(resolve 'openadr3.common-test/capability-sources)}
+    (catch Exception _ nil)))
+
+(defn- load-vtn-identity
+  "Pull :vtn identity from test-config.edn if set. Optional — purely
+  informational on the report header."
+  []
+  (try
+    @(resolve 'openadr3.common-test/vtn-identity)
+    (catch Exception _ nil)))
 
 (defn build-report
   "Build a complete EDN report from a Kaocha result tree.
   Filters out suites with no tests (not focused or not loaded)."
   [result descriptions failures]
-  (let [suites  (->> (:kaocha.result/tests result)
-                     (mapv #(extract-suite % descriptions failures))
-                     (filterv #(pos? (get-in % [:suite/summary :total]))))
-        summary (reduce (fn [acc s]
-                          (merge-with + acc (:suite/summary s)))
-                        {:total 0 :pass 0 :fail 0 :error 0 :pending 0 :skip 0}
-                        suites)]
-    {:report/timestamp (str (Instant/now))
-     :report/summary   summary
-     :report/suites    suites}))
+  (let [suites    (->> (:kaocha.result/tests result)
+                       (mapv #(extract-suite % descriptions failures))
+                       (filterv #(pos? (get-in % [:suite/summary :total]))))
+        summary   (reduce (fn [acc s]
+                            (merge-with + acc (:suite/summary s)))
+                          {:total 0 :pass 0 :fail 0 :error 0 :pending 0 :skip 0 :skip-capability 0}
+                          suites)
+        profile   (load-capability-profile)
+        vtn       (load-vtn-identity)]
+    (cond-> {:report/timestamp (str (Instant/now))
+             :report/summary   summary
+             :report/suites    suites}
+      vtn     (assoc :report/vtn vtn)
+      profile (assoc :report/capabilities       (:capabilities profile)
+                     :report/capability-sources (:sources profile)))))
 
 ;; ---------------------------------------------------------------------------
 ;; EDN file output
@@ -149,22 +192,24 @@
 
 (defn- result-label [r]
   (case r
-    :pass    "PASS"
-    :fail    "FAIL"
-    :error   "ERROR"
-    :pending "PEND"
-    :skip    "SKIP"
+    :pass            "PASS"
+    :fail            "FAIL"
+    :error           "ERROR"
+    :pending         "PEND"
+    :skip            "SKIP"
+    :skip-capability "N/A"
     (str r)))
 
 (defn- pad-right [s width]
   (format (str "%-" width "s") (or s "")))
 
-(defn- suite-header-line [{:keys [total pass fail error pending skip]}]
+(defn- suite-header-line [{:keys [total pass fail error pending skip skip-capability]}]
   (let [parts (cond-> [(str pass "/" total " passed")]
-                (pos? fail)    (conj (str fail " failed"))
-                (pos? error)   (conj (str error " errors"))
-                (pos? pending) (conj (str pending " pending"))
-                (pos? skip)    (conj (str skip " skipped")))]
+                (pos? fail)             (conj (str fail " failed"))
+                (pos? error)            (conj (str error " errors"))
+                (pos? pending)          (conj (str pending " pending"))
+                (pos? skip)             (conj (str skip " skipped"))
+                (pos? skip-capability)  (conj (str skip-capability " N/A")))]
     (str/join ", " parts)))
 
 (defn- test-table
@@ -221,11 +266,12 @@
         title   (str "  OpenADR3 Test Report — " timestamp)
         tables  (str/join "\n\n" (map test-table suites))
         fails   (failure-section report)
-        {:keys [total pass fail error skip]} summary
+        {:keys [total pass fail error skip skip-capability]} summary
         sum-line (str "  Summary: " total " tests, " pass " passed"
                       (when (pos? fail) (str ", " fail " failed"))
                       (when (pos? error) (str ", " error " errors"))
-                      (when (pos? skip) (str ", " skip " skipped")))]
+                      (when (pos? skip) (str ", " skip " skipped"))
+                      (when (pos? skip-capability) (str ", " skip-capability " N/A")))]
     (str/join "\n"
               (cond-> ["" border title border "" tables]
                 fails (conj (str "\n  " thin) fails (str "  " thin))

@@ -14,14 +14,30 @@
             [clojure.java.io :as io]
             [kaocha.plugin :refer [defplugin]]))
 
+(def ^:private warned-legacy? (atom false))
+
 (defn- auth-enforced?
-  "Read :auth-enforced? from test-config.edn. Defaults to true (the safe
-  default — for unknown VTNs we want auth tests to run)."
+  "Read auth-enforcement state from test-config.edn. Prefers the canonical
+  :capabilities {:http-auth {:enforced? ...}} shape; falls back to the
+  legacy :auth-enforced? top-level key (with a one-time deprecation
+  warning). Defaults to true — for unknown VTNs we want auth tests to run."
   []
   (let [f (io/file "test-config.edn")]
-    (if (.exists f)
-      (get (edn/read-string (slurp f)) :auth-enforced? true)
-      true)))
+    (if-not (.exists f)
+      true
+      (let [config       (edn/read-string (slurp f))
+            new-value    (get-in config [:capabilities :http-auth :enforced?])
+            legacy-value (get config :auth-enforced?)]
+        (cond
+          (some? new-value) new-value
+
+          (some? legacy-value)
+          (do (when (compare-and-set! warned-legacy? false true)
+                (println (str "[auth-gate] DEPRECATED: :auth-enforced? — "
+                              "migrate to :capabilities {:http-auth {:enforced? ...}}")))
+              legacy-value)
+
+          :else true)))))
 
 (def ^:private printed? (atom false))
 

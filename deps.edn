@@ -16,6 +16,9 @@
            :dev {:extra-paths ["dev"]
                  :extra-deps {babashka/process {:mvn/version "0.6.23"}}}
 
+           :format-report {:extra-paths ["script"]
+                           :main-opts ["-m" "format-report"]}
+
            :nrepl {:extra-paths ["dev"]
                    :extra-deps {nrepl/nrepl {:mvn/version "1.6.0"}
                                 babashka/process {:mvn/version "0.6.23"}}

@@ -1,0 +1,33 @@
+;; Test configuration — OA3-gateway VTN flavor (STUB — implementation pending).
+;;
+;; An OA3-gateway is a back-to-back VEN+VTN: the VEN side connects to a cloud
+;; VTN as a downstream consumer, the VTN side republishes (after potentially
+;; modifying) events/prices on the local network. Likely to advertise itself
+;; via mDNS rather than a static URL. No real implementation exists yet at
+;; the time of writing this file; profile is forward-declared so the campaign
+;; workflow has a target placeholder.
+;;
+;; Usage (when an implementation lands):
+;;   cp test-config.oa3-gateway.edn test-config.edn
+;;   # Adjust :vtn-url / :tokens / :capabilities to match the actual gateway
+;;   clojure -M:test
+
+{:vtn-url "http://localhost:8080/openadr3/3.1.0"
+
+ :tokens {:ven1 "ven_token"
+          :ven2 "ven_token2"
+          :bl   "bl_token"
+          :bad  "bad_token"}
+
+ :vtn {:implementation "oa3-gateway"
+       :deployment     "oa3-gateway-stub"}
+
+ :capabilities
+ ;; Tentative — adjust based on the actual gateway implementation:
+ {:transport   {:single-port? true}
+  :discovery   #{:mdns :static-url}            ;; gateway-flavor distinguisher
+  :notifiers   #{:MQTT}
+  :http-auth   {:enforced? false}              ;; LAN deployment, likely no auth
+  :ven-routes  {:subscriptions :full}}
+
+ :inter-suite-delay-ms 0}

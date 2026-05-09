@@ -1,5 +1,9 @@
-;; Test configuration — OpenADR 3 VTN Reference Implementation (Python)
-;; Single-port, all VEN routes enabled, BasicAuth tokens.
+;; Test configuration — VTN-RI on main branch (Python).
+;; Single-port, all VEN routes enabled, BasicAuth tokens, anonymous MQTT
+;; (use bin/test-stack-start-dynsec for the dynsec variant).
+;;
+;; For the refactor/fastapi branch, see test-config.vtn-ri-fastapi-anon-mqtt.edn
+;; and test-config.vtn-ri-fastapi-dynsec-mqtt.edn.
 ;;
 ;; Usage:
 ;;   cp test-config.vtn-ri.edn test-config.edn
@@ -7,20 +11,31 @@
 
 {:vtn-url "http://localhost:8080/openadr3/3.1.0"
 
- ;; VTN-RI uses BasicAuthProvider: base64(client_id:secret)
+ ;; VTN-RI main branch uses BasicAuthProvider: base64(client_id:secret)
  :tokens {:ven1 "dmVuX2NsaWVudDo5OTk="       ;; ven_client:999
           :ven2 "dmVuX2NsaWVudDI6OTk5OQ=="    ;; ven_client2:9999
           :bl   "YmxfY2xpZW50OjEwMDE="        ;; bl_client:1001
           :bad  "bad_token"}
 
- ;; VTN-RI supports both notifier types
- :expected-notifiers #{:WEBHOOK :MQTT}
+ :vtn {:implementation "openadr3-vtn-reference-implementation"
+       :version        "main"
+       :deployment     "vtn-ri-main"}
 
- ;; VTN-RI serves all routes on a single port — all VEN routes enabled
- :ven-routes {:subscriptions :full
-              :vens          :full
-              :resources     :full
-              :reports       :full}
+ ;; VTN capability profile — see openadr3.capabilities for schema.
+ ;; :handlers, :transport, etc. are auto-detected at startup; declare here
+ ;; only what auto-detection can't know.
+ :capabilities
+ {:http-auth   {:method :basic :enforced? true :on-bl? true :on-ven? true}
+  :notifiers   #{:WEBHOOK :MQTT}                  ;; advertises both
+  :mqtt-auth   {:method :anonymous}
+  :ven-routes  {:subscriptions :full              ;; single-port — all routes
+                :vens          :full
+                :resources     :full
+                :reports       :full}}
+
+ ;; --- Legacy keys (kept commented for one deprecation cycle) ---
+ ;; :expected-notifiers #{:WEBHOOK :MQTT}
+ ;; :ven-routes {:subscriptions :full :vens :full :resources :full :reports :full}
 
  ;; Small delay for VTN-RI's async startup
  :inter-suite-delay-ms 1000}

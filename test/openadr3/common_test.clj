@@ -2,6 +2,7 @@
   (:require [com.stuartsierra.component :as component]
             [clojure.edn :as edn]
             [clojure.java.io :as io]
+            [openadr3.capabilities :as caps]
             [openadr3.client.base :as base]
             [openadr3.client.ven :as ven]
             [openadr3.client.bl :as bl]))
@@ -68,14 +69,29 @@
    (bl/bl-client {:url VEN-url :token (:bad tokens)
                   :user-agent "clj-oa3-test (bad-token)"})))
 
+(def ^:private bad-token-bl
+  "Variant of bad-token bound to the BL URL — used by the capability probe
+  to detect auth enforcement on the BL port specifically."
+  (component/start
+   (bl/bl-client {:url BL-url :token (:bad tokens)
+                  :user-agent "clj-oa3-test (bad-token-bl)"})))
+
 ;; ---------------------------------------------------------------------------
 ;; Expected notifiers — configurable per VTN
 ;; ---------------------------------------------------------------------------
 
 (def expected-notifiers
   "Set of notifier types the VTN is expected to advertise.
-  Defaults to #{:WEBHOOK :MQTT} per the OA3 spec."
-  (get config :expected-notifiers #{:WEBHOOK :MQTT}))
+  Defaults to #{:WEBHOOK :MQTT} per the OA3 spec.
+
+  Resolution order:
+    1. :capabilities :notifiers (canonical, Phase 3)
+    2. :expected-notifiers (legacy; deprecation warning emitted by the
+       capabilities namespace's from-legacy-keys translation)
+    3. default."
+  (or (get-in config [:capabilities :notifiers])
+      (get config :expected-notifiers)
+      #{:WEBHOOK :MQTT}))
 
 ;; ---------------------------------------------------------------------------
 ;; VEN port route enablement — configurable per VTN
@@ -85,14 +101,21 @@
   "VEN port route enablement map. Keys are resource types, values are
   :full, :read-only, or false (disabled). Programs and events default
   to :read-only; everything else defaults to false (disabled).
-  Configure in test-config.edn via :ven-routes."
+
+  Resolution order (Phase 3):
+    1. :capabilities :ven-routes (canonical)
+    2. :ven-routes (legacy; deprecation warning emitted by the capabilities
+       namespace's from-legacy-keys translation)
+    3. defaults."
   (merge {:programs      :read-only
           :events        :read-only
           :subscriptions false
           :vens          false
           :resources     false
           :reports       false}
-         (get config :ven-routes {})))
+         (or (get-in config [:capabilities :ven-routes])
+             (get config :ven-routes)
+             {})))
 
 (defn ven-route-enabled?
   "True if the given resource route is enabled on the VEN port.
@@ -153,3 +176,34 @@
     (if (and auth (not= "ANONYMOUS" (:method auth)) (:username auth) (:password auth))
       (select-keys auth [:username :password])
       {})))
+
+;; ---------------------------------------------------------------------------
+;; Capability profile — built at load time from declared + advertised +
+;; auto-detected + defaulted layers. See openadr3.capabilities.
+;;
+;; Phase 1 (OA3T-80j.1): the profile is built and exposed but no test
+;; consumes it yet. Existing :auth-enforced?, :ven-routes, :expected-notifiers
+;; knobs still drive behavior. Phase 3 will migrate them under :capabilities.
+;; ---------------------------------------------------------------------------
+
+(def capability-profile
+  "Merged capability profile + per-fact source map. Built once at namespace
+  load time. See openadr3.capabilities for the schema."
+  (caps/build-profile config
+                      {:bl-client            bl
+                       :ven-client           ven1
+                       :bad-token-client     bad-token-bl
+                       :bad-token-ven-client bad-token}))
+
+(def capabilities
+  "Just the merged capability map (sources elided). Convenience accessor."
+  (:capabilities capability-profile))
+
+(def capability-sources
+  "Map of [path...] → source-keyword for each fact in the merged profile."
+  (:sources capability-profile))
+
+(def vtn-identity
+  "Optional :vtn map from test-config.edn — implementation, version, commit,
+  deployment name, URL — surfaced in the report header. Purely informational."
+  (get config :vtn))
