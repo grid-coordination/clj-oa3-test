@@ -147,6 +147,15 @@
       (let [resp (client/get-ven-by-id ven1 "any-id")]
         (is (= 404 (:status resp)) "VEN /vens route should return 404")))))
 
+(deftest ^:auth test-search-ven-by-id-ven-cross
+  (testing "VEN cannot get another VEN by ID (cross-VEN scope)"
+    (let [ven2-id (ven/ven-id ven2)]
+      (is (some? ven2-id) "ven2 should be registered")
+      (when ven2-id
+        (let [resp (client/get-ven-by-id ven1 ven2-id)]
+          (is (= 403 (:status resp))
+              "ven1 querying ven2's record should be forbidden"))))))
+
 ;; ---------------------------------------------------------------------------
 ;; Update VENs
 ;; ---------------------------------------------------------------------------
@@ -182,6 +191,17 @@
                                     {:objectType "VEN_VEN_REQUEST" :venName "x"})]
         (is (= 404 (:status resp)) "VEN /vens route should return 404")))))
 
+(deftest ^:auth test-update-ven-ven-cross
+  (testing "VEN cannot update another VEN (cross-VEN scope)"
+    (let [ven2-id (ven/ven-id ven2)]
+      (is (some? ven2-id) "ven2 should be registered")
+      (when ven2-id
+        (let [resp (client/update-ven ven1 ven2-id
+                                      {:objectType "VEN_VEN_REQUEST"
+                                       :venName "ven2-tampered"})]
+          (is (= 403 (:status resp))
+              "ven1 updating ven2's record should be forbidden"))))))
+
 ;; ---------------------------------------------------------------------------
 ;; Delete VENs
 ;; ---------------------------------------------------------------------------
@@ -196,6 +216,15 @@
       (when ven-id
         (let [resp (client/delete-ven bl ven-id)]
           (is (= 200 (:status resp)) "BL should delete a VEN"))))))
+
+(deftest ^:auth test-delete-ven-ven-cross
+  (testing "VEN cannot delete another VEN (cross-VEN scope)"
+    (let [ven2-id (ven/ven-id ven2)]
+      (is (some? ven2-id) "ven2 should be registered")
+      (when ven2-id
+        (let [resp (client/delete-ven ven1 ven2-id)]
+          (is (= 403 (:status resp))
+              "ven1 deleting ven2's record should be forbidden"))))))
 
 ;; ---------------------------------------------------------------------------
 ;; Bad token tests

@@ -1,7 +1,7 @@
 (ns openadr3.resources-test
   (:require [openadr3.client.base :as client]
             [openadr3.client.ven :as ven]
-            [openadr3.common-test :refer [ven1 bl bad-token inter-suite-delay-ms
+            [openadr3.common-test :refer [ven1 ven2 bl bad-token inter-suite-delay-ms
                                           ven-route-enabled?]]
             [clojure.test :refer [deftest is testing use-fixtures]]))
 
@@ -12,6 +12,7 @@
 ;; ---------------------------------------------------------------------------
 
 (defn- ven1-id [] (ven/ven-id ven1))
+(defn- ven2-id [] (ven/ven-id ven2))
 
 (defn- resource-body
   "Create a VEN resource request body."
@@ -126,6 +127,23 @@
       (let [resp (client/get-resource-by-id ven1 "any-id")]
         (is (= 404 (:status resp)) "VEN resource route should return 404")))))
 
+(deftest ^:auth test-search-resource-by-id-ven-cross
+  (testing "VEN cannot get another VEN's resource by ID (cross-VEN scope)"
+    (let [vid2 (ven2-id)]
+      (is (some? vid2) "ven2 should be registered")
+      (when vid2
+        (let [created (client/create-resource bl
+                                              (bl-resource-body vid2 "Ven2CrossGet" "ven_client2"))
+              res-id  (-> created :body :id)]
+          (is (some? res-id) "Need a ven2-owned resource ID")
+          (when res-id
+            (try
+              (let [resp (client/get-resource-by-id ven1 res-id)]
+                (is (= 403 (:status resp))
+                    "ven1 querying ven2's resource should be forbidden"))
+              (finally
+                (client/delete-resource bl res-id)))))))))
+
 ;; ---------------------------------------------------------------------------
 ;; Update resources
 ;; ---------------------------------------------------------------------------
@@ -167,6 +185,26 @@
                                           :resourceName "stub"})]
         (is (= 404 (:status resp)) "VEN resource route should return 404")))))
 
+(deftest ^:auth test-update-resource-ven-cross
+  (testing "VEN cannot update another VEN's resource (cross-VEN scope)"
+    (let [vid2 (ven2-id)]
+      (is (some? vid2) "ven2 should be registered")
+      (when vid2
+        (let [created (client/create-resource bl
+                                              (bl-resource-body vid2 "Ven2CrossUpdate" "ven_client2"))
+              res-id  (-> created :body :id)]
+          (is (some? res-id) "Need a ven2-owned resource ID")
+          (when res-id
+            (try
+              (let [resp (client/update-resource ven1 res-id
+                                                 {:objectType "VEN_RESOURCE_REQUEST"
+                                                  :venID vid2
+                                                  :resourceName "Tampered"})]
+                (is (= 403 (:status resp))
+                    "ven1 updating ven2's resource should be forbidden"))
+              (finally
+                (client/delete-resource bl res-id)))))))))
+
 ;; ---------------------------------------------------------------------------
 ;; Delete resources
 ;; ---------------------------------------------------------------------------
@@ -194,6 +232,27 @@
     (testing "VEN cannot delete resources (route disabled)"
       (let [resp (client/delete-resource ven1 "any-id")]
         (is (= 404 (:status resp)) "VEN resource route should return 404")))))
+
+(deftest ^:auth test-delete-resource-ven-cross
+  (testing "VEN cannot delete another VEN's resource (cross-VEN scope)"
+    (let [vid2 (ven2-id)]
+      (is (some? vid2) "ven2 should be registered")
+      (when vid2
+        (let [created (client/create-resource bl
+                                              (bl-resource-body vid2 "Ven2CrossDelete" "ven_client2"))
+              res-id  (-> created :body :id)]
+          (is (some? res-id) "Need a ven2-owned resource ID")
+          (when res-id
+            (try
+              (let [resp (client/delete-resource ven1 res-id)]
+                (is (= 403 (:status resp))
+                    "ven1 deleting ven2's resource should be forbidden"))
+              (finally
+                ;; Defensive cleanup — the 403 case won't have deleted it,
+                ;; but if the assertion fails (because the VTN incorrectly
+                ;; allowed the delete) the resource is already gone, so a
+                ;; second delete is a 404 we don't care about.
+                (client/delete-resource bl res-id)))))))))
 
 ;; ---------------------------------------------------------------------------
 ;; Bad token tests
