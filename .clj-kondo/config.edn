@@ -6,5 +6,6 @@
  ;; the plugin files from linting.
  :output {:exclude-files ["test/kaocha/plugin/auth_gate.clj"
                           "test/kaocha/plugin/capability_gate.clj"
+                          "test/kaocha/plugin/should_gate.clj"
                           "test/kaocha/plugin/suite_deps.clj"
                           "test/kaocha/plugin/test_report.clj"]}}

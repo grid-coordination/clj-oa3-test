@@ -4,7 +4,7 @@
 ;; Example: `clojure -M:test --focus :mqtt` will also run :programs and :vens.
 
 #kaocha/v1
- {:plugins [:kaocha.plugin/auth-gate :kaocha.plugin/capability-gate :kaocha.plugin/suite-deps :kaocha.plugin/test-report]
+ {:plugins [:kaocha.plugin/auth-gate :kaocha.plugin/should-gate :kaocha.plugin/capability-gate :kaocha.plugin/suite-deps :kaocha.plugin/test-report]
   :tests [{:id          :notifiers
            :type        :kaocha.type/clojure.test
            :source-paths []
@@ -87,7 +87,13 @@
            :source-paths []
            :test-paths  ["test"]
            :ns-patterns ["webhook-test$"]
-           :suite-deps/requires [:programs]}]
+           :suite-deps/requires [:programs]}
+          {:id          :should
+           :type        :kaocha.type/clojure.test
+           :source-paths []
+           :test-paths  ["test"]
+           :ns-patterns ["should-test$"]
+           :capabilities/requires {:handlers #{:programs}}}]
   :color?     true
   :fail-fast? false
   :randomize? false}

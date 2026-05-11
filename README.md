@@ -233,6 +233,21 @@ The `kaocha.plugin/auth-gate` plugin reads `[:capabilities :http-auth :enforced?
 
 The tagged tests span 7 suites: programs (8), events (8), vens (5), resources (5), reports (8), subscriptions (5), topics (12).
 
+### SHOULD-level conformance — `^:should`
+
+Some OA3 spec recommendations are marked SHOULD rather than MUST — the RFC 7807 Problem-object body shape on error responses being the canonical example. A VTN that returns `404` with an empty body is technically MUST-conformant but missing the recommendation.
+
+Tests asserting these recommendations are tagged `^:should` and live in the `:should` suite (`test/openadr3/should_test.clj`). The `kaocha.plugin/should-gate` plugin reads `[:capabilities :should-enforced?]` (defaults to **false** — opt-in) and skips them by default, so they don't add noise to reports from VTNs still wiring up basics.
+
+To exercise them, set:
+
+```edn
+;; in test-config.edn:
+:capabilities {:should-enforced? true}
+```
+
+This is parallel to `auth-gate`, but with the default flipped — `:should-enforced?` is off unless you ask for it; `:http-auth :enforced?` is on unless you say otherwise.
+
 ### MQTT Notification Tests
 
 The MQTT suite connects ven1 and bl to the MQTT broker (using credentials from `GET /notifiers` when the broker requires authentication), then tests notification delivery:
