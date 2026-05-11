@@ -70,7 +70,13 @@
  ;;  :notifiers         #{:WEBHOOK :MQTT}
  ;;  :mqtt-auth         {:method :anonymous}
  ;;  :webhook-delivery? false
- ;;  :discovery         #{:static-url}}
+ ;;  :discovery         #{:static-url}
+ ;;
+ ;;  ;; SHOULD-level OA3 conformance — RFC 7807 Problem-object error
+ ;;  ;; response bodies, etc. Defaults to false (opt-in). When true, the
+ ;;  ;; should-gate plugin runs ^:should-tagged tests. Useful for VTNs
+ ;;  ;; aiming for full conformance — keep off when wiring up basics.
+ ;;  :should-enforced?  false}
 
  ;; ---- Legacy keys (DEPRECATED — migrate to :capabilities above) ----
  ;; These are still accepted for one deprecation cycle. Each emits a
