@@ -1,0 +1,1860 @@
+#:report{:timestamp "2026-05-12T20:18:13.936671Z",
+         :summary
+         {:total 206,
+          :pass 196,
+          :fail 9,
+          :error 1,
+          :pending 0,
+          :skip 0,
+          :skip-capability 0},
+         :suites
+         [#:suite{:id :notifiers,
+                  :tests
+                  [#:test{:id :openadr3.notifiers-test/test-notifiers,
+                          :name "test-notifiers",
+                          :desc "GET /notifiers",
+                          :result :pass,
+                          :file "openadr3/notifiers_test.clj",
+                          :line 6}],
+                  :summary
+                  {:total 1,
+                   :pass 1,
+                   :fail 0,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 0}}
+          #:suite{:id :programs,
+                  :tests
+                  [#:test{:id
+                          :openadr3.programs-test/test-create-program-bad-token,
+                          :name "test-create-program-bad-token",
+                          :desc "Bad token cannot create a program",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 197}
+                   #:test{:id
+                          :openadr3.programs-test/test-create-program-conflict,
+                          :name "test-create-program-conflict",
+                          :desc
+                          "Duplicate programName should conflict",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 106}
+                   #:test{:id
+                          :openadr3.programs-test/test-create-program-ven-forbidden,
+                          :name "test-create-program-ven-forbidden",
+                          :desc "VEN cannot create a program",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 97}
+                   #:test{:id
+                          :openadr3.programs-test/test-create-program-with-payload-descriptors,
+                          :name
+                          "test-create-program-with-payload-descriptors",
+                          :desc
+                          "Create program with EVENT_PAYLOAD_DESCRIPTOR payloadDescriptors",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 68}
+                   #:test{:id
+                          :openadr3.programs-test/test-create-program1,
+                          :name "test-create-program1",
+                          :desc "Create Program1 with BL token",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 54}
+                   #:test{:id
+                          :openadr3.programs-test/test-create-program2,
+                          :name "test-create-program2",
+                          :desc "Create Program2 with BL token",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 59}
+                   #:test{:id
+                          :openadr3.programs-test/test-delete-program-bad-id,
+                          :name "test-delete-program-bad-id",
+                          :desc
+                          "Delete non-existent program returns 404",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 241}
+                   #:test{:id
+                          :openadr3.programs-test/test-delete-program-bad-token,
+                          :name "test-delete-program-bad-token",
+                          :desc "Bad token cannot delete a program",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 224}
+                   #:test{:id
+                          :openadr3.programs-test/test-delete-program-bl,
+                          :name "test-delete-program-bl",
+                          :desc "BL can delete a program",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 176}
+                   #:test{:id
+                          :openadr3.programs-test/test-delete-program-ven-forbidden,
+                          :name "test-delete-program-ven-forbidden",
+                          :desc "VEN cannot delete a program",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 185}
+                   #:test{:id
+                          :openadr3.programs-test/test-payload-descriptors-round-trip,
+                          :name "test-payload-descriptors-round-trip",
+                          :desc
+                          "payloadDescriptors round-trip through GET",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 74}
+                   #:test{:id
+                          :openadr3.programs-test/test-search-all-programs-bl,
+                          :name "test-search-all-programs-bl",
+                          :desc "BL can search all programs",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 117}
+                   #:test{:id
+                          :openadr3.programs-test/test-search-all-programs-ven,
+                          :name "test-search-all-programs-ven",
+                          :desc "VEN can search programs",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 123}
+                   #:test{:id
+                          :openadr3.programs-test/test-search-program-bad-id,
+                          :name "test-search-program-bad-id",
+                          :desc "Non-existent program ID returns 404",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 236}
+                   #:test{:id
+                          :openadr3.programs-test/test-search-program-by-id-bad-token,
+                          :name "test-search-program-by-id-bad-token",
+                          :desc "Bad token cannot get a program by ID",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 207}
+                   #:test{:id
+                          :openadr3.programs-test/test-search-program-by-id-bl,
+                          :name "test-search-program-by-id-bl",
+                          :desc "BL can get a program by ID",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 129}
+                   #:test{:id
+                          :openadr3.programs-test/test-search-program-by-id-ven,
+                          :name "test-search-program-by-id-ven",
+                          :desc "VEN can get a program by ID",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 138}
+                   #:test{:id
+                          :openadr3.programs-test/test-search-programs-bad-token,
+                          :name "test-search-programs-bad-token",
+                          :desc "Bad token cannot search programs",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 202}
+                   #:test{:id
+                          :openadr3.programs-test/test-search-programs-pagination,
+                          :name "test-search-programs-pagination",
+                          :desc "Pagination with skip and limit",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 256}
+                   #:test{:id
+                          :openadr3.programs-test/test-update-program-bad-id,
+                          :name "test-update-program-bad-id",
+                          :desc
+                          "Update non-existent program returns 404",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 246}
+                   #:test{:id
+                          :openadr3.programs-test/test-update-program-bad-token,
+                          :name "test-update-program-bad-token",
+                          :desc "Bad token cannot update a program",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 215}
+                   #:test{:id
+                          :openadr3.programs-test/test-update-program-bl,
+                          :name "test-update-program-bl",
+                          :desc "BL can update a program",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 150}
+                   #:test{:id
+                          :openadr3.programs-test/test-update-program-ven-forbidden,
+                          :name "test-update-program-ven-forbidden",
+                          :desc "VEN cannot update a program",
+                          :result :pass,
+                          :file "openadr3/programs_test.clj",
+                          :line 163}],
+                  :summary
+                  {:total 23,
+                   :pass 23,
+                   :fail 0,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 0}}
+          #:suite{:id :vens,
+                  :tests
+                  [#:test{:id
+                          :openadr3.vens-test/test-create-ven-bad-token,
+                          :name "test-create-ven-bad-token",
+                          :desc "Bad token cannot create a VEN",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 233}
+                   #:test{:id :openadr3.vens-test/test-create-ven-bl,
+                          :name "test-create-ven-bl",
+                          :desc "BL can create a VEN",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 70}
+                   #:test{:id
+                          :openadr3.vens-test/test-create-ven-conflict-client-id,
+                          :name "test-create-ven-conflict-client-id",
+                          :desc "Duplicate clientID should conflict",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 98}
+                   #:test{:id :openadr3.vens-test/test-create-ven-ven,
+                          :name "test-create-ven-ven",
+                          :desc "VEN can create a VEN",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 78}
+                   #:test{:id
+                          :openadr3.vens-test/test-delete-ven-bad-id,
+                          :name "test-delete-ven-bad-id",
+                          :desc "Delete non-existent VEN returns 404",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 279}
+                   #:test{:id
+                          :openadr3.vens-test/test-delete-ven-bad-token,
+                          :name "test-delete-ven-bad-token",
+                          :desc "Bad token cannot delete a VEN",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 262}
+                   #:test{:id :openadr3.vens-test/test-delete-ven-bl,
+                          :name "test-delete-ven-bl",
+                          :desc "BL can delete a VEN",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 209}
+                   #:test{:id
+                          :openadr3.vens-test/test-delete-ven-ven-cross,
+                          :name "test-delete-ven-ven-cross",
+                          :desc
+                          "VEN cannot delete another VEN (cross-VEN scope)",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 220}
+                   #:test{:id :openadr3.vens-test/test-register-ven1,
+                          :name "test-register-ven1",
+                          :desc "ven1 is registered (done in fixture)",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 52}
+                   #:test{:id :openadr3.vens-test/test-register-ven2,
+                          :name "test-register-ven2",
+                          :desc "ven2 is registered (done in fixture)",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 59}
+                   #:test{:id
+                          :openadr3.vens-test/test-search-all-vens-bl,
+                          :name "test-search-all-vens-bl",
+                          :desc "BL can search all VENs",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 113}
+                   #:test{:id
+                          :openadr3.vens-test/test-search-all-vens-ven,
+                          :name "test-search-all-vens-ven",
+                          :desc "VEN can search VENs (sees own VENs)",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 119}
+                   #:test{:id
+                          :openadr3.vens-test/test-search-ven-bad-id,
+                          :name "test-search-ven-bad-id",
+                          :desc "Non-existent VEN ID returns 404",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 274}
+                   #:test{:id
+                          :openadr3.vens-test/test-search-ven-by-id-bad-token,
+                          :name "test-search-ven-by-id-bad-token",
+                          :desc "Bad token cannot get a VEN by ID",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 245}
+                   #:test{:id
+                          :openadr3.vens-test/test-search-ven-by-id-bl,
+                          :name "test-search-ven-by-id-bl",
+                          :desc "BL can get a VEN by ID",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 129}
+                   #:test{:id
+                          :openadr3.vens-test/test-search-ven-by-id-ven,
+                          :name "test-search-ven-by-id-ven",
+                          :desc "VEN can get own VEN by ID",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 138}
+                   #:test{:id
+                          :openadr3.vens-test/test-search-ven-by-id-ven-cross,
+                          :name "test-search-ven-by-id-ven-cross",
+                          :desc
+                          "VEN cannot get another VEN by ID (cross-VEN scope)",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 150}
+                   #:test{:id
+                          :openadr3.vens-test/test-search-vens-bad-token,
+                          :name "test-search-vens-bad-token",
+                          :desc "Bad token cannot search VENs",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 240}
+                   #:test{:id
+                          :openadr3.vens-test/test-search-vens-pagination,
+                          :name "test-search-vens-pagination",
+                          :desc "Pagination with skip and limit",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 296}
+                   #:test{:id
+                          :openadr3.vens-test/test-update-ven-bad-id,
+                          :name "test-update-ven-bad-id",
+                          :desc
+                          "Update non-existent VEN returns 404 or 400",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 284}
+                   #:test{:id
+                          :openadr3.vens-test/test-update-ven-bad-token,
+                          :name "test-update-ven-bad-token",
+                          :desc "Bad token cannot update a VEN",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 253}
+                   #:test{:id :openadr3.vens-test/test-update-ven-bl,
+                          :name "test-update-ven-bl",
+                          :desc "BL can update a VEN",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 163}
+                   #:test{:id :openadr3.vens-test/test-update-ven-ven,
+                          :name "test-update-ven-ven",
+                          :desc "VEN can update own VEN",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 180}
+                   #:test{:id
+                          :openadr3.vens-test/test-update-ven-ven-cross,
+                          :name "test-update-ven-ven-cross",
+                          :desc
+                          "VEN cannot update another VEN (cross-VEN scope)",
+                          :result :pass,
+                          :file "openadr3/vens_test.clj",
+                          :line 194}],
+                  :summary
+                  {:total 24,
+                   :pass 24,
+                   :fail 0,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 0}}
+          #:suite{:id :events,
+                  :tests
+                  [#:test{:id
+                          :openadr3.events-test/test-create-event-bad-program-id,
+                          :name "test-create-event-bad-program-id",
+                          :desc
+                          "Event creation with invalid programID returns 400",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 68}
+                   #:test{:id
+                          :openadr3.events-test/test-create-event-bad-token,
+                          :name "test-create-event-bad-token",
+                          :desc "Bad token cannot create an event",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 191}
+                   #:test{:id
+                          :openadr3.events-test/test-create-event-bl,
+                          :name "test-create-event-bl",
+                          :desc "BL can create an event",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 52}
+                   #:test{:id
+                          :openadr3.events-test/test-create-event-ven-forbidden,
+                          :name "test-create-event-ven-forbidden",
+                          :desc "VEN cannot create an event",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 62}
+                   #:test{:id
+                          :openadr3.events-test/test-create-event-with-price-payloads,
+                          :name
+                          "test-create-event-with-price-payloads",
+                          :desc
+                          "Create event with PRICE interval payloads on PriceProgram",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 262}
+                   #:test{:id
+                          :openadr3.events-test/test-delete-event-bad-id,
+                          :name "test-delete-event-bad-id",
+                          :desc
+                          "Delete non-existent event returns 404",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 246}
+                   #:test{:id
+                          :openadr3.events-test/test-delete-event-bad-token,
+                          :name "test-delete-event-bad-token",
+                          :desc "Bad token cannot delete an event",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 226}
+                   #:test{:id
+                          :openadr3.events-test/test-delete-event-bl,
+                          :name "test-delete-event-bl",
+                          :desc "BL can delete an event",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 166}
+                   #:test{:id
+                          :openadr3.events-test/test-delete-event-ven-forbidden,
+                          :name "test-delete-event-ven-forbidden",
+                          :desc "VEN cannot delete an event",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 176}
+                   #:test{:id
+                          :openadr3.events-test/test-event-price-intervals-round-trip,
+                          :name
+                          "test-event-price-intervals-round-trip",
+                          :desc
+                          "Event PRICE interval payloads round-trip through GET",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 278}
+                   #:test{:id
+                          :openadr3.events-test/test-search-all-events-bl,
+                          :name "test-search-all-events-bl",
+                          :desc "BL can search all events",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 77}
+                   #:test{:id
+                          :openadr3.events-test/test-search-all-events-ven,
+                          :name "test-search-all-events-ven",
+                          :desc "VEN can search events",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 85}
+                   #:test{:id
+                          :openadr3.events-test/test-search-event-bad-id,
+                          :name "test-search-event-bad-id",
+                          :desc "Non-existent event ID returns 404",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 241}
+                   #:test{:id
+                          :openadr3.events-test/test-search-event-by-id-bad-token,
+                          :name "test-search-event-by-id-bad-token",
+                          :desc "Bad token cannot get an event by ID",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 202}
+                   #:test{:id
+                          :openadr3.events-test/test-search-event-by-id-bl,
+                          :name "test-search-event-by-id-bl",
+                          :desc "BL can get an event by ID",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 90}
+                   #:test{:id
+                          :openadr3.events-test/test-search-event-by-id-ven,
+                          :name "test-search-event-by-id-ven",
+                          :desc "VEN can get an event by ID",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 102}
+                   #:test{:id
+                          :openadr3.events-test/test-search-events-bad-token,
+                          :name "test-search-events-bad-token",
+                          :desc "Bad token cannot search events",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 197}
+                   #:test{:id
+                          :openadr3.events-test/test-search-events-by-program-id,
+                          :name "test-search-events-by-program-id",
+                          :desc "Search events filtered by programID",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 113}
+                   #:test{:id
+                          :openadr3.events-test/test-search-events-pagination,
+                          :name "test-search-events-pagination",
+                          :desc
+                          "Pagination with skip and limit > limit=1 returns exactly 1",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 310}
+                   #:test{:id
+                          :openadr3.events-test/test-update-event-bad-id,
+                          :name "test-update-event-bad-id",
+                          :desc
+                          "Update non-existent event returns 404",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 251}
+                   #:test{:id
+                          :openadr3.events-test/test-update-event-bad-token,
+                          :name "test-update-event-bad-token",
+                          :desc "Bad token cannot update an event",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 213}
+                   #:test{:id
+                          :openadr3.events-test/test-update-event-bl,
+                          :name "test-update-event-bl",
+                          :desc "BL can update an event",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 128}
+                   #:test{:id
+                          :openadr3.events-test/test-update-event-ven-forbidden,
+                          :name "test-update-event-ven-forbidden",
+                          :desc "VEN cannot update an event",
+                          :result :pass,
+                          :file "openadr3/events_test.clj",
+                          :line 147}],
+                  :summary
+                  {:total 23,
+                   :pass 23,
+                   :fail 0,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 0}}
+          #:suite{:id :resources,
+                  :tests
+                  [#:test{:id
+                          :openadr3.resources-test/test-create-resource-bad-token,
+                          :name "test-create-resource-bad-token",
+                          :desc "Bad token cannot create a resource",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 261}
+                   #:test{:id
+                          :openadr3.resources-test/test-create-resource-bl,
+                          :name "test-create-resource-bl",
+                          :desc "BL can create a resource for a VEN",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 70}
+                   #:test{:id
+                          :openadr3.resources-test/test-create-resource-conflict,
+                          :name "test-create-resource-conflict",
+                          :desc
+                          "Duplicate resourceName per VEN should conflict",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 76}
+                   #:test{:id
+                          :openadr3.resources-test/test-create-resource-ven,
+                          :name "test-create-resource-ven",
+                          :desc "VEN can create a resource",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 55}
+                   #:test{:id
+                          :openadr3.resources-test/test-delete-resource-bad-id,
+                          :name "test-delete-resource-bad-id",
+                          :desc
+                          "Delete non-existent resource returns 404",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 312}
+                   #:test{:id
+                          :openadr3.resources-test/test-delete-resource-bad-token,
+                          :name "test-delete-resource-bad-token",
+                          :desc "Bad token cannot delete a resource",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 293}
+                   #:test{:id
+                          :openadr3.resources-test/test-delete-resource-bl,
+                          :name "test-delete-resource-bl",
+                          :desc "BL can delete a resource",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 212}
+                   #:test{:id
+                          :openadr3.resources-test/test-delete-resource-ven,
+                          :name "test-delete-resource-ven",
+                          :desc "VEN can delete own resource",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 222}
+                   #:test{:id
+                          :openadr3.resources-test/test-delete-resource-ven-cross,
+                          :name "test-delete-resource-ven-cross",
+                          :desc
+                          "VEN cannot delete another VEN's resource (cross-VEN scope)",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 236}
+                   #:test{:id
+                          :openadr3.resources-test/test-search-all-resources-bl,
+                          :name "test-search-all-resources-bl",
+                          :desc "BL can search resources for a VEN",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 88}
+                   #:test{:id
+                          :openadr3.resources-test/test-search-all-resources-ven,
+                          :name "test-search-all-resources-ven",
+                          :desc "VEN can search own resources",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 95}
+                   #:test{:id
+                          :openadr3.resources-test/test-search-resource-bad-id,
+                          :name "test-search-resource-bad-id",
+                          :desc "Non-existent resource ID returns 404",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 307}
+                   #:test{:id
+                          :openadr3.resources-test/test-search-resource-by-id-bad-token,
+                          :name "test-search-resource-by-id-bad-token",
+                          :desc
+                          "Bad token cannot get a resource by ID",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 273}
+                   #:test{:id
+                          :openadr3.resources-test/test-search-resource-by-id-bl,
+                          :name "test-search-resource-by-id-bl",
+                          :desc "BL can get a resource by ID",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 106}
+                   #:test{:id
+                          :openadr3.resources-test/test-search-resource-by-id-ven,
+                          :name "test-search-resource-by-id-ven",
+                          :desc "VEN can get own resource by ID",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 116}
+                   #:test{:id
+                          :openadr3.resources-test/test-search-resource-by-id-ven-cross,
+                          :name "test-search-resource-by-id-ven-cross",
+                          :desc
+                          "VEN cannot get another VEN's resource by ID (cross-VEN scope)",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 130}
+                   #:test{:id
+                          :openadr3.resources-test/test-search-resources-bad-token,
+                          :name "test-search-resources-bad-token",
+                          :desc "Bad token cannot search resources",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 267}
+                   #:test{:id
+                          :openadr3.resources-test/test-search-resources-pagination,
+                          :name "test-search-resources-pagination",
+                          :desc "Pagination with skip and limit",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 328}
+                   #:test{:id
+                          :openadr3.resources-test/test-update-resource-bad-id,
+                          :name "test-update-resource-bad-id",
+                          :desc
+                          "Update non-existent resource returns 404 or 400",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 317}
+                   #:test{:id
+                          :openadr3.resources-test/test-update-resource-bad-token,
+                          :name "test-update-resource-bad-token",
+                          :desc "Bad token cannot update a resource",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 283}
+                   #:test{:id
+                          :openadr3.resources-test/test-update-resource-bl,
+                          :name "test-update-resource-bl",
+                          :desc "BL can update a resource",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 151}
+                   #:test{:id
+                          :openadr3.resources-test/test-update-resource-ven,
+                          :name "test-update-resource-ven",
+                          :desc "VEN can update own resource",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 168}
+                   #:test{:id
+                          :openadr3.resources-test/test-update-resource-ven-cross,
+                          :name "test-update-resource-ven-cross",
+                          :desc
+                          "VEN cannot update another VEN's resource (cross-VEN scope)",
+                          :result :pass,
+                          :file "openadr3/resources_test.clj",
+                          :line 188}],
+                  :summary
+                  {:total 23,
+                   :pass 23,
+                   :fail 0,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 0}}
+          #:suite{:id :reports,
+                  :tests
+                  [#:test{:id
+                          :openadr3.reports-test/test-create-report-bad-token,
+                          :name "test-create-report-bad-token",
+                          :desc "Bad token cannot create a report",
+                          :result :pass,
+                          :file "openadr3/reports_test.clj",
+                          :line 199}
+                   #:test{:id
+                          :openadr3.reports-test/test-create-report-bl-forbidden,
+                          :name "test-create-report-bl-forbidden",
+                          :desc "BL cannot create a report",
+                          :result :pass,
+                          :file "openadr3/reports_test.clj",
+                          :line 79}
+                   #:test{:id
+                          :openadr3.reports-test/test-create-report-ven,
+                          :name "test-create-report-ven",
+                          :desc "VEN can create a report",
+                          :result :pass,
+                          :file "openadr3/reports_test.clj",
+                          :line 62}
+                   #:test{:id
+                          :openadr3.reports-test/test-delete-report-bad-id,
+                          :name "test-delete-report-bad-id",
+                          :desc
+                          "Delete non-existent report returns 404",
+                          :result :pass,
+                          :file "openadr3/reports_test.clj",
+                          :line 248}
+                   #:test{:id
+                          :openadr3.reports-test/test-delete-report-bad-token,
+                          :name "test-delete-report-bad-token",
+                          :desc "Bad token cannot delete a report",
+                          :result :pass,
+                          :file "openadr3/reports_test.clj",
+                          :line 230}
+                   #:test{:id
+                          :openadr3.reports-test/test-delete-report-bl-forbidden,
+                          :name "test-delete-report-bl-forbidden",
+                          :desc "BL cannot delete a report",
+                          :result :pass,
+                          :file "openadr3/reports_test.clj",
+                          :line 186}
+                   #:test{:id
+                          :openadr3.reports-test/test-delete-report-ven,
+                          :name "test-delete-report-ven",
+                          :desc "VEN can delete own report",
+                          :result :pass,
+                          :file "openadr3/reports_test.clj",
+                          :line 173}
+                   #:test{:id
+                          :openadr3.reports-test/test-search-all-reports-bl,
+                          :name "test-search-all-reports-bl",
+                          :desc "BL can search all reports",
+                          :result :pass,
+                          :file "openadr3/reports_test.clj",
+                          :line 88}
+                   #:test{:id
+                          :openadr3.reports-test/test-search-all-reports-ven,
+                          :name "test-search-all-reports-ven",
+                          :desc "VEN can search reports (sees own)",
+                          :result :pass,
+                          :file "openadr3/reports_test.clj",
+                          :line 95}
+                   #:test{:id
+                          :openadr3.reports-test/test-search-report-bad-id,
+                          :name "test-search-report-bad-id",
+                          :desc "Non-existent report ID returns 404",
+                          :result :pass,
+                          :file "openadr3/reports_test.clj",
+                          :line 243}
+                   #:test{:id
+                          :openadr3.reports-test/test-search-report-by-id-bad-token,
+                          :name "test-search-report-by-id-bad-token",
+                          :desc "Bad token cannot get a report by ID",
+                          :result :pass,
+                          :file "openadr3/reports_test.clj",
+                          :line 209}
+                   #:test{:id
+                          :openadr3.reports-test/test-search-report-by-id-bl,
+                          :name "test-search-report-by-id-bl",
+                          :desc "BL can get a report by ID",
+                          :result :pass,
+                          :file "openadr3/reports_test.clj",
+                          :line 104}
+                   #:test{:id
+                          :openadr3.reports-test/test-search-report-by-id-ven,
+                          :name "test-search-report-by-id-ven",
+                          :desc "VEN can get own report by ID",
+                          :result :pass,
+                          :file "openadr3/reports_test.clj",
+                          :line 113}
+                   #:test{:id
+                          :openadr3.reports-test/test-search-reports-bad-token,
+                          :name "test-search-reports-bad-token",
+                          :desc "Bad token cannot search reports",
+                          :result :pass,
+                          :file "openadr3/reports_test.clj",
+                          :line 204}
+                   #:test{:id
+                          :openadr3.reports-test/test-search-reports-pagination,
+                          :name "test-search-reports-pagination",
+                          :desc "Pagination with skip and limit",
+                          :result :pass,
+                          :file "openadr3/reports_test.clj",
+                          :line 266}
+                   #:test{:id
+                          :openadr3.reports-test/test-update-report-bad-id,
+                          :name "test-update-report-bad-id",
+                          :desc
+                          "Update non-existent report returns 404 or 400",
+                          :result :pass,
+                          :file "openadr3/reports_test.clj",
+                          :line 253}
+                   #:test{:id
+                          :openadr3.reports-test/test-update-report-bad-token,
+                          :name "test-update-report-bad-token",
+                          :desc "Bad token cannot update a report",
+                          :result :pass,
+                          :file "openadr3/reports_test.clj",
+                          :line 218}
+                   #:test{:id
+                          :openadr3.reports-test/test-update-report-bl-forbidden,
+                          :name "test-update-report-bl-forbidden",
+                          :desc "BL cannot update a report",
+                          :result :pass,
+                          :file "openadr3/reports_test.clj",
+                          :line 157}
+                   #:test{:id
+                          :openadr3.reports-test/test-update-report-ven,
+                          :name "test-update-report-ven",
+                          :desc "VEN can update own report",
+                          :result :pass,
+                          :file "openadr3/reports_test.clj",
+                          :line 130}],
+                  :summary
+                  {:total 19,
+                   :pass 19,
+                   :fail 0,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 0}}
+          #:suite{:id :subscriptions,
+                  :tests
+                  [#:test{:id
+                          :openadr3.subscriptions-test/test-create-subscription-bad-token,
+                          :name "test-create-subscription-bad-token",
+                          :desc
+                          "Bad token cannot create a subscription",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 192}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-create-subscription-bl,
+                          :name "test-create-subscription-bl",
+                          :desc "BL can create a subscription",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 48}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-create-subscription-ven,
+                          :name "test-create-subscription-ven",
+                          :desc "VEN can create a subscription",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 56}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-delete-subscription-bad-id,
+                          :name "test-delete-subscription-bad-id",
+                          :desc
+                          "Delete non-existent subscription returns 404",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 242}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-delete-subscription-bad-token,
+                          :name "test-delete-subscription-bad-token",
+                          :desc
+                          "Bad token cannot delete a subscription",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 223}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-delete-subscription-bl,
+                          :name "test-delete-subscription-bl",
+                          :desc "BL can delete a subscription",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 162}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-delete-subscription-ven,
+                          :name "test-delete-subscription-ven",
+                          :desc "VEN can delete own subscription",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 171}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-search-all-subscriptions-bl,
+                          :name "test-search-all-subscriptions-bl",
+                          :desc "BL can search all subscriptions",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 72}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-search-all-subscriptions-ven,
+                          :name "test-search-all-subscriptions-ven",
+                          :desc
+                          "VEN can search subscriptions (sees own)",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 81}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-search-subscription-bad-id,
+                          :name "test-search-subscription-bad-id",
+                          :desc
+                          "Non-existent subscription ID returns 404",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 237}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-search-subscription-by-id-bad-token,
+                          :name
+                          "test-search-subscription-by-id-bad-token",
+                          :desc
+                          "Bad token cannot get a subscription by ID",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 202}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-search-subscription-by-id-bl,
+                          :name "test-search-subscription-by-id-bl",
+                          :desc "BL can get a subscription by ID",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 93}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-search-subscription-by-id-ven,
+                          :name "test-search-subscription-by-id-ven",
+                          :desc "VEN can get own subscription by ID",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 103}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-search-subscriptions-bad-token,
+                          :name "test-search-subscriptions-bad-token",
+                          :desc
+                          "Bad token cannot search subscriptions",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 197}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-search-subscriptions-by-client-name,
+                          :name
+                          "test-search-subscriptions-by-client-name",
+                          :desc
+                          "Search subscriptions filtered by clientName",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 308}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-search-subscriptions-by-program-id,
+                          :name
+                          "test-search-subscriptions-by-program-id",
+                          :desc
+                          "Search subscriptions filtered by programID",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 297}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-search-subscriptions-pagination,
+                          :name "test-search-subscriptions-pagination",
+                          :desc "Pagination with skip and limit",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 258}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-update-subscription-bad-id,
+                          :name "test-update-subscription-bad-id",
+                          :desc
+                          "Update non-existent subscription returns 404 or 400",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 247}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-update-subscription-bad-token,
+                          :name "test-update-subscription-bad-token",
+                          :desc
+                          "Bad token cannot update a subscription",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 212}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-update-subscription-bl,
+                          :name "test-update-subscription-bl",
+                          :desc "BL can update a subscription",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 125}
+                   #:test{:id
+                          :openadr3.subscriptions-test/test-update-subscription-ven,
+                          :name "test-update-subscription-ven",
+                          :desc "VEN can update own subscription",
+                          :result :pass,
+                          :file "openadr3/subscriptions_test.clj",
+                          :line 138}],
+                  :summary
+                  {:total 21,
+                   :pass 21,
+                   :fail 0,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 0}}
+          #:suite{:id :topics,
+                  :tests
+                  [#:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-events,
+                          :name "test-mqtt-topics-bad-token-events",
+                          :desc "Bad token cannot get events topics",
+                          :result :pass,
+                          :file "openadr3/topics_test.clj",
+                          :line 143}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-program,
+                          :name "test-mqtt-topics-bad-token-program",
+                          :desc "Bad token cannot get program topics",
+                          :result :pass,
+                          :file "openadr3/topics_test.clj",
+                          :line 129}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-program-events,
+                          :name
+                          "test-mqtt-topics-bad-token-program-events",
+                          :desc
+                          "Bad token cannot get program events topics",
+                          :result :pass,
+                          :file "openadr3/topics_test.clj",
+                          :line 136}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-programs,
+                          :name "test-mqtt-topics-bad-token-programs",
+                          :desc "Bad token cannot get programs topics",
+                          :result :pass,
+                          :file "openadr3/topics_test.clj",
+                          :line 124}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-reports,
+                          :name "test-mqtt-topics-bad-token-reports",
+                          :desc "Bad token cannot get reports topics",
+                          :result :pass,
+                          :file "openadr3/topics_test.clj",
+                          :line 148}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-resources,
+                          :name "test-mqtt-topics-bad-token-resources",
+                          :desc
+                          "Bad token cannot get resources topics",
+                          :result :pass,
+                          :file "openadr3/topics_test.clj",
+                          :line 163}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-subscriptions,
+                          :name
+                          "test-mqtt-topics-bad-token-subscriptions",
+                          :desc
+                          "Bad token cannot get subscriptions topics",
+                          :result :pass,
+                          :file "openadr3/topics_test.clj",
+                          :line 153}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-ven,
+                          :name "test-mqtt-topics-bad-token-ven",
+                          :desc "Bad token cannot get ven topics",
+                          :result :pass,
+                          :file "openadr3/topics_test.clj",
+                          :line 168}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-ven-events,
+                          :name
+                          "test-mqtt-topics-bad-token-ven-events",
+                          :desc
+                          "Bad token cannot get ven events topics",
+                          :result :pass,
+                          :file "openadr3/topics_test.clj",
+                          :line 189}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-ven-programs,
+                          :name
+                          "test-mqtt-topics-bad-token-ven-programs",
+                          :desc
+                          "Bad token cannot get ven programs topics",
+                          :result :pass,
+                          :file "openadr3/topics_test.clj",
+                          :line 182}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-ven-resources,
+                          :name
+                          "test-mqtt-topics-bad-token-ven-resources",
+                          :desc
+                          "Bad token cannot get ven resources topics",
+                          :result :pass,
+                          :file "openadr3/topics_test.clj",
+                          :line 175}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bad-token-vens,
+                          :name "test-mqtt-topics-bad-token-vens",
+                          :desc "Bad token cannot get vens topics",
+                          :result :pass,
+                          :file "openadr3/topics_test.clj",
+                          :line 158}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-bl,
+                          :name "test-mqtt-topics-bl",
+                          :desc "BL topics tests",
+                          :result :pass,
+                          :file "openadr3/topics_test.clj",
+                          :line 112}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-ven1,
+                          :name "test-mqtt-topics-ven1",
+                          :desc "VEN 1 topics tests",
+                          :result :fail,
+                          :failures
+                          [{:type :fail,
+                            :message "Check for 403 status",
+                            :expected "(= status 403)",
+                            :actual "(not (= 200 403))"}
+                           {:type :fail,
+                            :message "Check for 403 status",
+                            :expected "(= status 403)",
+                            :actual "(not (= 200 403))"}
+                           {:type :fail,
+                            :message "Check for 403 status",
+                            :expected "(= status 403)",
+                            :actual "(not (= 200 403))"}
+                           {:type :fail,
+                            :message "Check for 403 status",
+                            :expected "(= status 403)",
+                            :actual "(not (= 200 403))"}
+                           {:type :fail,
+                            :message "Check for 403 status",
+                            :expected "(= status 403)",
+                            :actual "(not (= 200 403))"}],
+                          :file "openadr3/topics_test.clj",
+                          :line 94}
+                   #:test{:id
+                          :openadr3.topics-test/test-mqtt-topics-ven2,
+                          :name "test-mqtt-topics-ven2",
+                          :desc "VEN 2 topics tests",
+                          :result :fail,
+                          :failures
+                          [{:type :fail,
+                            :message "Check for 403 status",
+                            :expected "(= status 403)",
+                            :actual "(not (= 200 403))"}
+                           {:type :fail,
+                            :message "Check for 403 status",
+                            :expected "(= status 403)",
+                            :actual "(not (= 200 403))"}
+                           {:type :fail,
+                            :message "Check for 403 status",
+                            :expected "(= status 403)",
+                            :actual "(not (= 200 403))"}
+                           {:type :fail,
+                            :message "Check for 403 status",
+                            :expected "(= status 403)",
+                            :actual "(not (= 200 403))"}
+                           {:type :fail,
+                            :message "Check for 403 status",
+                            :expected "(= status 403)",
+                            :actual "(not (= 200 403))"}],
+                          :file "openadr3/topics_test.clj",
+                          :line 103}],
+                  :summary
+                  {:total 15,
+                   :pass 13,
+                   :fail 2,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 0}}
+          #:suite{:id :channel,
+                  :tests
+                  [#:test{:id
+                          :openadr3.channel-test/test-mqtt-channel-lifecycle,
+                          :name "test-mqtt-channel-lifecycle",
+                          :desc
+                          "MqttChannel start → use → stop lifecycle > before start",
+                          :result :pass,
+                          :file "openadr3/channel_test.clj",
+                          :line 21}
+                   #:test{:id
+                          :openadr3.channel-test/test-mqtt-channel-subscribe-before-start-throws,
+                          :name
+                          "test-mqtt-channel-subscribe-before-start-throws",
+                          :desc "subscribe-topics before start throws",
+                          :result :pass,
+                          :file "openadr3/channel_test.clj",
+                          :line 54}
+                   #:test{:id
+                          :openadr3.channel-test/test-mqtt-channel-with-on-message,
+                          :name "test-mqtt-channel-with-on-message",
+                          :desc
+                          "MqttChannel with :on-message callback",
+                          :result :pass,
+                          :file "openadr3/channel_test.clj",
+                          :line 62}
+                   #:test{:id
+                          :openadr3.channel-test/test-mqtt-conn-accessor,
+                          :name "test-mqtt-conn-accessor",
+                          :desc
+                          "mqtt-conn returns raw connection after start",
+                          :result :pass,
+                          :file "openadr3/channel_test.clj",
+                          :line 132}
+                   #:test{:id
+                          :openadr3.channel-test/test-ven-component-stop-closes-channels,
+                          :name
+                          "test-ven-component-stop-closes-channels",
+                          :desc
+                          "component/stop auto-stops managed channels",
+                          :result :pass,
+                          :file "openadr3/channel_test.clj",
+                          :line 199}
+                   #:test{:id
+                          :openadr3.channel-test/test-ven-mqtt-end-to-end,
+                          :name "test-ven-mqtt-end-to-end",
+                          :desc
+                          "VenClient add-mqtt → subscribe → receive notification → stop",
+                          :result :pass,
+                          :file "openadr3/channel_test.clj",
+                          :line 156}
+                   #:test{:id
+                          :openadr3.channel-test/test-webhook-channel-custom-path,
+                          :name "test-webhook-channel-custom-path",
+                          :desc "WebhookChannel with custom path",
+                          :result :pass,
+                          :file "openadr3/channel_test.clj",
+                          :line 117}
+                   #:test{:id
+                          :openadr3.channel-test/test-webhook-channel-lifecycle,
+                          :name "test-webhook-channel-lifecycle",
+                          :desc
+                          "WebhookChannel start → use → stop lifecycle > before start",
+                          :result :pass,
+                          :file "openadr3/channel_test.clj",
+                          :line 82}
+                   #:test{:id
+                          :openadr3.channel-test/test-webhook-receiver-accessor,
+                          :name "test-webhook-receiver-accessor",
+                          :desc
+                          "webhook-receiver returns raw receiver after start",
+                          :result :pass,
+                          :file "openadr3/channel_test.clj",
+                          :line 142}],
+                  :summary
+                  {:total 9,
+                   :pass 9,
+                   :fail 0,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 0}}
+          #:suite{:id :ven-client,
+                  :tests
+                  [#:test{:id
+                          :openadr3.ven-client-test/test-add-mqtt-and-get-channel,
+                          :name "test-add-mqtt-and-get-channel",
+                          :desc
+                          "add-mqtt creates and starts an MQTT channel",
+                          :result :pass,
+                          :file "openadr3/ven_client_test.clj",
+                          :line 110}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-add-webhook-and-get-channel,
+                          :name "test-add-webhook-and-get-channel",
+                          :desc
+                          "add-webhook creates and starts a webhook channel",
+                          :result :pass,
+                          :file "openadr3/ven_client_test.clj",
+                          :line 123}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-client-type-field,
+                          :name "test-client-type-field",
+                          :desc "VenClient has :client-type :ven",
+                          :result :pass,
+                          :file "openadr3/ven_client_test.clj",
+                          :line 180}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-discover-notifiers,
+                          :name "test-discover-notifiers",
+                          :desc
+                          "discover-notifiers returns notifier configuration",
+                          :result :pass,
+                          :file "openadr3/ven_client_test.clj",
+                          :line 47}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-get-channel-nil-when-absent,
+                          :name "test-get-channel-nil-when-absent",
+                          :desc
+                          "get-channel returns nil for absent channel type",
+                          :result :pass,
+                          :file "openadr3/ven_client_test.clj",
+                          :line 137}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-mqtt-broker-urls,
+                          :name "test-mqtt-broker-urls",
+                          :desc
+                          "mqtt-broker-urls returns broker URIs when VTN supports MQTT",
+                          :result :pass,
+                          :file "openadr3/ven_client_test.clj",
+                          :line 61}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-poll-events,
+                          :name "test-poll-events",
+                          :desc
+                          "poll-events returns coerced event entities",
+                          :result :pass,
+                          :file "openadr3/ven_client_test.clj",
+                          :line 73}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-resolve-program-id,
+                          :name "test-resolve-program-id",
+                          :desc
+                          "resolve-program-id finds a program and caches it",
+                          :result :pass,
+                          :file "openadr3/ven_client_test.clj",
+                          :line 29}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-resolve-program-id-not-found,
+                          :name "test-resolve-program-id-not-found",
+                          :desc
+                          "resolve-program-id returns nil for nonexistent program",
+                          :result :pass,
+                          :file "openadr3/ven_client_test.clj",
+                          :line 39}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-subscribe-mqtt,
+                          :name "test-subscribe-mqtt",
+                          :desc
+                          "subscribe discovers topics from VTN and subscribes on MQTT channel",
+                          :result :pass,
+                          :file "openadr3/ven_client_test.clj",
+                          :line 141}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-ven-id-and-name,
+                          :name "test-ven-id-and-name",
+                          :desc
+                          "ven-id and ven-name return registered values",
+                          :result :pass,
+                          :file "openadr3/ven_client_test.clj",
+                          :line 20}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-ven-scoped-topics-auto-id,
+                          :name "test-ven-scoped-topics-auto-id",
+                          :desc
+                          "VEN-scoped topic functions auto-use registered ven-id",
+                          :result :pass,
+                          :file "openadr3/ven_client_test.clj",
+                          :line 160}
+                   #:test{:id
+                          :openadr3.ven-client-test/test-vtn-supports-mqtt,
+                          :name "test-vtn-supports-mqtt",
+                          :desc
+                          "vtn-supports-mqtt? detects MQTT support",
+                          :result :pass,
+                          :file "openadr3/ven_client_test.clj",
+                          :line 55}],
+                  :summary
+                  {:total 13,
+                   :pass 13,
+                   :fail 0,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 0}}
+          #:suite{:id :mqtt,
+                  :tests
+                  [#:test{:id
+                          :openadr3.mqtt-test/test-event-create-notification,
+                          :name "test-event-create-notification",
+                          :desc
+                          "MQTT notification for event creation on a program",
+                          :result :pass,
+                          :file "openadr3/mqtt_test.clj",
+                          :line 161}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-event-delete-notification,
+                          :name "test-event-delete-notification",
+                          :desc "MQTT notification for event deletion",
+                          :result :pass,
+                          :file "openadr3/mqtt_test.clj",
+                          :line 229}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-event-update-notification,
+                          :name "test-event-update-notification",
+                          :desc "MQTT notification for event update",
+                          :result :pass,
+                          :file "openadr3/mqtt_test.clj",
+                          :line 192}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-program-create-notification,
+                          :name "test-program-create-notification",
+                          :desc
+                          "MQTT notification for program creation",
+                          :result :pass,
+                          :file "openadr3/mqtt_test.clj",
+                          :line 67}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-program-delete-notification,
+                          :name "test-program-delete-notification",
+                          :desc
+                          "MQTT notification for program deletion",
+                          :result :pass,
+                          :file "openadr3/mqtt_test.clj",
+                          :line 136}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-program-update-notification,
+                          :name "test-program-update-notification",
+                          :desc "MQTT notification for program update",
+                          :result :pass,
+                          :file "openadr3/mqtt_test.clj",
+                          :line 107}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-report-create-notification,
+                          :name "test-report-create-notification",
+                          :desc
+                          "MQTT notification for report creation (BL receives)",
+                          :result :pass,
+                          :file "openadr3/mqtt_test.clj",
+                          :line 380}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-report-delete-notification,
+                          :name "test-report-delete-notification",
+                          :desc
+                          "MQTT notification for report deletion (BL receives)",
+                          :result :pass,
+                          :file "openadr3/mqtt_test.clj",
+                          :line 473}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-report-update-notification,
+                          :name "test-report-update-notification",
+                          :desc
+                          "MQTT notification for report update (BL receives)",
+                          :result :pass,
+                          :file "openadr3/mqtt_test.clj",
+                          :line 422}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-resource-create-notification,
+                          :name "test-resource-create-notification",
+                          :desc
+                          "MQTT notification for resource creation",
+                          :result :pass,
+                          :file "openadr3/mqtt_test.clj",
+                          :line 290}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-resource-delete-notification,
+                          :name "test-resource-delete-notification",
+                          :desc
+                          "MQTT notification for resource deletion",
+                          :result :pass,
+                          :file "openadr3/mqtt_test.clj",
+                          :line 351}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-resource-update-notification,
+                          :name "test-resource-update-notification",
+                          :desc
+                          "MQTT notification for resource update",
+                          :result :pass,
+                          :file "openadr3/mqtt_test.clj",
+                          :line 317}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-subscription-create-notification,
+                          :name
+                          "test-subscription-create-notification",
+                          :desc
+                          "MQTT notification for subscription creation (BL receives)",
+                          :result :pass,
+                          :file "openadr3/mqtt_test.clj",
+                          :line 515}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-subscription-delete-notification,
+                          :name
+                          "test-subscription-delete-notification",
+                          :desc
+                          "MQTT notification for subscription deletion (BL receives)",
+                          :result :pass,
+                          :file "openadr3/mqtt_test.clj",
+                          :line 541}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-targeted-event-notification,
+                          :name "test-targeted-event-notification",
+                          :desc
+                          "MQTT notification on VEN-scoped event topics for targeted event",
+                          :result :pass,
+                          :file "openadr3/mqtt_test.clj",
+                          :line 603}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-targeted-program-notification,
+                          :name "test-targeted-program-notification",
+                          :desc
+                          "MQTT notification on VEN-scoped program topics for targeted program",
+                          :result :pass,
+                          :file "openadr3/mqtt_test.clj",
+                          :line 572}
+                   #:test{:id
+                          :openadr3.mqtt-test/test-ven-update-notification,
+                          :name "test-ven-update-notification",
+                          :desc "MQTT notification for VEN update",
+                          :result :error,
+                          :failures
+                          [{:type :error,
+                            :message
+                            "Uncaught exception, not in assertion.",
+                            :actual
+                            "#error {\n :cause \"Cannot invoke \\\"Object.hashCode()\\\" because \\\"key\\\" is null\"\n :via\n [{:type java.lang.NullPointerException\n   :message \"Cannot invoke \\\"Object.hashCode()\\\" because \\\"key\\\" is null\"\n   :at [java.util.Hashtable remove \"Hashtable.java\" 507]}]\n :trace\n [[java.util.Hashtable remove \"Hashtable.java\" 507]\n  [org.eclipse.paho.client.mqttv3.internal.CommsCallback removeMessageListener \"CommsCallback.java\" 450]\n  [org.eclipse.paho.client.mqttv3.internal.ClientComms removeMessageListener \"ClientComms.java\" 552]\n  [org.eclipse.paho.client.mqttv3.MqttAsyncClient subscribe \"MqttAsyncClient.java\" 812]\n  [org.eclipse.paho.client.mqttv3.MqttClient subscribe \"MqttClient.java\" 322]\n  [org.eclipse.paho.client.mqttv3.MqttClient subscribe \"MqttClient.java\" 360]\n  [jdk.internal.reflect.DirectMethodHandleAccessor invoke \"DirectMethodHandleAccessor.java\" 104]\n  [java.lang.reflect.Method invoke \"Method.java\" 565]\n  [clojure.lang.Reflector invokeMatchingMethod \"Reflector.java\" 196]\n  [clojure.lang.Reflector invokeInstanceMethodOfClass \"Reflector.java\" 106]\n  [clojure.lang.Reflector invokeInstanceMethod \"Reflector.java\" 98]\n  [clojurewerkz.machine_head.client$subscribe invokeStatic \"client.clj\" 151]\n  [clojurewerkz.machine_head.client$subscribe invoke \"client.clj\" 132]\n  [openadr3.mqtt$subscribe_BANG_ invokeStatic \"mqtt.clj\" 105]\n  [openadr3.mqtt$subscribe_BANG_ invoke \"mqtt.clj\" 87]\n  [openadr3.channel.MqttChannel subscribe_topics \"channel.clj\" 65]\n  [openadr3.mqtt_test$subscribe_clear_wait_BANG_ invokeStatic \"mqtt_test.clj\" 58]\n  [openadr3.mqtt_test$subscribe_clear_wait_BANG_ invoke \"mqtt_test.clj\" 50]\n  [openadr3.mqtt_test$fn__22385 invokeStatic \"mqtt_test.clj\" 266]\n  [openadr3.mqtt_test$fn__22385 invoke \"mqtt_test.clj\" 260]\n  [kaocha.type.var$test_var invokeStatic \"var.clj\" 24]\n  [kaocha.type.var$test_var invoke \"var.clj\" 20]\n  [kaocha.type.var$eval23005$fn__23007$wrapped_test__23010 invoke \"var.clj\" 36]\n  [kaocha.plugin.capture_output$capture_output_pre_test_hook$fn__2257$fn__2258 invoke \"capture_output.cljc\" 97]\n  [kaocha.type.var$eval23005$fn__23007 invoke \"var.clj\" 38]\n  [clojure.lang.MultiFn invoke \"MultiFn.java\" 234]\n  [clojure.lang.AFn applyToHelper \"AFn.java\" 156]\n  [clojure.lang.AFn applyTo \"AFn.java\" 144]\n  [clojure.core$apply invokeStatic \"core.clj\" 667]\n  [clojure.core$apply invoke \"core.clj\" 662]\n  [kaocha.plugin.capture_output$capture_output_wrap_run_hook$fn__2249$fn__2250 invoke \"capture_output.cljc\" 88]\n  [clojure.core$with_redefs_fn invokeStatic \"core.clj\" 7706]\n  [clojure.core$with_redefs_fn invoke \"core.clj\" 7690]\n  [kaocha.plugin.capture_output$capture_output_wrap_run_hook$fn__2249 doInvoke \"capture_output.cljc\" 88]\n  [clojure.lang.RestFn invoke \"RestFn.java\" 424]\n  [kaocha.testable$run invokeStatic \"testable.clj\" 129]\n  [kaocha.testable$run invoke \"testable.clj\" 120]\n  [kaocha.testable$run_testable invokeStatic \"testable.clj\" 211]\n  [kaocha.testable$run_testable invoke \"testable.clj\" 158]\n  [kaocha.testable$run_testables invokeStatic \"testable.clj\" 224]\n  [kaocha.testable$run_testables invoke \"testable.clj\" 214]\n  [kaocha.type.ns$run_tests$fn__4749 invoke \"ns.clj\" 21]\n  [openadr3.mqtt_test$eval22232$fn__22233 invoke \"mqtt_test.clj\" 28]\n  [clojure.test$compose_fixtures$fn__9892$fn__9893 invoke \"test.clj\" 694]\n  [clojure.test$default_fixture invokeStatic \"test.clj\" 687]\n  [clojure.test$default_fixture invoke \"test.clj\" 683]\n  [clojure.test$compose_fixtures$fn__9892 invoke \"test.clj\" 694]\n  [kaocha.type.ns$run_tests invokeStatic \"ns.clj\" 21]\n  [kaocha.type.ns$run_tests invoke \"ns.clj\" 16]\n  [kaocha.type.ns$eval4767$fn__4768 invoke \"ns.clj\" 61]\n  [clojure.lang.MultiFn invoke \"MultiFn.java\" 234]\n  [clojure.lang.AFn applyToHelper \"AFn.java\" 156]\n  [clojure.lang.AFn applyTo \"AFn.java\" 144]\n  [clojure.core$apply invokeStatic \"core.clj\" 667]\n  [clojure.core$apply invoke \"core.clj\" 662]\n  [kaocha.plugin.capture_output$capture_output_wrap_run_hook$fn__2249$fn__2250 invoke \"capture_output.cljc\" 88]\n  [clojure.core$with_redefs_fn invokeStatic \"core.clj\" 7706]\n  [clojure.core$with_redefs_fn invoke \"core.clj\" 7690]\n  [kaocha.plugin.capture_output$capture_output_wrap_run_hook$fn__2249 doInvoke \"capture_output.cljc\" 88]\n  [clojure.lang.RestFn invoke \"RestFn.java\" 424]\n  [kaocha.testable$run invokeStatic \"testable.clj\" 129]\n  [kaocha.testable$run invoke \"testable.clj\" 120]\n  [kaocha.testable$run_testable invokeStatic \"testable.clj\" 211]\n  [kaocha.testable$run_testable invoke \"testable.clj\" 158]\n  [kaocha.testable$run_testables invokeStatic \"testable.clj\" 224]\n  [kaocha.testable$run_testables invoke \"testable.clj\" 214]\n  [kaocha.test_suite$run invokeStatic \"test_suite.clj\" 7]\n  [kaocha.test_suite$run invoke \"test_suite.clj\" 5]\n  [kaocha.type.clojure.test$eval6182$fn__6183 invoke \"test.clj\" 18]\n  [clojure.lang.MultiFn invoke \"MultiFn.java\" 234]\n  [clojure.lang.AFn applyToHelper \"AFn.java\" 156]\n  [clojure.lang.AFn applyTo \"AFn.java\" 144]\n  [clojure.core$apply invokeStatic \"core.clj\" 667]\n  [clojure.core$apply invoke \"core.clj\" 662]\n  [kaocha.plugin.capture_output$capture_output_wrap_run_hook$fn__2249$fn__2250 invoke \"capture_output.cljc\" 88]\n  [clojure.core$with_redefs_fn invokeStatic \"core.clj\" 7706]\n  [clojure.core$with_redefs_fn invoke \"core.clj\" 7690]\n  [kaocha.plugin.capture_output$capture_output_wrap_run_hook$fn__2249 doInvoke \"capture_output.cljc\" 88]\n  [clojure.lang.RestFn invoke \"RestFn.java\" 424]\n  [kaocha.testable$run invokeStatic \"testable.clj\" 129]\n  [kaocha.testable$run invoke \"testable.clj\" 120]\n  [kaocha.testable$run_testable invokeStatic \"testable.clj\" 211]\n  [kaocha.testable$run_testable invoke \"testable.clj\" 158]\n  [kaocha.testable$run_testables invokeStatic \"testable.clj\" 224]\n  [kaocha.testable$run_testables invoke \"testable.clj\" 214]\n  [kaocha.api$run$fn__4032$fn__4036$fn__4037 invoke \"api.clj\" 159]\n  [clojure.core$with_redefs_fn invokeStatic \"core.clj\" 7706]\n  [clojure.core$with_redefs_fn invoke \"core.clj\" 7690]\n  [kaocha.api$run$fn__4032$fn__4036 invoke \"api.clj\" 133]\n  [clojure.lang.AFn applyToHelper \"AFn.java\" 152]\n  [clojure.lang.AFn applyTo \"AFn.java\" 144]\n  [clojure.core$apply invokeStatic \"core.clj\" 667]\n  [clojure.core$with_bindings_STAR_ invokeStatic \"core.clj\" 1990]\n  [clojure.core$with_bindings_STAR_ doInvoke \"core.clj\" 1990]\n  [clojure.lang.RestFn invoke \"RestFn.java\" 428]\n  [kaocha.api$run$fn__4032 invoke \"api.clj\" 132]\n  [clojure.lang.AFn applyToHelper \"AFn.java\" 152]\n  [clojure.lang.AFn applyTo \"AFn.java\" 144]\n  [clojure.core$apply invokeStatic \"core.clj\" 667]\n  [clojure.core$with_bindings_STAR_ invokeStatic \"core.clj\" 1990]\n  [clojure.core$with_bindings_STAR_ doInvoke \"core.clj\" 1990]\n  [clojure.lang.RestFn invoke \"RestFn.java\" 428]\n  [kaocha.api$run invokeStatic \"api.clj\" 110]\n  [kaocha.api$run invoke \"api.clj\" 97]\n  [kaocha.runner$run$fn__4095 invoke \"runner.clj\" 131]\n  [clojure.lang.AFn applyToHelper \"AFn.java\" 152]\n  [clojure.lang.AFn applyTo \"AFn.java\" 144]\n  [clojure.core$apply invokeStatic \"core.clj\" 667]\n  [clojure.core$with_bindings_STAR_ invokeStatic \"core.clj\" 1990]\n  [clojure.core$with_bindings_STAR_ doInvoke \"core.clj\" 1990]\n  [clojure.lang.RestFn invoke \"RestFn.java\" 428]\n  [kaocha.runner$run invokeStatic \"runner.clj\" 129]\n  [kaocha.runner$run invoke \"runner.clj\" 72]\n  [kaocha.runner$_main_STAR_ invokeStatic \"runner.clj\" 165]\n  [kaocha.runner$_main_STAR_ doInvoke \"runner.clj\" 143]\n  [clojure.lang.RestFn applyTo \"RestFn.java\" 140]\n  [clojure.core$apply invokeStatic \"core.clj\" 667]\n  [clojure.core$apply invoke \"core.clj\" 662]\n  [kaocha.runner$_main invokeStatic \"runner.clj\" 176]\n  [kaocha.runner$_main doInvoke \"runner.clj\" 174]\n  [clojure.lang.RestFn applyTo \"RestFn.java\" 140]\n  [clojure.lang.Var applyTo \"Var.java\" 707]\n  [clojure.core$apply invokeStatic \"core.clj\" 667]\n  [clojure.main$main_opt invokeStatic \"main.clj\" 515]\n  [clojure.main$main_opt invoke \"main.clj\" 511]\n  [clojure.main$main invokeStatic \"main.clj\" 665]\n  [clojure.main$main doInvoke \"main.clj\" 617]\n  [clojure.lang.RestFn applyTo \"RestFn.java\" 140]\n  [clojure.lang.Var applyTo \"Var.java\" 707]\n  [clojure.main main \"main.java\" 40]]}"}],
+                          :file "openadr3/mqtt_test.clj",
+                          :line 260}],
+                  :summary
+                  {:total 17,
+                   :pass 16,
+                   :fail 0,
+                   :error 1,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 0}}
+          #:suite{:id :mqtt-auth,
+                  :tests
+                  [#:test{:id
+                          :openadr3.mqtt-auth-test/test-anonymous-mode-no-credentials,
+                          :name "test-anonymous-mode-no-credentials",
+                          :desc
+                          "When VTN runs with auth=ANONYMOUS, GET /notifiers returns ANONYMOUS binding",
+                          :result :pass,
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 313}
+                   #:test{:id
+                          :openadr3.mqtt-auth-test/test-connect-anonymous-rejected,
+                          :name "test-connect-anonymous-rejected",
+                          :desc
+                          "Anonymous connection is rejected when dynsec is active",
+                          :result :pass,
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 169}
+                   #:test{:id
+                          :openadr3.mqtt-auth-test/test-connect-with-valid-credentials,
+                          :name "test-connect-with-valid-credentials",
+                          :desc
+                          "VEN can connect to broker using credentials from GET /notifiers",
+                          :result :pass,
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 145}
+                   #:test{:id
+                          :openadr3.mqtt-auth-test/test-connect-with-wrong-password-rejected,
+                          :name
+                          "test-connect-with-wrong-password-rejected",
+                          :desc
+                          "Connection with wrong password is rejected",
+                          :result :pass,
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 159}
+                   #:test{:id
+                          :openadr3.mqtt-auth-test/test-notifiers-no-credentials-for-bl,
+                          :name "test-notifiers-no-credentials-for-bl",
+                          :desc
+                          "GET /notifiers for a BL client does not return VEN-specific credentials",
+                          :result :pass,
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 118}
+                   #:test{:id
+                          :openadr3.mqtt-auth-test/test-notifiers-returns-ven-credentials,
+                          :name
+                          "test-notifiers-returns-ven-credentials",
+                          :desc
+                          "GET /notifiers returns per-VEN MQTT credentials in dynsec mode",
+                          :result :pass,
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 103}
+                   #:test{:id
+                          :openadr3.mqtt-auth-test/test-ven-can-subscribe-to-allowed-topics,
+                          :name
+                          "test-ven-can-subscribe-to-allowed-topics",
+                          :desc
+                          "VEN can subscribe to its allowed topics and receive notifications",
+                          :result :pass,
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 180}
+                   #:test{:id
+                          :openadr3.mqtt-auth-test/test-ven-can-subscribe-to-own-targeted-topics,
+                          :name
+                          "test-ven-can-subscribe-to-own-targeted-topics",
+                          :desc
+                          "VEN can subscribe to its own VEN-scoped topics",
+                          :result :pass,
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 208}
+                   #:test{:id
+                          :openadr3.mqtt-auth-test/test-ven-cannot-subscribe-to-other-ven-topics,
+                          :name
+                          "test-ven-cannot-subscribe-to-other-ven-topics",
+                          :desc
+                          "VEN cannot receive notifications on another VEN's targeted topics",
+                          :result :pass,
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 238}
+                   #:test{:id
+                          :openadr3.mqtt-auth-test/test-ven-deletion-invalidates-credentials,
+                          :name
+                          "test-ven-deletion-invalidates-credentials",
+                          :desc
+                          "After VEN deletion, its old MQTT credentials are rejected",
+                          :result :pass,
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 280}
+                   #:test{:id
+                          :openadr3.mqtt-auth-test/test-ven2-gets-different-credentials,
+                          :name "test-ven2-gets-different-credentials",
+                          :desc
+                          "Each VEN gets its own unique credentials",
+                          :result :pass,
+                          :file "openadr3/mqtt_auth_test.clj",
+                          :line 128}],
+                  :summary
+                  {:total 11,
+                   :pass 11,
+                   :fail 0,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 0}}
+          #:suite{:id :webhook,
+                  :tests
+                  [#:test{:id
+                          :openadr3.webhook-test/test-webhook-event-create-notification,
+                          :name
+                          "test-webhook-event-create-notification",
+                          :desc
+                          "Webhook notification for event creation via subscription",
+                          :result :fail,
+                          :failures
+                          [{:type :fail,
+                            :message
+                            "Should receive CREATE notification via webhook",
+                            :expected "(some? notification)",
+                            :actual "(not (some? nil))"}],
+                          :file "openadr3/webhook_test.clj",
+                          :line 59}
+                   #:test{:id
+                          :openadr3.webhook-test/test-webhook-program-create-notification,
+                          :name
+                          "test-webhook-program-create-notification",
+                          :desc
+                          "Webhook notification for program creation via subscription",
+                          :result :fail,
+                          :failures
+                          [{:type :fail,
+                            :message
+                            "Should receive CREATE notification for program via webhook",
+                            :expected "(some? notification)",
+                            :actual "(not (some? nil))"}],
+                          :file "openadr3/webhook_test.clj",
+                          :line 122}
+                   #:test{:id
+                          :openadr3.webhook-test/test-webhook-program-delete-notification,
+                          :name
+                          "test-webhook-program-delete-notification",
+                          :desc
+                          "Webhook notification for program deletion via subscription",
+                          :result :fail,
+                          :failures
+                          [{:type :fail,
+                            :message
+                            "Should receive DELETE notification for program via webhook",
+                            :expected "(some? notification)",
+                            :actual "(not (some? nil))"}],
+                          :file "openadr3/webhook_test.clj",
+                          :line 168}],
+                  :summary
+                  {:total 3,
+                   :pass 0,
+                   :fail 3,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 0}}
+          #:suite{:id :should,
+                  :tests
+                  [#:test{:id
+                          :openadr3.should-test/test-bad-request-returns-problem-body,
+                          :name
+                          "test-bad-request-returns-problem-body",
+                          :desc
+                          "400 BAD_REQUEST error responses SHOULD be a Problem object",
+                          :result :fail,
+                          :failures
+                          [{:type :fail,
+                            :message
+                            "expected Problem-shaped body (RFC 7807); got {:detail \"Program not found\"}",
+                            :expected
+                            "(problem-shape? (:body resp) (:status resp))",
+                            :actual
+                            "(not (problem-shape? {:detail \"Program not found\"} 404))"}],
+                          :file "openadr3/should_test.clj",
+                          :line 70}
+                   #:test{:id
+                          :openadr3.should-test/test-bad-token-returns-problem-body,
+                          :name "test-bad-token-returns-problem-body",
+                          :desc
+                          "403 FORBIDDEN error responses SHOULD be a Problem object",
+                          :result :fail,
+                          :failures
+                          [{:type :fail,
+                            :message
+                            "expected Problem-shaped body (RFC 7807); got {:Error \"Forbidden\"}",
+                            :expected
+                            "(problem-shape? (:body resp) (:status resp))",
+                            :actual
+                            "(not (problem-shape? {:Error \"Forbidden\"} 403))"}],
+                          :file "openadr3/should_test.clj",
+                          :line 51}
+                   #:test{:id
+                          :openadr3.should-test/test-conflict-returns-problem-body,
+                          :name "test-conflict-returns-problem-body",
+                          :desc
+                          "409 CONFLICT error responses SHOULD be a Problem object",
+                          :result :fail,
+                          :failures
+                          [{:type :fail,
+                            :message
+                            "expected Problem-shaped body (RFC 7807); got {:detail \"A program with that name already exists\"}",
+                            :expected
+                            "(problem-shape? (:body r2) (:status r2))",
+                            :actual
+                            "(not (problem-shape? {:detail \"A program with that name already exists\"} 409))"}],
+                          :file "openadr3/should_test.clj",
+                          :line 58}
+                   #:test{:id
+                          :openadr3.should-test/test-not-found-returns-problem-body,
+                          :name "test-not-found-returns-problem-body",
+                          :desc
+                          "404 NOT_FOUND error responses SHOULD be a Problem object",
+                          :result :fail,
+                          :failures
+                          [{:type :fail,
+                            :message
+                            "expected Problem-shaped body (RFC 7807); got {:detail \"Program not found\"}",
+                            :expected
+                            "(problem-shape? (:body resp) (:status resp))",
+                            :actual
+                            "(not (problem-shape? {:detail \"Program not found\"} 404))"}],
+                          :file "openadr3/should_test.clj",
+                          :line 44}],
+                  :summary
+                  {:total 4,
+                   :pass 0,
+                   :fail 4,
+                   :error 0,
+                   :pending 0,
+                   :skip 0,
+                   :skip-capability 0}}],
+         :vtn
+         {:implementation "openadr3-vtn-reference-implementation",
+          :version "main",
+          :commit "19ce849",
+          :deployment "vtn-ri-main-anon-mqtt"},
+         :capabilities
+         {:transport {:single-port? true, :ven-port 8080},
+          :ven-routes
+          {:subscriptions :full,
+           :vens :full,
+           :resources :full,
+           :reports :full},
+          :should-enforced? true,
+          :discovery #{:static-url},
+          :mqtt-auth {:method :anonymous},
+          :handlers
+          #{:vens
+            :events
+            :subscriptions
+            :reports
+            :programs
+            :resources},
+          :handlers-bl
+          #{:vens
+            :events
+            :subscriptions
+            :reports
+            :programs
+            :resources},
+          :webhook-delivery? false,
+          :http-auth
+          {:method :bearer-jwt,
+           :enforced? true,
+           :on-bl? true,
+           :on-ven? true},
+          :handlers-ven
+          #{:vens
+            :events
+            :subscriptions
+            :reports
+            :programs
+            :resources},
+          :notifiers #{:MQTT :WEBHOOK}},
+         :capability-sources
+         {[:handlers-ven] :auto-detected,
+          [:transport :ven-port] :declared,
+          [:http-auth :on-bl?] :declared,
+          [:handlers] :auto-detected,
+          [:http-auth :on-ven?] :declared,
+          [:notifiers] :declared,
+          [:ven-routes :reports] :declared,
+          [:http-auth :method] :declared,
+          [:webhook-delivery?] :defaulted,
+          [:handlers-bl] :auto-detected,
+          [:ven-routes :vens] :declared,
+          [:ven-routes :resources] :declared,
+          [:ven-routes :subscriptions] :declared,
+          [:should-enforced?] :declared,
+          [:transport :single-port?] :declared,
+          [:http-auth :enforced?] :declared,
+          [:mqtt-auth :method] :declared,
+          [:discovery] :defaulted}}
