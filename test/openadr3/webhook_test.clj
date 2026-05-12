@@ -13,7 +13,13 @@
 (use-fixtures :once
   (fn [f]
     (Thread/sleep inter-suite-delay-ms)
-    (reset! ven1-webhook (-> (ch/webhook-channel {:port 0 :callback-host "127.0.0.1"})
+    ;; :callback-host is the literal host stored in the VTN's subscription
+    ;; record and POSTed back. "localhost" rather than "127.0.0.1" so the
+    ;; VTN-RI's WEBHOOK__REPLACE_LOCALHOST rewrite (which matches the
+    ;; substring "//localhost:") can substitute a container-reachable host
+    ;; like host.docker.internal. Bare "127.0.0.1" routes to the container's
+    ;; own loopback and is unreachable.
+    (reset! ven1-webhook (-> (ch/webhook-channel {:port 0 :callback-host "localhost"})
                              ch/channel-start))
     (try
       (f)
